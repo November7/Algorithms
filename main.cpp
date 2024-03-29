@@ -7,11 +7,11 @@ using namespace std;
 
 int main()
 {
-    int r = 100;
+    int r = 10;
     int *p = new int[r];
 
 
-    randomArray(p,r,0,500,true);
+    randomArray(p,r,0,20,true,true);
     printArray(p,r);
     
 
