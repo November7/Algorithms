@@ -12,7 +12,7 @@ int main()
 
 
     randomArray(p,r,0,500,true);
-    printArray(p,r," ");
+    printArray(p,r);
     
 
     delete [] p;

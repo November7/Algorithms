@@ -5,11 +5,11 @@
 #include <iostream>
 using namespace std;
 
-void printArray(int t[], int n, const char sep[]=", ")
+void printArray(int t[], int n)
 {
     for (int i = 0; i < n; i++)
     {
-        cout << t[i] << sep;
+        cout << t[i] <<", ";
     }
     cout << endl;
 }
