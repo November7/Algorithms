@@ -11,7 +11,7 @@ int main()
     int *p = new int[r];
 
 
-    randomArray(p,r,0,20,true,true);
+    randomArray(p,r,0,20,true,false);
     printArray(p,r);
     
 

@@ -15,7 +15,7 @@ int randomArray(int t[], int n, int min, int max, int unique=false, int sorted=f
     {
         
         if(max - min + 1 <= n) return -1;
-        int spread = 1 + (max - min + 1) / n;
+        int spread = max - min - n + 1;
 
         t[0] = min + rand() % spread;        
         for(int i = 1; i < n; i++)
