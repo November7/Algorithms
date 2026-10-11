@@ -18,7 +18,7 @@
     "status": "published"
   },
   {
-    "title": "Przeszukiwanie grafów — DFS i BFS",
+    "title": "Przeszukiwanie grafów - DFS i BFS",
     "description": "Interaktywne laboratorium DFS i BFS z przeszukiwaniem losowych grafów oraz rysowaniem drzew przeszukiwania na żywo.",
     "url": "dfs-bfs.html",
     "status": "published"
