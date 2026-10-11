@@ -1,19 +1,19 @@
 [
   {
     "title": "Wyznaczanie minimum i maksimum",
-    "description": "Interaktywne laboratorium z pięcioma algorytmami wyznaczania minimum i maksimum.",
+    "description": "Interaktywne laboratorium z algorytmami wyznaczania minimum i maksimum.",
     "url": "minmax.html",
     "status": "published"
   },
   {
     "title": "Algorytmy wyszukiwania",
-    "description": "Interaktywne laboratorium z ośmioma algorytmami wyszukiwania.",
+    "description": "Interaktywne laboratorium z algorytmami wyszukiwania.",
     "url": "search.html",
     "status": "published"
   },
   {
     "title": "Algorytmy sortowania",
-    "description": "Interaktywne laboratorium z dziesięcioma algorytmami sortowania.",
+    "description": "Interaktywne laboratorium z algorytmami sortowania.",
     "url": "sort.html",
     "status": "published"
   },
