@@ -141,19 +141,27 @@
       state.depth[vertex] = state.depth[parent] + 1;
       state.children[parent].push(vertex);
     }
-    state.positions = [];
-    const levels = [];
-    for (let vertex = 0; vertex < size; vertex++) (levels[state.depth[vertex]] ??= []).push(vertex);
-    const maxWidth = Math.max(...levels.map(level => level.length));
-    const gapX = Math.max(48, 720 / Math.max(1, maxWidth));
-    const gapY = 76;
     state.positions = Array(size);
-    levels.forEach((level, y) => level.forEach((vertex, index) => {
-      state.positions[vertex] = {
-        x: (index - (level.length - 1) / 2) * gapX,
-        y: y * gapY
-      };
-    }));
+    const gapX = 64;
+    const gapY = 76;
+    let leafIndex = 0;
+    function positionSubtree(vertex) {
+      const children = state.children[vertex];
+      let x;
+      if (children.length === 0) {
+        x = leafIndex++ * gapX;
+      } else {
+        const childPositions = children.map(positionSubtree);
+        x = (childPositions[0] + childPositions[childPositions.length - 1]) / 2;
+      }
+      state.positions[vertex] = { x, y: state.depth[vertex] * gapY };
+      return x;
+    }
+    positionSubtree(0);
+    const minX = Math.min(...state.positions.map(point => point.x));
+    const maxX = Math.max(...state.positions.map(point => point.x));
+    const midpoint = (minX + maxX) / 2;
+    state.positions.forEach(point => { point.x -= midpoint; });
     fillVertexOptions();
     resetQuery();
     drawTree();
@@ -310,6 +318,7 @@
     const width = Math.max(560, maxX - minX + paddingX * 2);
     const height = maxY + paddingY * 2 + 10;
     svg.setAttribute('viewBox', `${minX - paddingX} ${-paddingY} ${width} ${height}`);
+    svg.setAttribute('width', String(width));
     svg.setAttribute('height', String(height));
     svg.replaceChildren();
 

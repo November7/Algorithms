@@ -860,7 +860,7 @@
 .lca-actions { margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; }
 .lca-actions #randomBtn { margin-left:auto; }
 .tree-viewport { overflow:auto; min-height:300px; max-height:620px; padding:18px; }
-.tree-board { display:block; width:100%; min-width:560px; }
+.tree-board { display:block; width:auto; min-width:560px; }
 .tree-edge { stroke:#cbd7e7; stroke-width:2; }
 .tree-edge.path-a { stroke:#4775bb; stroke-width:3; }
 .tree-edge.path-b { stroke:#bd7a42; stroke-width:3; }
