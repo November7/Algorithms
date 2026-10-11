@@ -20,13 +20,32 @@
       </section>
       <section class="panel">
         <h2 class="section-label">Spis treści</h2>
-        <ul>
-          <li>Wyznaczanie minimum i maksimum (planowane)</li>
-          <li>Algorytmy wyszukiwania (planowane)</li>
-          <li><a href="sort.html">Algorytmy sortowania</a> - interaktywne laboratorium z dziesięcioma algorytmami</li>
-          <li>Algorytmy grafowe (planowane)</li>
-        </ul>
+        <ul id="algorithmIndex"><li>Ładowanie…</li></ul>
       </section>
     </main>
+    <script>
+      fetch('algorithms.json')
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(items => {
+          const list = document.getElementById('algorithmIndex');
+          list.replaceChildren(...items.map(item => {
+            const li = document.createElement('li');
+            if (item.status === 'published' && item.url) {
+              const a = document.createElement('a');
+              a.href = item.url;
+              a.textContent = item.title;
+              li.append(a);
+            } else {
+              li.append(item.title + ' (planowane)');
+            }
+            if (item.status === 'published' && item.description) li.append(' - ' + item.description);
+            return li;
+          }));
+        })
+        .catch(() => {
+          document.getElementById('algorithmIndex').innerHTML =
+            '<li>Nie udało się wczytać listy. Otwórz stronę przez serwer HTTP lub GitHub Pages.</li>';
+        });
+    </script>
   </body>
 </html>

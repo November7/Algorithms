@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Wyznaczanie minimum i maksimum",
+    "description": "Planowane.",
+    "status": "planned"
+  },
+  {
+    "title": "Algorytmy wyszukiwania",
+    "description": "Planowane.",
+    "status": "planned"
+  },
+  {
+    "title": "Algorytmy sortowania",
+    "description": "Interaktywne laboratorium z dziesięcioma algorytmami sortowania.",
+    "url": "sort.html",
+    "status": "published"
+  },
+  {
+    "title": "Algorytmy grafowe",
+    "description": "Planowane.",
+    "status": "planned"
+  }
+]
