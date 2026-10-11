@@ -1,4 +1,4 @@
-[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github)](https://november7.github.io/AlgorithmsLab/sort.html)
+[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github)](https://november7.github.io/AlgorithmsLab/)
 [![Language-English-success](https://img.shields.io/badge/Language-English-success)](#english)
 [![J%C4%99zyk-Polski-red](https://img.shields.io/badge/J%C4%99zyk-Polski-red)](#polski)
 [![AI Generated](https://img.shields.io/badge/README-AI%20Generated-4B8BF5?style=flat&logo=githubcopilot&logoColor=white)](#)
@@ -9,13 +9,7 @@ Repozytorium zawiera zbiór interaktywnych symulacji znanych algorytmów. Przyk�
 
 README oraz symulacje w tym repozytorium są tworzone przy użyciu sztucznej inteligencji.
 
-## Spis treści
-
-- Wyznaczanie minimum i maksimum (planowane).
-- [Algorytmy wyszukiwania](https://november7.github.io/AlgorithmsLab/search.html) - interaktywne laboratorium z ośmioma algorytmami wyszukiwania.
-- [Algorytmy sortowania](https://november7.github.io/AlgorithmsLab/sort.html) - interaktywne laboratorium z dziesięcioma algorytmami sortowania.
-- Algorytmy grafowe (planowane).
-
+Lista dostępnych symulacji znajduje się na [stronie projektu](https://november7.github.io/AlgorithmsLab/).
 
 # English
 
@@ -23,9 +17,4 @@ This repository is a collection of interactive simulations of well-known algorit
 
 This README and the simulations in this repository are created using artificial intelligence.
 
-## Contents
-
-- Finding minimum and maximum (planned).
-- [Search algorithms](https://november7.github.io/AlgorithmsLab/search.html) - an interactive lab featuring eight search algorithms.
-- [Sorting algorithms](https://november7.github.io/AlgorithmsLab/sort.html) - an interactive lab featuring ten sorting algorithms.
-- Graph algorithms (planned).
+The list of available simulations is on the [project page](https://november7.github.io/AlgorithmsLab/).

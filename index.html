@@ -3,49 +3,68 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Interaktywne symulacje znanych algorytmów.">
+    <meta name="description" content="AlgorithmsLab - interaktywne symulacje znanych algorytmów.">
     <title>AlgorithmsLab</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="vendor/github-markdown.min.css">
+    <style>
+      body { margin: 0; background: #fff; }
+      @media (prefers-color-scheme: dark) { body { background: #0d1117; } }
+      .page { box-sizing: border-box; max-width: 980px; margin: 0 auto; padding: 45px; }
+      @media (max-width: 767px) { .page { padding: 15px; } }
+    </style>
   </head>
   <body>
-    <main class="shell">
-      <header class="masthead">
-        <a class="brand" href="index.html">AlgorithmsLab</a>
-      </header>
-      <section class="intro">
-        <div>
-          <h1>Algorytmy krok po kroku.</h1>
-          <p>Zbiór interaktywnych symulacji znanych algorytmów.</p>
-        </div>
-      </section>
-      <section class="panel">
-        <h2 class="section-label">Spis treści</h2>
-        <ul id="algorithmIndex"><li>Ładowanie…</li></ul>
+    <main class="page markdown-body">
+      <div id="readme">Ładowanie…</div>
+      <section id="algorithms" hidden>
+        <h2>Algorytmy</h2>
+        <ul id="algorithmIndex"></ul>
       </section>
     </main>
+    <script src="vendor/marked.min.js"></script>
     <script>
-      fetch('algorithms.json')
-        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-        .then(items => {
-          const list = document.getElementById('algorithmIndex');
-          list.replaceChildren(...items.map(item => {
-            const li = document.createElement('li');
-            if (item.status === 'published' && item.url) {
-              const a = document.createElement('a');
-              a.href = item.url;
-              a.textContent = item.title;
-              li.append(a);
-            } else {
-              li.append(item.title + ' (planowane)');
-            }
-            if (item.status === 'published' && item.description) li.append(' - ' + item.description);
-            return li;
-          }));
-        })
-        .catch(() => {
-          document.getElementById('algorithmIndex').innerHTML =
-            '<li>Nie udało się wczytać listy. Otwórz stronę przez serwer HTTP lub GitHub Pages.</li>';
-        });
+      const slug = text => text.trim().toLowerCase().replace(/\s+/g, '-');
+
+      async function load(url, type) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`${url}: ${response.status}`);
+        return type === 'json' ? response.json() : response.text();
+      }
+
+      function renderAlgorithms(items) {
+        const list = document.getElementById('algorithmIndex');
+        list.replaceChildren(...items.map(item => {
+          const li = document.createElement('li');
+          if (item.status === 'published' && item.url) {
+            const a = document.createElement('a');
+            a.href = item.url;
+            a.textContent = item.title;
+            li.append(a);
+            if (item.description) li.append(' - ' + item.description);
+          } else {
+            li.append(item.title + ' (planowane)');
+          }
+          return li;
+        }));
+        document.getElementById('algorithms').hidden = false;
+      }
+
+      (async () => {
+        const readme = document.getElementById('readme');
+        try {
+          readme.innerHTML = marked.parse(await load('README.md', 'text'));
+          // marked 15 does not add heading ids, which the README language badges rely on.
+          readme.querySelectorAll('h1, h2, h3').forEach(h => { h.id = slug(h.textContent); });
+        } catch (error) {
+          readme.textContent = 'Nie udało się wczytać README.md. Otwórz stronę przez serwer HTTP lub GitHub Pages.';
+          console.error(error);
+        }
+        try {
+          renderAlgorithms(await load('algorithms.json', 'json'));
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     </script>
   </body>
 </html>
