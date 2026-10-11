@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Interaktywne laboratorium DFS i BFS. Przeszukuj losowe grafy krok po kroku, obserwuj stos, kolejkę i drzewo przeszukiwania.">
-    <title>Przeszukiwanie grafów — DFS i BFS · AlgorithmsLab</title>
+    <title>Przeszukiwanie grafów - DFS i BFS · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body class="graph-lab">
@@ -29,7 +29,7 @@
         <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
           <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
           <div id="algorithmList"></div>
-          <p class="sidebar-note">Wybierz ⓘ, aby przeczytać krótkie objaśnienie. Zmiana algorytmu zachowuje graf i wierzchołek startowy.</p>
+          <!-- <p class="sidebar-note">Wybierz ⓘ, aby przeczytać krótkie objaśnienie. Zmiana algorytmu zachowuje graf i wierzchołek startowy.</p> -->
           <p class="sidebar-note">Graf jest nieskierowany i nieważony. Sąsiadów sprawdzamy zawsze według rosnących numerów.</p>
         </aside>
         <section class="panel controls" aria-label="Ustawienia i sterowanie">
@@ -91,7 +91,7 @@
               </div>
               <div class="graph-diagram graph-tree-panel">
                 <div class="graph-tree-heading"><h3 id="treeTitle">Drzewo przeszukiwania</h3><span class="tag" id="treeStatus">Czeka na start</span></div>
-                <div class="graph-tree-viewport" id="treeViewport" tabindex="0" role="region" aria-label="Drzewo przeszukiwania — przewijany widok" aria-describedby="treeHint">
+                <div class="graph-tree-viewport" id="treeViewport" tabindex="0" role="region" aria-label="Drzewo przeszukiwania - przewijany widok" aria-describedby="treeHint">
                   <p class="graph-tree-empty" id="treeEmpty">Wykonaj pierwszy krok. Tutaj będzie rosło drzewo odkrytych wierzchołków.</p>
                   <svg id="treeBoard" class="graph-tree-board" role="img" aria-labelledby="treeTitle" aria-describedby="treeSummary" hidden></svg>
                 </div>
@@ -140,8 +140,8 @@
           <summary>Składowe, drzewo przeszukiwania i odległości</summary>
           <div class="glossary-grid">
             <div><h3>Graf niespójny</h3><p>Ze startu można dotrzeć tylko do jego składowej. W trybie „Cały graf” po jej przejściu wybieramy najmniejszy nieodkryty numer jako nowy korzeń. Nie istnieje krawędź łącząca te korzenie.</p></div>
-            <div><h3>Drzewo przeszukiwania</h3><p>Krawędź, przez którą odkrywamy wierzchołek, łączy go z rodzicem. Te krawędzie tworzą drzewo, a przy wielu składowych — las. Pozostałe krawędzie nadal należą do grafu.</p></div>
-            <div><h3>BFS a DFS</h3><p>BFS wyznacza najkrótszą odległość w liczbie krawędzi od korzenia danej składowej. DFS pokazuje głębokość w swoim drzewie, która nie musi być najkrótszą odległością. Korzeń ma wartość 0, a nieodkryty wierzchołek — kreskę.</p></div>
+            <div><h3>Drzewo przeszukiwania</h3><p>Krawędź, przez którą odkrywamy wierzchołek, łączy go z rodzicem. Te krawędzie tworzą drzewo, a przy wielu składowych - las. Pozostałe krawędzie nadal należą do grafu.</p></div>
+            <div><h3>BFS a DFS</h3><p>BFS wyznacza najkrótszą odległość w liczbie krawędzi od korzenia danej składowej. DFS pokazuje głębokość w swoim drzewie, która nie musi być najkrótszą odległością. Korzeń ma wartość 0, a nieodkryty wierzchołek - kreskę.</p></div>
           </div>
         </details>
       </section>
@@ -282,7 +282,7 @@
     const labels = { unseen: 'Nieodkryty', discovered: 'Odkryty', finished: 'Zakończony' };
     $('vertexTable').replaceChildren(...state.marks.map((mark, v) => {
       const row = document.createElement('tr');
-      [vertexName(v), v === state.active ? 'Bieżący' : labels[mark], state.parent[v] < 0 ? '—' : vertexName(state.parent[v]), state.depth[v] ?? '—'].forEach(value => {
+      [vertexName(v), v === state.active ? 'Bieżący' : labels[mark], state.parent[v] < 0 ? '-' : vertexName(state.parent[v]), state.depth[v] ?? '-'].forEach(value => {
         const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
       });
       return row;
@@ -301,7 +301,7 @@
   function* operation(message) { $('operation').textContent = message; yield; }
   function* inspect(v, neighbor) {
     state.active = v; state.edge = [v, neighbor]; state.checks++;
-    yield* operation(`Sprawdź ${v + 1} → ${neighbor + 1}. ${state.marks[neighbor] === 'unseen' ? 'Sąsiad jest nieodkryty.' : 'Sąsiad był już odkryty — pomiń.'}`);
+    yield* operation(`Sprawdź ${v + 1} → ${neighbor + 1}. ${state.marks[neighbor] === 'unseen' ? 'Sąsiad jest nieodkryty.' : 'Sąsiad był już odkryty - pomiń.'}`);
     state.edge = null;
   }
   function* breadthFirst(root) {
@@ -494,8 +494,8 @@
     if (!tipAnchor) return;
     const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
     const width = document.documentElement.clientWidth;
-    tooltip.style.left = `${a.right + 12 + box.width <= width - 12 ? a.right + 12 : Math.max(12, a.left - box.width - 12)}px`;
-    tooltip.style.top = `${Math.max(12, Math.min(a.top - 16, window.innerHeight - box.height - 12))}px`;
+    tooltip.style.setProperty('--tooltip-x', `${a.right + 12 + box.width <= width - 12 ? a.right + 12 : Math.max(12, a.left - box.width - 12)}px`);
+    tooltip.style.setProperty('--tooltip-y', `${Math.max(12, Math.min(a.top - 16, window.innerHeight - box.height - 12))}px`);
   }
   function openTip(button, pin = false) {
     clearTimeout(tipTimer);

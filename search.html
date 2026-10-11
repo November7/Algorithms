@@ -6,11 +6,8 @@
     <meta name="description" content="Interaktywne laboratorium ośmiu algorytmów wyszukiwania. Obserwuj porównania, zawężanie przedziału i porównuj złożoności.">
     <title>Algorytmy wyszukiwania · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-      @media(min-width:1051px) { .fields { grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; } }
-    </style>
   </head>
-  <body>
+  <body class="search-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -21,7 +18,7 @@
             <i></i>
           </span>
           AlgorithmsLab
-          <span style="font-weight:400;color:var(--muted)"> / edukacja</span>
+          <span class="brand-note"> / edukacja</span>
         </a>
         <span class="meta">Algorytmy wyszukiwania</span>
       </header>
@@ -37,7 +34,7 @@
         <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
           <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
           <div id="algorithmList"></div>
-          <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p>
+          <!-- <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p> -->
         </aside>
         <div class="main-column">
           <section class="panel controls" aria-label="Ustawienia i sterowanie">
@@ -119,7 +116,7 @@
             </div>
             <div class="stat">
               <span>Wynik</span>
-              <output aria-live="off" id="resultCount">—</output>
+              <output aria-live="off" id="resultCount">-</output>
               <small>pozycja w tablicy</small>
             </div>
           </section>
@@ -157,7 +154,7 @@
             <p id="uses"></p>
             <div class="exercise">
               <h3>Sprawdź samodzielnie</h3>
-              <p id="exercise" style="margin:0"></p>
+              <p id="exercise"></p>
             </div>
           </div>
         </div>
@@ -242,7 +239,7 @@
 
   const canvas = $('board'), ctx = canvas.getContext('2d');
   const sizeInput = $('size'), speedInput = $('speed');
-  const state = { data: [], original: [], target: 0, active: new Set(), range: null, found: -1, result: '—', comparisons: 0, writes: 0, running: false, paused: false, selected: 'linear', iterator: null };
+  const state = { data: [], original: [], target: 0, active: new Set(), range: null, found: -1, result: '-', comparisons: 0, writes: 0, running: false, paused: false, selected: 'linear', iterator: null };
   let frameId = null, lastTime = null, budget = 0, dirty = true, viewWidth = 1, viewHeight = 1;
 
   function renderLesson() {
@@ -279,7 +276,7 @@
     document.querySelectorAll('.algorithm-pick').forEach(button => { button.disabled = state.running; });
   }
   function setStatus(text) { $('statusText').textContent = text; }
-  function clearCounters() { state.comparisons = state.writes = 0; state.active.clear(); state.range = null; state.found = -1; state.result = '—'; }
+  function clearCounters() { state.comparisons = state.writes = 0; state.active.clear(); state.range = null; state.found = -1; state.result = '-'; }
 
   function sampleDistinct(count) {
     const values = new Set();
@@ -537,7 +534,7 @@
     if (!state.iterator) return;
     try { const step = state.iterator.next(); if (step.done) finish(step.value); }
     catch (error) {
-      stop(); setStatus('Błąd — przywrócono dane');
+      stop(); setStatus('Błąd - przywrócono dane');
       $('operation').textContent = 'Nie udało się dokończyć wyszukiwania. Dane wejściowe zostały zachowane.';
       console.error(error);
     }
@@ -583,7 +580,7 @@
     const right = a.right + 12;
     const x = right + box.width <= viewportWidth - 12 ? right : Math.max(12, a.left - box.width - 12);
     const y = Math.max(12, Math.min(a.top - 16, viewportHeight - box.height - 12));
-    tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
+    tooltip.style.setProperty('--tooltip-x', `${x}px`); tooltip.style.setProperty('--tooltip-y', `${y}px`);
   }
   function openTip(button, pin = false) {
     clearTimeout(tipTimer);

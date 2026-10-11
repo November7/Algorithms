@@ -22,5 +22,11 @@
     "description": "Interaktywne laboratorium DFS i BFS z przeszukiwaniem losowych grafów oraz rysowaniem drzew przeszukiwania na żywo.",
     "url": "dfs-bfs.html",
     "status": "published"
+  },
+  {
+    "title": "Najniższy wspólny przodek (LCA)",
+    "description": "Interaktywna symulacja znajdowania najniższego wspólnego przodka dwóch wierzchołków w drzewie.",
+    "url": "lca.html",
+    "status": "published"
   }
 ]

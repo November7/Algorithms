@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interaktywna symulacja algorytmu LCA. Znajdź najniższego wspólnego przodka dwóch wierzchołków w drzewie krok po kroku.">
+    <title>Najniższy wspólny przodek (LCA) · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          AlgorithmsLab <span class="graph-brand-note"> / edukacja</span>
+        </a>
+        <span class="meta">Drzewa · LCA</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div>
+          <span class="eyebrow">Zrozum, zanim zapamiętasz</span>
+          <h1 id="pageTitle">Znajdź wspólnego przodka.</h1>
+          <p>Wybierz dwa wierzchołki w drzewie. Wyrównaj ich głębokości, a potem przesuwaj oba w górę aż do pierwszego wspólnego przodka.</p>
+        </div>
+        <span class="badge">LCA · krok po kroku</span>
+      </section>
+      <section class="panel lca-controls" aria-label="Ustawienia zapytania LCA">
+        <div class="lca-fields">
+          <div class="field">
+            <label for="vertexA">Pierwszy wierzchołek</label>
+            <select id="vertexA"></select>
+          </div>
+          <div class="field">
+            <label for="vertexB">Drugi wierzchołek</label>
+            <select id="vertexB"></select>
+          </div>
+          <div class="field">
+            <label for="size">Liczba wierzchołków <output id="sizeLabel" for="size">15</output></label>
+            <input type="range" id="size" min="5" max="30" value="15" step="1">
+          </div>
+        </div>
+        <div class="lca-actions">
+          <button type="button" id="startBtn" class="btn primary">▶ Start</button>
+          <button type="button" id="stepBtn" class="btn">Jeden krok</button>
+          <button type="button" id="stopBtn" class="btn">Reset</button>
+          <button type="button" id="randomBtn" class="btn">↻ Losuj drzewo</button>
+        </div>
+        <p class="control-hint">Wierzchołek 1 jest korzeniem. Drzewo jest ukorzenione; każdy pozostały wierzchołek ma dokładnie jednego rodzica.</p>
+      </section>
+      <div class="main-column lca-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="treeTitle">
+          <div class="chart-heading">
+            <div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="treeTitle">Drzewo i ścieżki do korzenia</h2></div>
+            <span id="statusText" role="status">Gotowy</span>
+          </div>
+          <div class="tree-viewport" id="treeViewport" tabindex="0" role="region" aria-label="Ukorzenione drzewo - przewijany widok">
+            <svg id="treeBoard" class="tree-board" role="img" aria-labelledby="treeTitle treeDescription"></svg>
+          </div>
+          <div class="tree-legend" id="treeDescription">
+            <span><i class="legend-dot a" aria-hidden="true"></i>Wierzchołek A / jego ścieżka</span>
+            <span><i class="legend-dot b" aria-hidden="true"></i>Wierzchołek B / jego ścieżka</span>
+            <span><i class="legend-dot answer" aria-hidden="true"></i>Najniższy wspólny przodek</span>
+          </div>
+          <p class="lca-operation" id="operation" role="status" aria-live="polite">Wybierz wierzchołki i uruchom algorytm lub wykonaj jeden krok.</p>
+        </section>
+        <section class="lca-stats" aria-label="Wynik i statystyki">
+          <div class="stat"><span>Głębokość A</span><output id="depthA">0</output><small id="vertexNameA">Wierzchołek 1</small></div>
+          <div class="stat"><span>Głębokość B</span><output id="depthB">0</output><small id="vertexNameB">Wierzchołek 1</small></div>
+          <div class="stat"><span>Wspólny przodek</span><output id="answer">-</output><small id="stepCount">Kroki: 0</small></div>
+        </section>
+        <details class="data-details">
+          <summary>Rodzice i głębokości</summary>
+          <div class="graph-table-wrap">
+            <table class="parent-table">
+              <caption>Każdy wierzchołek poza korzeniem ma jednego rodzica</caption>
+              <thead><tr><th scope="col">Wierzchołek</th><th scope="col">Rodzic</th><th scope="col">Głębokość</th></tr></thead>
+              <tbody id="vertexTable"></tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Najniższy wspólny przodek (LCA)</h2></div>
+          <span class="tag">Wyrównywanie głębokości</span>
+        </div>
+        <dl class="complexity">
+          <div><dt>Wejście</dt><dd>Ukorzenione drzewo</dd></div>
+          <div><dt>Przygotowanie</dt><dd>Θ(V)</dd></div>
+          <div><dt>Czas zapytania</dt><dd>O(h)</dd></div>
+          <div><dt>Pamięć</dt><dd>O(V)</dd></div>
+          <div><dt>Wysokość drzewa</dt><dd>h</dd></div>
+        </dl>
+        <p class="complexity-note">Najpierw przygotowujemy tablice rodziców i głębokości przez przejście drzewa. Ta demonstracja animuje samo zapytanie; każdy krok przechodzi do rodzica jednego lub obu wierzchołków.</p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <ol>
+              <li>Jeśli wierzchołki mają różne głębokości, podnieś głębszy do poziomu płytszego.</li>
+              <li>Jeśli są różne, podnieś oba o jeden poziom.</li>
+              <li>Powtarzaj, aż wierzchołki się spotkają. Ten wierzchołek jest LCA.</li>
+            </ol>
+          </div>
+          <div>
+            <h3>Dlaczego to działa?</h3>
+            <p>Po wyrównaniu głębokości oba wierzchołki są w tej samej odległości od korzenia. Idąc równocześnie w górę, zachowujemy tę odległość, aż trafimy na ich pierwszego wspólnego przodka - najniższego z nich.</p>
+          </div>
+          <div>
+            <h3>Zastosowania i ograniczenia</h3>
+            <p>LCA przydaje się m.in. przy zapytaniach o odległość w drzewie, analizie hierarchii i strukturach drzewiastych. To rozwiązanie jest proste, ale dla bardzo wielu zapytań można przygotować tablicę przodków 2<sup>k</sup> (binary lifting), by obsługiwać każde zapytanie w O(log V).</p>
+          </div>
+        </div>
+        <details class="glossary">
+          <summary>Co oznacza „najniższy”?</summary>
+          <p>„Najniższy” oznacza najdalszy od korzenia spośród wspólnych przodków A i B. Każdy wierzchołek jest własnym przodkiem, więc gdy A = B, wynikiem jest ten wierzchołek.</p>
+        </details>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const state = {
+    parent: [], depth: [], children: [], positions: [], size: 15,
+    currentA: 0, currentB: 0, originalA: 0, originalB: 0,
+    pathA: new Set(), pathB: new Set(), answer: -1, steps: 0,
+    iterator: null, running: false, frameId: null, lastTime: null, budget: 0
+  };
+
+  function makeTree(size) {
+    state.size = size;
+    state.parent = Array(size).fill(-1);
+    state.depth = Array(size).fill(0);
+    state.children = Array.from({ length: size }, () => []);
+    for (let vertex = 1; vertex < size; vertex++) {
+      const parent = Math.floor(Math.random() * vertex);
+      state.parent[vertex] = parent;
+      state.depth[vertex] = state.depth[parent] + 1;
+      state.children[parent].push(vertex);
+    }
+    state.positions = [];
+    const levels = [];
+    for (let vertex = 0; vertex < size; vertex++) (levels[state.depth[vertex]] ??= []).push(vertex);
+    const maxWidth = Math.max(...levels.map(level => level.length));
+    const gapX = Math.max(48, 720 / Math.max(1, maxWidth));
+    const gapY = 76;
+    state.positions = Array(size);
+    levels.forEach((level, y) => level.forEach((vertex, index) => {
+      state.positions[vertex] = {
+        x: (index - (level.length - 1) / 2) * gapX,
+        y: y * gapY
+      };
+    }));
+    fillVertexOptions();
+    resetQuery();
+    drawTree();
+    updateInfo();
+  }
+
+  function fillVertexOptions() {
+    for (const id of ['vertexA', 'vertexB']) {
+      const select = $(id);
+      const previous = Number(select.value);
+      select.replaceChildren(...Array.from({ length: state.size }, (_, vertex) => {
+        const option = document.createElement('option');
+        option.value = String(vertex);
+        option.textContent = `Wierzchołek ${vertex + 1}`;
+        return option;
+      }));
+      select.value = String(Math.min(previous, state.size - 1));
+    }
+    if ($('vertexA').value === $('vertexB').value && state.size > 1) $('vertexB').value = String((Number($('vertexB').value) + 1) % state.size);
+  }
+
+  function stopAnimation() {
+    state.running = false;
+    if (state.frameId !== null) cancelAnimationFrame(state.frameId);
+    state.frameId = null;
+    state.lastTime = null;
+  }
+
+  function resetQuery() {
+    stopAnimation();
+    state.iterator = null;
+    state.currentA = Number($('vertexA').value);
+    state.currentB = Number($('vertexB').value);
+    state.originalA = state.currentA;
+    state.originalB = state.currentB;
+    state.pathA = new Set([state.currentA]);
+    state.pathB = new Set([state.currentB]);
+    state.answer = -1;
+    state.steps = 0;
+    state.lastTime = null;
+    state.budget = 0;
+    $('statusText').textContent = 'Gotowy';
+    $('startBtn').textContent = '▶ Start';
+    $('operation').textContent = 'Wybierz wierzchołki i uruchom algorytm lub wykonaj jeden krok.';
+    $('answer').textContent = '-';
+    updateInfo();
+    drawTree();
+  }
+
+  function* querySteps() {
+    let a = state.currentA, b = state.currentB;
+    if (state.depth[a] > state.depth[b]) {
+      while (state.depth[a] > state.depth[b]) {
+        const previous = a;
+        a = state.parent[a];
+        state.pathA.add(a);
+        state.currentA = a;
+        state.steps++;
+        yield `A (${previous + 1}) jest głębiej. Podnieś A do rodzica ${a + 1}. Głębokość A: ${state.depth[a]}, głębokość B: ${state.depth[b]}.`;
+      }
+    } else {
+      while (state.depth[b] > state.depth[a]) {
+        const previous = b;
+        b = state.parent[b];
+        state.pathB.add(b);
+        state.currentB = b;
+        state.steps++;
+        yield `B (${previous + 1}) jest głębiej. Podnieś B do rodzica ${b + 1}. Głębokość A: ${state.depth[a]}, głębokość B: ${state.depth[b]}.`;
+      }
+    }
+    while (a !== b) {
+      const previousA = a, previousB = b;
+      a = state.parent[a];
+      b = state.parent[b];
+      state.pathA.add(a);
+      state.pathB.add(b);
+      state.currentA = a;
+      state.currentB = b;
+      state.steps++;
+      yield `Wierzchołki ${previousA + 1} i ${previousB + 1} są różne. Podnieś oba: A → ${a + 1}, B → ${b + 1}.`;
+    }
+  }
+
+  function advance() {
+    if (!state.iterator) return;
+    const result = state.iterator.next();
+    if (result.done || state.currentA === state.currentB) {
+      state.answer = state.currentA;
+      state.iterator = null;
+      stopAnimation();
+      $('statusText').textContent = 'Zakończono';
+      $('operation').textContent = `Gotowe. Najniższym wspólnym przodkiem wierzchołków ${state.originalA + 1} i ${state.originalB + 1} jest ${state.answer + 1}.`;
+      $('startBtn').textContent = '▶ Uruchom ponownie';
+    } else {
+      $('operation').textContent = result.value;
+    }
+    updateInfo();
+    drawTree();
+  }
+
+  function start() {
+    if (state.running) return;
+    resetQuery();
+    state.iterator = querySteps();
+    state.running = true;
+    $('statusText').textContent = 'Wyszukiwanie';
+    $('startBtn').textContent = 'Ⅱ Pauza';
+    animate();
+  }
+
+  function animate(now) {
+    state.frameId = null;
+    if (!state.running) return;
+    if (now !== undefined) {
+      if (state.lastTime !== null) state.budget += Math.min((now - state.lastTime) / 1000, 0.1) * 3;
+      state.lastTime = now;
+      while (state.budget >= 1 && state.running) {
+        advance();
+        state.budget--;
+      }
+    }
+    if (state.running) state.frameId = requestAnimationFrame(animate);
+  }
+
+  function toggleRun() {
+    if (state.running) {
+      stopAnimation();
+      $('statusText').textContent = 'Pauza';
+      $('startBtn').textContent = '▶ Wznów';
+      return;
+    }
+    if (!state.iterator) start();
+    else {
+      state.running = true;
+      state.lastTime = null;
+      $('statusText').textContent = 'Wyszukiwanie';
+      $('startBtn').textContent = 'Ⅱ Pauza';
+      animate();
+    }
+  }
+
+  function createSvgElement(name, attributes) {
+    const element = document.createElementNS(svgNS, name);
+    for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, String(value));
+    return element;
+  }
+
+  function drawTree() {
+    const svg = $('treeBoard');
+    const xs = state.positions.map(point => point.x);
+    const ys = state.positions.map(point => point.y);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), maxY = Math.max(...ys);
+    const paddingX = 40, paddingY = 36;
+    const width = Math.max(560, maxX - minX + paddingX * 2);
+    const height = maxY + paddingY * 2 + 10;
+    svg.setAttribute('viewBox', `${minX - paddingX} ${-paddingY} ${width} ${height}`);
+    svg.setAttribute('height', String(height));
+    svg.replaceChildren();
+
+    for (let vertex = 1; vertex < state.size; vertex++) {
+      const parent = state.parent[vertex];
+      const classes = ['tree-edge'];
+      if (state.pathA.has(parent) && state.pathA.has(vertex)) classes.push('path-a');
+      if (state.pathB.has(parent) && state.pathB.has(vertex)) classes.push('path-b');
+      if (classes.includes('path-a') && classes.includes('path-b')) classes.push('shared-path');
+      svg.append(createSvgElement('line', {
+        x1: state.positions[parent].x, y1: state.positions[parent].y,
+        x2: state.positions[vertex].x, y2: state.positions[vertex].y,
+        class: classes.join(' ')
+      }));
+    }
+
+    for (let vertex = 0; vertex < state.size; vertex++) {
+      const classes = ['tree-node'];
+      if (vertex === state.answer) classes.push('answer');
+      else if (vertex === state.currentA && state.currentA !== state.currentB) classes.push('current-a');
+      else if (vertex === state.currentB && state.currentA !== state.currentB) classes.push('current-b');
+      else if (vertex === state.originalA) classes.push('endpoint-a');
+      else if (vertex === state.originalB) classes.push('endpoint-b');
+      else if (state.pathA.has(vertex)) classes.push('ancestor-a');
+      else if (state.pathB.has(vertex)) classes.push('ancestor-b');
+      const group = createSvgElement('g', { class: classes.join(' '), transform: `translate(${state.positions[vertex].x} ${state.positions[vertex].y})` });
+      group.append(createSvgElement('circle', { r: 17 }));
+      const label = createSvgElement('text', { y: 1 });
+      label.textContent = String(vertex + 1);
+      group.append(label);
+      svg.append(group);
+    }
+  }
+
+  function updateInfo() {
+    const a = Number($('vertexA').value), b = Number($('vertexB').value);
+    $('depthA').textContent = String(state.depth[a]);
+    $('depthB').textContent = String(state.depth[b]);
+    $('vertexNameA').textContent = `Wierzchołek ${a + 1}`;
+    $('vertexNameB').textContent = `Wierzchołek ${b + 1}`;
+    $('stepCount').textContent = `Kroki: ${state.steps}`;
+    $('sizeLabel').textContent = String(state.size);
+    $('vertexTable').replaceChildren(...state.parent.map((parent, vertex) => {
+      const row = document.createElement('tr');
+      for (const value of [String(vertex + 1), parent < 0 ? '- (korzeń)' : String(parent + 1), String(state.depth[vertex])]) {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.append(cell);
+      }
+      return row;
+    }));
+    if (state.answer >= 0) $('answer').textContent = String(state.answer + 1);
+  }
+
+  $('vertexA').addEventListener('change', resetQuery);
+  $('vertexB').addEventListener('change', resetQuery);
+  $('size').addEventListener('input', () => {
+    $('sizeLabel').textContent = $('size').value;
+  });
+  $('size').addEventListener('change', () => makeTree(Number($('size').value)));
+  $('randomBtn').addEventListener('click', () => makeTree(state.size));
+  $('stopBtn').addEventListener('click', resetQuery);
+  $('stepBtn').addEventListener('click', () => {
+    if (!state.iterator) {
+      resetQuery();
+      state.iterator = querySteps();
+    }
+    stopAnimation();
+    state.budget = 0;
+    $('statusText').textContent = 'Krok ręczny';
+    $('startBtn').textContent = '▶ Wznów';
+    advance();
+  });
+  $('startBtn').addEventListener('click', toggleRun);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) state.lastTime = null;
+  });
+
+  makeTree(state.size);
+})();
+    </script>
+  </body>
+</html>

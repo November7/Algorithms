@@ -18,7 +18,7 @@
             <i></i>
           </span>
           AlgorithmsLab
-          <span style="font-weight:400;color:var(--muted)"> / edukacja</span>
+          <span class="brand-note"> / edukacja</span>
         </a>
         <span class="meta">Minimum i maksimum</span>
       </header>
@@ -34,7 +34,7 @@
         <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
           <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
           <div id="algorithmList"></div>
-          <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p>
+          <!-- <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p> -->
         </aside>
         <div class="main-column">
           <section class="panel controls" aria-label="Ustawienia i sterowanie">
@@ -97,13 +97,13 @@
             </div>
             <div class="stat">
               <span>Minimum</span>
-              <output aria-live="off" id="minValue">—</output>
-              <small id="minPos">pozycja: —</small>
+              <output aria-live="off" id="minValue">-</output>
+              <small id="minPos">pozycja: -</small>
             </div>
             <div class="stat">
               <span>Maksimum</span>
-              <output aria-live="off" id="maxValue">—</output>
-              <small id="maxPos">pozycja: —</small>
+              <output aria-live="off" id="maxValue">-</output>
+              <small id="maxPos">pozycja: -</small>
             </div>
             <div class="stat">
               <span>Elementy</span>
@@ -145,7 +145,7 @@
             <p id="uses"></p>
             <div class="exercise">
               <h3>Sprawdź samodzielnie</h3>
-              <p id="exercise" style="margin:0"></p>
+              <p id="exercise"></p>
             </div>
           </div>
         </div>
@@ -239,10 +239,10 @@
     const { data, minIdx, maxIdx } = state;
     $('cmpCount').textContent = state.comparisons.toLocaleString('pl-PL');
     $('cmpBound').textContent = `granica: ${bound(data.length)}`;
-    $('minValue').textContent = minIdx >= 0 ? data[minIdx] : '—';
-    $('minPos').textContent = `pozycja: ${minIdx >= 0 ? minIdx + 1 : '—'}`;
-    $('maxValue').textContent = maxIdx >= 0 ? data[maxIdx] : '—';
-    $('maxPos').textContent = `pozycja: ${maxIdx >= 0 ? maxIdx + 1 : '—'}`;
+    $('minValue').textContent = minIdx >= 0 ? data[minIdx] : '-';
+    $('minPos').textContent = `pozycja: ${minIdx >= 0 ? minIdx + 1 : '-'}`;
+    $('maxValue').textContent = maxIdx >= 0 ? data[maxIdx] : '-';
+    $('maxPos').textContent = `pozycja: ${maxIdx >= 0 ? maxIdx + 1 : '-'}`;
     $('lengthCount').textContent = data.length;
     if ($('dataDetails').open) $('dataText').textContent = data.join(', ');
   }
@@ -423,7 +423,7 @@
     if (!state.iterator) return;
     try { const step = state.iterator.next(); if (step.done) finish(step.value); }
     catch (error) {
-      stop(); setStatus('Błąd — przywrócono stan');
+      stop(); setStatus('Błąd - przywrócono stan');
       $('operation').textContent = 'Nie udało się dokończyć wyszukiwania. Dane wejściowe zostały zachowane.';
       console.error(error);
     }
@@ -467,7 +467,7 @@
     const right = a.right + 12;
     const x = right + box.width <= viewportWidth - 12 ? right : Math.max(12, a.left - box.width - 12);
     const y = Math.max(12, Math.min(a.top - 16, viewportHeight - box.height - 12));
-    tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
+    tooltip.style.setProperty('--tooltip-x', `${x}px`); tooltip.style.setProperty('--tooltip-y', `${y}px`);
   }
   function openTip(button, pin = false) {
     clearTimeout(tipTimer);
