@@ -6,8 +6,9 @@
   },
   {
     "title": "Algorytmy wyszukiwania",
-    "description": "Planowane.",
-    "status": "planned"
+    "description": "Interaktywne laboratorium z ośmioma algorytmami wyszukiwania.",
+    "url": "search.html",
+    "status": "published"
   },
   {
     "title": "Algorytmy sortowania",

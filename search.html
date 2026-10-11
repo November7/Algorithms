@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interaktywne laboratorium ośmiu algorytmów wyszukiwania. Obserwuj porównania, zawężanie przedziału i porównuj złożoności.">
+    <title>Algorytmy wyszukiwania · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      @media(min-width:1051px) { .fields { grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; } }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          AlgorithmsLab
+          <span style="font-weight:400;color:var(--muted)"> / edukacja</span>
+        </a>
+        <span class="meta">Algorytmy wyszukiwania</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div>
+          <span class="eyebrow">Zrozum, zanim zapamiętasz</span>
+          <h1 id="pageTitle">Znajdź wartość krok po kroku.</h1>
+          <p>Odkryj, jak działają algorytmy wyszukiwania. Obserwuj porównania, śledź zawężanie przedziału i sprawdź, dlaczego dane uporządkowane przyspieszają poszukiwania.</p>
+        </div>
+        <span class="badge">8 algorytmów · jeden zestaw danych</span>
+      </section>
+      <div class="workspace">
+        <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
+          <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
+          <div id="algorithmList"></div>
+          <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p>
+        </aside>
+        <div class="main-column">
+          <section class="panel controls" aria-label="Ustawienia i sterowanie">
+            <div class="fields">
+              <div class="field">
+                <label for="dataset">Układ danych</label>
+                <select id="dataset">
+                  <option value="uniform">Rosnący, równomierny</option>
+                  <option value="skewed">Rosnący, nierównomierny</option>
+                  <option value="unsorted">Nieuporządkowany</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="target">Szukana wartość</label>
+                <select id="target">
+                  <option value="random">Losowy element</option>
+                  <option value="first">Pierwszy element</option>
+                  <option value="middle">Środkowy element</option>
+                  <option value="last">Ostatni element</option>
+                  <option value="missing">Brak w tablicy</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="size">
+                  Liczba elementów
+                  <output id="sizeLabel" for="size">40</output>
+                </label>
+                <input type="range" id="size" min="12" max="160" step="1" value="40">
+              </div>
+              <div class="field">
+                <label for="speed">
+                  Tempo
+                  <output id="speedLabel" for="speed">5 op./s</output>
+                </label>
+                <input type="range" id="speed" min="1" max="100" step="1" value="5" aria-describedby="tempoHint">
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" id="startBtn" class="btn primary">▶ Start</button>
+              <button type="button" id="pauseBtn" class="btn" disabled>Pauza</button>
+              <button type="button" id="stepBtn" class="btn">Jeden krok</button>
+              <button type="button" id="stopBtn" class="btn" disabled>Stop</button>
+              <button type="button" id="randomBtn" class="btn">↻ Losuj dane</button>
+            </div>
+            <p class="control-hint" id="tempoHint">Tempo określa liczbę kroków animacji na sekundę. Stop przywraca dane sprzed uruchomienia. Algorytmy dla danych uporządkowanych wymagają układu rosnącego.</p>
+          </section>
+          <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+            <div class="chart-heading">
+              <div>
+                <div class="eyebrow">02 / Obserwuj działanie</div>
+                <h2 id="chartTitle">Wyszukiwanie sekwencyjne</h2>
+              </div>
+              <span id="statusText" role="status">Gotowy</span>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="board" role="img" aria-label="Wykres wartości tablicy z zaznaczoną szukaną wartością" aria-describedby="chartDescription operation">Wartości tablicy są dostępne w sekcji „Dane w postaci tekstowej”.</canvas>
+            </div>
+            <div class="chart-caption" id="chartDescription">
+              <span>Ciemny słupek: bieżące porównanie. Blade słupki: już wykluczone.</span>
+              <span>Linia przerywana: szukana wartość. ✓ znaleziona pozycja</span>
+            </div>
+            <p id="operation">Wybierz Start lub wykonaj pierwszy krok.</p>
+          </section>
+          <section class="stats" aria-label="Statystyki operacji">
+            <div class="stat">
+              <span>Porównania</span>
+              <output aria-live="off" id="cmpCount">0</output>
+              <small>szukana a element</small>
+            </div>
+            <div class="stat">
+              <span>Zapisy</span>
+              <output aria-live="off" id="writeCount">0</output>
+              <small>zapisy do tablicy</small>
+            </div>
+            <div class="stat">
+              <span>Szukana</span>
+              <output aria-live="off" id="targetCount">0</output>
+              <small id="lengthCount">elementów: 40</small>
+            </div>
+            <div class="stat">
+              <span>Wynik</span>
+              <output aria-live="off" id="resultCount">—</output>
+              <small>pozycja w tablicy</small>
+            </div>
+          </section>
+          <details class="data-details" id="dataDetails">
+            <summary>Dane w postaci tekstowej i zasady liczenia</summary>
+            <p id="dataText"></p>
+            <p>Porównanie dotyczy szukanej wartości i jednego elementu tablicy. Testy indeksów w pętlach oraz odczyty brzegów przedziału w wyszukiwaniu interpolacyjnym nie są liczone. Zapisy pojawiają się tylko u wartownika, który tymczasowo zmienia ostatni element. Wyniki są liczbą operacji, a nie pomiarem czasu procesora. Pozycje w opisach liczymy od 1.</p>
+          </details>
+        </div>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div>
+            <p class="eyebrow">03 / Zrozum algorytm</p>
+            <h2 id="lessonTitle"></h2>
+          </div>
+          <span class="tag" id="family"></span>
+        </div>
+        <dl class="complexity" id="complexity"></dl>
+        <p class="complexity-note" id="complexityNote"></p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <p id="description"></p>
+            <ol id="steps"></ol>
+          </div>
+          <div>
+            <h3>Zalety</h3>
+            <p id="pros"></p>
+            <h3>Ograniczenia</h3>
+            <p id="cons"></p>
+          </div>
+          <div>
+            <h3>Kiedy się przydaje?</h3>
+            <p id="uses"></p>
+            <div class="exercise">
+              <h3>Sprawdź samodzielnie</h3>
+              <p id="exercise" style="margin:0"></p>
+            </div>
+          </div>
+        </div>
+        <details class="glossary">
+          <summary>Jak czytać złożoność i wymóg uporządkowania?</summary>
+          <div class="glossary-grid">
+            <div>
+              <h3>Czas</h3>
+              <p>n oznacza liczbę elementów. Θ opisuje ścisły rząd wzrostu liczby porównań, a O górne ograniczenie. Θ(log n) rośnie wolniej niż Θ(√n), a ono wolniej niż Θ(n). Podajemy liczbę porównań, nie sekundy.</p>
+            </div>
+            <div>
+              <h3>Pamięć pomocnicza</h3>
+              <p>Podajemy dodatkową pamięć algorytmu bez danych wejściowych. Wszystkie wersje w tym laboratorium są iteracyjne, więc potrzebują O(1) pamięci.</p>
+            </div>
+            <div>
+              <h3>Dane uporządkowane</h3>
+              <p>Jeśli tablica jest rosnąca, jedno porównanie pozwala odrzucić całą część tablicy. W danych nieuporządkowanych można tylko sprawdzać elementy po kolei, bo żaden wynik porównania nie mówi nic o pozostałych.</p>
+            </div>
+          </div>
+        </details>
+      </section>
+      <footer>
+        <span>AlgorithmsLab · Interaktywna nauka algorytmów</span>
+        <span>
+          Materiały:
+          <a href="https://algs4.cs.princeton.edu/cheatsheet/" target="_blank" rel="noopener noreferrer">Princeton Algorithms</a>
+          ·
+          <a href="https://xlinux.nist.gov/dads/" target="_blank" rel="noopener noreferrer">NIST DADS</a>
+        </span>
+      </footer>
+    </main>
+    <p id="stepAnnouncement" class="sr-only" role="status"></p>
+    <div id="algorithmTooltip" class="tooltip" role="tooltip" hidden></div>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const MAX_VALUE = 1000;
+  // These descriptions refer to the exact variants implemented below.
+  const ALGO_INFO = {
+    linear: { name: 'Sekwencyjne', title: 'Wyszukiwanie sekwencyjne', family: 'Przeglądanie po kolei', sorted: false, best: 'Θ(1)', average: 'Θ(n)', worst: 'Θ(n)', memory: 'O(1)',
+      description: 'Sprawdza elementy od początku tablicy, jeden po drugim, aż znajdzie szukaną wartość albo dojdzie do końca.',
+      steps: ['Porównaj szukaną wartość z bieżącym elementem.', 'Jeśli są równe, zwróć pozycję.', 'W przeciwnym razie przejdź do następnego elementu; po ostatnim zgłoś brak.'],
+      pros: 'Działa na dowolnych danych; nie wymaga sortowania ani dodatkowej pamięci.', cons: 'Przy dużych tablicach wykonuje wiele porównań; nie wykorzystuje porządku danych.', uses: 'Małe lub nieuporządkowane zbiory oraz jednorazowe wyszukiwania.',
+      note: 'Średnio, gdy szukana wartość jest w tablicy i każda pozycja jest równie prawdopodobna, wystarcza około (n + 1)/2 porównań. Przy braku wartości zawsze n.', exercise: 'Wybierz „Ostatni element” i „Brak w tablicy”. Ile porównań wykonuje algorytm w obu przypadkach?' },
+    sentinel: { name: 'Z wartownikiem', title: 'Wyszukiwanie z wartownikiem', family: 'Przeglądanie po kolei', sorted: false, best: 'Θ(1)', average: 'Θ(n)', worst: 'Θ(n)', memory: 'O(1)',
+      description: 'Zastępuje ostatni element szukaną wartością, czyli wartownikiem. Dzięki temu pętla na pewno się zatrzyma i nie musi sprawdzać, czy doszła do końca tablicy.',
+      steps: ['Zapamiętaj ostatni element i wpisz na jego miejsce szukaną wartość.', 'Przeglądaj tablicę, aż trafisz na element równy szukanej.', 'Przywróć ostatni element i sprawdź, czy znaleziona pozycja jest prawdziwa.'],
+      pros: 'Usuwa jeden test indeksu z każdego obrotu pętli; nadal działa na danych nieuporządkowanych.', cons: 'Tymczasowo modyfikuje tablicę, więc nie nadaje się do danych tylko do odczytu ani do dostępu równoległego.', uses: 'Szybkie przeszukiwanie surowych tablic, gdy koszt testu indeksu ma znaczenie.',
+      note: 'Liczba porównań wartości jest taka sama jak w wersji zwykłej. Zysk dotyczy testów indeksu w pętli, których nie liczymy. Dwa zapisy do tablicy są kosztem wartownika.', exercise: 'Porównaj liczbę porównań z wyszukiwaniem sekwencyjnym dla tych samych danych. Gdzie widać różnicę?' },
+    binary: { name: 'Binarne', title: 'Wyszukiwanie binarne', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'Θ(log n)', worst: 'Θ(log n)', memory: 'O(1)',
+      description: 'Porównuje szukaną wartość ze środkiem przedziału i odrzuca połowę, w której na pewno jej nie ma.',
+      steps: ['Weź środkowy element przedziału.', 'Jeśli jest równy szukanej, zwróć pozycję.', 'Jeśli jest mniejszy, szukaj po prawej; jeśli większy, po lewej.'],
+      pros: 'Bardzo mało porównań: dla 160 elementów wystarczy najwyżej 8.', cons: 'Wymaga danych uporządkowanych i swobodnego dostępu do elementów.', uses: 'Słowniki, indeksy, wyszukiwanie w dużych posortowanych tablicach.',
+      note: 'Jedno porównanie trójstanowe (mniejsze, równe, większe) na krok. Najwyżej ⌊log₂ n⌋ + 1 porównań.', exercise: 'Podwój liczbę elementów. O ile wzrasta maksymalna liczba porównań?' },
+    jump: { name: 'Skokowe (Jump)', title: 'Wyszukiwanie skokowe', family: 'Skoki i przeglądanie', sorted: true, best: 'Θ(1)', average: 'Θ(√n)', worst: 'Θ(√n)', memory: 'O(1)',
+      description: 'Przeskakuje po tablicy blokami o długości ⌊√n⌋, aż znajdzie blok, w którym może być szukana wartość. Potem przegląda ten blok po kolei.',
+      steps: ['Porównaj szukaną z ostatnim elementem kolejnego bloku.', 'Jeśli element jest mniejszy, skocz do następnego bloku.', 'Gdy jest większy, przejrzyj sekwencyjnie bieżący blok.'],
+      pros: 'Mniej porównań niż sekwencyjne; prosty, a skacze tylko w prawo, co bywa korzystne np. dla taśm.', cons: 'Więcej porównań niż binarne; wymaga uporządkowania.', uses: 'Gdy cofanie się w danych jest drogie, a swobodny dostęp ograniczony.',
+      note: 'Długość bloku √n minimalizuje sumę liczby skoków i długości końcowego przeglądania. Dla n = 100 to blok 10.', exercise: 'Dla 100 elementów ustaw szukaną na ostatnią pozycję. Ile skoków i ile kroków sekwencyjnych wykonuje algorytm?' },
+    interpolation: { name: 'Interpolacyjne', title: 'Wyszukiwanie interpolacyjne', family: 'Szacowanie pozycji', sorted: true, best: 'Θ(1)', average: 'Θ(log log n)¹', worst: 'Θ(n)', memory: 'O(1)',
+      description: 'Zamiast środka przedziału szacuje pozycję szukanej wartości na podstawie jej wielkości względem wartości na krańcach, jak szukanie nazwiska w książce telefonicznej.',
+      steps: ['Oblicz pozycję: lo + (szukana − a[lo]) · (hi − lo) / (a[hi] − a[lo]).', 'Porównaj element z tej pozycji z szukaną.', 'Zawęź przedział z lewej lub prawej strony i powtórz.'],
+      pros: 'Przy równomiernie rozłożonych wartościach potrzebuje bardzo mało porównań.', cons: 'Przy nierównomiernych danych może degradować do liniowego przeglądania; wymaga liczb i uporządkowania.', uses: 'Duże tablice liczb o w przybliżeniu jednostajnym rozkładzie, np. kolejne numery lub daty.',
+      note: '¹ Średnia Θ(log log n) zakłada równomierny rozkład wartości. Odczyty a[lo] i a[hi] potrzebne do wzoru nie są liczone jako porównania.', exercise: 'Porównaj układ „równomierny” i „nierównomierny”. Dlaczego w drugim algorytm wykonuje więcej porównań?' },
+    exponential: { name: 'Wykładnicze', title: 'Wyszukiwanie wykładnicze', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'O(log n)', worst: 'Θ(log n)', memory: 'O(1)',
+      description: 'Najpierw podwaja pozycję (1, 2, 4, 8, …), aż trafi na element nie mniejszy od szukanego. Potem stosuje wyszukiwanie binarne w znalezionym przedziale.',
+      steps: ['Sprawdź pozycję 1, 2, 4, 8, … aż do elementu większego od szukanego.', 'Ogranicz przedział do ostatniego podwojenia.', 'Przeszukaj ten przedział binarnie.'],
+      pros: 'Szybkie, gdy szukana wartość leży blisko początku; działa też dla bardzo długich lub nieograniczonych list.', cons: 'Dla wartości na końcu wykonuje więcej porównań niż zwykłe binarne; wymaga uporządkowania.', uses: 'Nieznany lub nieograniczony rozmiar danych oraz wyszukiwanie wartości blisko początku.',
+      note: 'Dla szukanej wartości na pozycji p liczba porównań wynosi O(log p), co przy położeniu blisko początku daje przewagę nad binarnym.', exercise: 'Wybierz „Pierwszy element”, a potem „Ostatni element”. Jak zmienia się liczba porównań?' },
+    ternary: { name: 'Trójpodziałowe', title: 'Wyszukiwanie trójpodziałowe', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'Θ(log n)', worst: 'Θ(log n)', memory: 'O(1)',
+      description: 'Dzieli przedział na trzy części dwoma punktami podziału i zostawia tę część, w której może być szukana wartość.',
+      steps: ['Wyznacz dwa punkty podziału: pierwszą i drugą trzecią przedziału.', 'Porównaj szukaną z nimi i odrzuć dwie trzecie lub jedną trzecią tablicy.', 'Powtórz dla pozostałego przedziału.'],
+      pros: 'Ilustruje uogólnienie wyszukiwania binarnego na więcej części.', cons: 'Wykonuje więcej porównań niż binarne (do 2·log₃ n ≈ 1,26·log₂ n), mimo mniejszej liczby kroków.', uses: 'Głównie dydaktyka i porównanie strategii podziału.',
+      note: 'Dwa porównania na krok przy trzykrotnym zmniejszaniu przedziału dają około 1,26·log₂ n porównań w najgorszym przypadku, więcej niż w binarnym.', exercise: 'Porównaj liczbę porównań z wyszukiwaniem binarnym dla 160 elementów. Które wykonuje ich mniej?' },
+    fibonacci: { name: 'Fibonacciego', title: 'Wyszukiwanie Fibonacciego', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'Θ(log n)', worst: 'Θ(log n)', memory: 'O(1)',
+      description: 'Dzieli przedział według kolejnych liczb Fibonacciego zamiast na połowy. Pozycje do sprawdzenia wyznacza wyłącznie dodawaniem i odejmowaniem.',
+      steps: ['Znajdź najmniejszą liczbę Fibonacciego nie mniejszą od n.', 'Sprawdź pozycję odsuniętą o poprzednią liczbę Fibonacciego.', 'Zawęź przedział do mniejszej lub większej części i cofnij się o jedną liczbę ciągu.'],
+      pros: 'Obywa się bez dzielenia; pozycje rosną i maleją zgodnie z ciągiem, co bywa korzystne w pamięciach o kosztownym dostępie.', cons: 'Trudniejszy do zrozumienia niż binarne; wykonuje średnio nieco więcej porównań.', uses: 'Systemy bez szybkiego dzielenia oraz ćwiczenia z zależnościami ciągu Fibonacciego.',
+      note: 'Dla nieznacznie większej niż binarne stałej wykonuje Θ(log n) porównań. Przedział zmniejsza się w stosunku około złotego podziału 1 : 1,618.', exercise: 'Ustaw 21 lub 34 elementy. Jak pokrywają się przedziały z liczbami Fibonacciego?' }
+  };
+
+  const canvas = $('board'), ctx = canvas.getContext('2d');
+  const sizeInput = $('size'), speedInput = $('speed');
+  const state = { data: [], original: [], target: 0, active: new Set(), range: null, found: -1, result: '—', comparisons: 0, writes: 0, running: false, paused: false, selected: 'linear', iterator: null };
+  let frameId = null, lastTime = null, budget = 0, dirty = true, viewWidth = 1, viewHeight = 1;
+
+  function renderLesson() {
+    const info = ALGO_INFO[state.selected];
+    $('chartTitle').textContent = info.title;
+    $('lessonTitle').textContent = info.title;
+    $('family').textContent = info.family;
+    for (const key of ['description', 'pros', 'cons', 'uses', 'exercise']) $(key).textContent = info[key];
+    $('complexityNote').textContent = info.note;
+    $('steps').replaceChildren(...info.steps.map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
+    $('complexity').innerHTML = [['Najlepszy czas', info.best], ['Średni czas', info.average], ['Najgorszy czas', info.worst], ['Pamięć pomocnicza', info.memory], ['Wymaga danych rosnących', info.sorted ? 'Tak' : 'Nie']].map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
+    document.querySelectorAll('.algorithm-pick').forEach(button => {
+      const selected = button.dataset.algorithm === state.selected;
+      button.setAttribute('aria-pressed', String(selected));
+      button.parentElement.classList.toggle('selected', selected);
+    });
+  }
+  function updateInfo() {
+    $('cmpCount').textContent = state.comparisons.toLocaleString('pl-PL');
+    $('writeCount').textContent = state.writes.toLocaleString('pl-PL');
+    $('targetCount').textContent = state.target;
+    $('resultCount').textContent = state.result;
+    $('lengthCount').textContent = `elementów: ${state.data.length}`;
+    if ($('dataDetails').open) $('dataText').textContent = `Szukana wartość: ${state.target}. Tablica: ${state.data.join(', ')}.`;
+  }
+  function updateControls() {
+    $('startBtn').disabled = state.running;
+    $('pauseBtn').disabled = !state.running;
+    $('pauseBtn').textContent = state.paused ? 'Wznów' : 'Pauza';
+    $('pauseBtn').setAttribute('aria-pressed', String(state.paused));
+    $('stopBtn').disabled = !state.running;
+    $('stepBtn').disabled = state.running && !state.paused;
+    for (const id of ['size', 'dataset', 'target', 'randomBtn']) $(id).disabled = state.running;
+    document.querySelectorAll('.algorithm-pick').forEach(button => { button.disabled = state.running; });
+  }
+  function setStatus(text) { $('statusText').textContent = text; }
+  function clearCounters() { state.comparisons = state.writes = 0; state.active.clear(); state.range = null; state.found = -1; state.result = '—'; }
+
+  function sampleDistinct(count) {
+    const values = new Set();
+    while (values.size < count) values.add(1 + Math.floor(Math.random() * (MAX_VALUE - 1)));
+    return [...values];
+  }
+  function chooseTarget() {
+    const data = state.data, n = data.length, kind = $('target').value;
+    if (kind === 'first') return data[0];
+    if (kind === 'middle') return data[Math.floor(n / 2)];
+    if (kind === 'last') return data[n - 1];
+    if (kind === 'missing') {
+      let value;
+      do value = 1 + Math.floor(Math.random() * MAX_VALUE); while (data.includes(value));
+      return value;
+    }
+    return data[Math.floor(Math.random() * n)];
+  }
+  function generateData(length) {
+    if (state.running) return;
+    const kind = $('dataset').value;
+    if (kind === 'skewed') {
+      state.data = Array.from({ length }, (_, i) => i + 1 + Math.floor(Math.pow(i / (length - 1), 4) * (MAX_VALUE - 1 - length)));
+    } else {
+      state.data = sampleDistinct(length);
+      if (kind === 'uniform') state.data.sort((a, b) => a - b);
+    }
+    state.target = chooseTarget();
+    clearCounters(); setStatus('Gotowy');
+    $('operation').textContent = 'Wybierz Start lub wykonaj pierwszy krok.';
+    rafDraw();
+  }
+  function isSorted() { return state.data.every((value, i) => i === 0 || state.data[i - 1] < value); }
+
+  function rafDraw() { dirty = true; if (frameId === null) frameId = requestAnimationFrame(frame); }
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    viewWidth = Math.max(1, rect.width); viewHeight = Math.max(1, rect.height);
+    canvas.width = Math.round(viewWidth * dpr); canvas.height = Math.round(viewHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); rafDraw();
+  }
+  function draw() {
+    const width = viewWidth, height = viewHeight, left = 34, right = 12, top = 30, bottom = 24;
+    ctx.clearRect(0, 0, width, height);
+    const chartHeight = Math.max(1, height - top - bottom), chartWidth = Math.max(1, width - left - right);
+    const yOf = value => top + chartHeight * (1 - value / MAX_VALUE);
+    ctx.font = '10px "Segoe UI", sans-serif'; ctx.textAlign = 'right';
+    for (let value = 0; value <= MAX_VALUE; value += 250) {
+      const y = yOf(value);
+      ctx.fillStyle = '#657995'; ctx.fillText(String(value), left - 7, y + 3);
+      ctx.fillStyle = '#e7edf6'; ctx.fillRect(left, y, chartWidth, 1);
+    }
+    const slot = chartWidth / Math.max(1, state.data.length), barWidth = Math.max(.4, slot - Math.min(3, slot * .22));
+    for (let i = 0; i < state.data.length; i++) {
+      const h = Math.max(1, state.data[i] / MAX_VALUE * chartHeight), x = left + i * slot, y = height - bottom - h;
+      const active = state.active.has(i), found = i === state.found, radius = Math.min(3, barWidth / 2, h / 2);
+      const inRange = !state.range || (i >= state.range.lo && i <= state.range.hi);
+      ctx.fillStyle = active ? '#21457e' : found ? '#437c88' : inRange ? '#779bce' : '#cfdaea';
+      ctx.beginPath(); ctx.moveTo(x, y + h); ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y); ctx.lineTo(x + barWidth - radius, y);
+      ctx.quadraticCurveTo(x + barWidth, y, x + barWidth, y + radius);
+      ctx.lineTo(x + barWidth, y + h); ctx.closePath(); ctx.fill();
+      ctx.textAlign = 'center'; ctx.fillStyle = '#253f63';
+      if (slot >= 26) ctx.fillText(String(state.data[i]), x + barWidth / 2, y - 7);
+      if (active) { ctx.beginPath(); ctx.arc(x + barWidth / 2, height - 12, Math.min(2.5, barWidth / 2), 0, 2 * Math.PI); ctx.fill(); }
+      else if (found) {
+        if (slot >= 10) ctx.fillText('✓', x + barWidth / 2, height - 8);
+        else ctx.fillRect(x, height - 12, barWidth, 2);
+      }
+    }
+    const ty = yOf(state.target);
+    ctx.save(); ctx.strokeStyle = '#b5532f'; ctx.fillStyle = '#b5532f'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(left, ty); ctx.lineTo(left + chartWidth, ty); ctx.stroke(); ctx.restore();
+    ctx.textAlign = 'right'; ctx.fillStyle = '#b5532f';
+    ctx.fillText(`szukana: ${state.target}`, left + chartWidth - 2, Math.max(top - 4, ty - 5));
+  }
+
+  // A generator yields one visible operation. No delayed promise can survive
+  // cancellation and mutate a newly generated dataset.
+  function* markActive(indices, message) {
+    state.active = new Set(indices); $('operation').textContent = message; yield;
+  }
+  function setRange(lo, hi) { state.range = { lo, hi }; dirty = true; }
+  function* compare(i) {
+    state.comparisons++;
+    const value = state.data[i], target = state.target;
+    const verdict = value === target ? 'równa się szukanej.' : value < target ? 'jest mniejsza od szukanej.' : 'jest większa od szukanej.';
+    yield* markActive([i], `Pozycja ${i + 1}: wartość ${value} ${verdict}`);
+    return value - target;
+  }
+  function* write(index, value, message) {
+    state.data[index] = value; state.writes++;
+    yield* markActive([index], message);
+  }
+
+  function* linearSearch() {
+    const n = state.data.length;
+    for (let i = 0; i < n; i += 1) {
+      setRange(i, n - 1);
+      if ((yield* compare(i)) === 0) return i;
+    }
+    return -1;
+  }
+
+  function* sentinelSearch() {
+    const n = state.data.length, last = state.data[n - 1];
+    yield* write(n - 1, state.target, `Wartownik: ostatni element (${last}) zastąpiony szukaną wartością ${state.target}.`);
+    let i = 0;
+    setRange(0, n - 1);
+    while ((yield* compare(i)) !== 0) { i += 1; setRange(i, n - 1); }
+    yield* write(n - 1, last, `Przywrócenie ostatniego elementu: ${last}.`);
+    if (i < n - 1) return i;
+    state.comparisons++;
+    yield* markActive([n - 1], `Pozycja ${n}: wartość ${last} ${last === state.target ? 'równa się szukanej.' : 'nie jest szukaną; wartownik zatrzymał pętlę.'}`);
+    return last === state.target ? n - 1 : -1;
+  }
+
+  function* binaryRange(lo, hi) {
+    while (lo <= hi) {
+      setRange(lo, hi);
+      const mid = Math.floor((lo + hi) / 2), diff = yield* compare(mid);
+      if (diff === 0) return mid;
+      if (diff < 0) lo = mid + 1; else hi = mid - 1;
+    }
+    setRange(lo, hi);
+    return -1;
+  }
+  function* binarySearch() { return yield* binaryRange(0, state.data.length - 1); }
+
+  function* jumpSearch() {
+    const n = state.data.length, step = Math.max(1, Math.floor(Math.sqrt(n)));
+    let prev = 0, cur = Math.min(step, n) - 1;
+    while (true) {
+      setRange(prev, n - 1);
+      const diff = yield* compare(cur);
+      if (diff === 0) return cur;
+      if (diff > 0) break;
+      prev = cur + 1;
+      if (prev >= n) { setRange(n, n - 1); return -1; }
+      cur = Math.min(prev + step, n) - 1;
+    }
+    setRange(prev, cur - 1);
+    for (let i = prev; i < cur; i += 1) {
+      const diff = yield* compare(i);
+      if (diff === 0) return i;
+      if (diff > 0) break;
+      setRange(i + 1, cur - 1);
+    }
+    return -1;
+  }
+
+  function* interpolationSearch() {
+    const data = state.data, target = state.target;
+    let lo = 0, hi = data.length - 1;
+    while (lo <= hi && target >= data[lo] && target <= data[hi]) {
+      setRange(lo, hi);
+      const pos = data[hi] === data[lo] ? lo : lo + Math.floor((target - data[lo]) * (hi - lo) / (data[hi] - data[lo]));
+      const diff = yield* compare(pos);
+      if (diff === 0) return pos;
+      if (diff < 0) lo = pos + 1; else hi = pos - 1;
+    }
+    setRange(lo, hi < lo ? hi : lo - 1);
+    return -1;
+  }
+
+  function* exponentialSearch() {
+    const n = state.data.length;
+    let diff = yield* compare(0);
+    if (diff === 0) return 0;
+    if (diff > 0) { setRange(1, 0); return -1; }
+    let bound = 1;
+    while (bound < n) {
+      setRange(Math.floor(bound / 2), n - 1);
+      diff = yield* compare(bound);
+      if (diff === 0) return bound;
+      if (diff > 0) break;
+      bound *= 2;
+    }
+    return yield* binaryRange(Math.floor(bound / 2) + 1, Math.min(bound, n) - 1);
+  }
+
+  function* ternarySearch() {
+    let lo = 0, hi = state.data.length - 1;
+    while (lo <= hi) {
+      setRange(lo, hi);
+      const third = Math.floor((hi - lo) / 3), m1 = lo + third, m2 = hi - third;
+      const d1 = yield* compare(m1);
+      if (d1 === 0) return m1;
+      if (d1 > 0) { hi = m1 - 1; continue; }
+      if (m2 === m1) { lo = m1 + 1; continue; }
+      const d2 = yield* compare(m2);
+      if (d2 === 0) return m2;
+      if (d2 < 0) lo = m2 + 1;
+      else { lo = m1 + 1; hi = m2 - 1; }
+    }
+    setRange(lo, hi);
+    return -1;
+  }
+
+  function* fibonacciSearch() {
+    const n = state.data.length;
+    let fib2 = 0, fib1 = 1, fibM = 1;
+    while (fibM < n) { fib2 = fib1; fib1 = fibM; fibM = fib2 + fib1; }
+    let offset = -1, lo = 0, hi = n - 1;
+    while (fibM > 1) {
+      setRange(lo, hi);
+      const i = Math.min(offset + fib2, n - 1), diff = yield* compare(i);
+      if (diff < 0) { fibM = fib1; fib1 = fib2; fib2 = fibM - fib1; offset = i; lo = i + 1; }
+      else if (diff > 0) { fibM = fib2; fib1 -= fib2; fib2 = fibM - fib1; hi = i - 1; }
+      else return i;
+    }
+    if (fib1 && offset + 1 < n) {
+      setRange(offset + 1, offset + 1);
+      if ((yield* compare(offset + 1)) === 0) return offset + 1;
+    }
+    setRange(1, 0);
+    return -1;
+  }
+
+  const SEARCHERS = {
+    linear: linearSearch,
+    sentinel: sentinelSearch,
+    binary: binarySearch,
+    jump: jumpSearch,
+    interpolation: interpolationSearch,
+    exponential: exponentialSearch,
+    ternary: ternarySearch,
+    fibonacci: fibonacciSearch
+  };
+
+  function begin(paused = false) {
+    if (state.running) return;
+    if (ALGO_INFO[state.selected].sorted && !isSorted()) {
+      setStatus('Wymaga danych rosnących');
+      $('operation').textContent = 'Ten algorytm wymaga tablicy rosnącej. Wybierz układ rosnący albo algorytm sekwencyjny.';
+      return;
+    }
+    clearCounters(); state.original = state.data.slice();
+    state.iterator = SEARCHERS[state.selected](); state.running = true; state.paused = paused;
+    lastTime = null; budget = 0; updateControls(); setStatus(paused ? 'Pauza' : 'Wyszukiwanie'); rafDraw();
+  }
+  function finish(index) {
+    state.running = false; state.paused = false; state.iterator = null; state.active.clear();
+    state.range = { lo: 1, hi: 0 };
+    if (index >= 0) {
+      state.found = index; state.result = `pozycja ${index + 1}`;
+      setStatus('Znaleziono'); $('operation').textContent = `Gotowe. Wartość ${state.target} znajduje się na pozycji ${index + 1}.`;
+    } else {
+      state.result = 'brak';
+      setStatus('Nie znaleziono'); $('operation').textContent = `Gotowe. Wartości ${state.target} nie ma w tablicy.`;
+    }
+    updateControls(); dirty = true;
+  }
+  function nextStep() {
+    if (!state.iterator) return;
+    try { const step = state.iterator.next(); if (step.done) finish(step.value); }
+    catch (error) {
+      stop(); setStatus('Błąd — przywrócono dane');
+      $('operation').textContent = 'Nie udało się dokończyć wyszukiwania. Dane wejściowe zostały zachowane.';
+      console.error(error);
+    }
+    dirty = true;
+  }
+  function stop() {
+    if (!state.running) return;
+    // The sentinel variant temporarily changes the array. Restore the snapshot.
+    state.iterator = null; state.data = state.original.slice();
+    state.running = false; state.paused = false; lastTime = null; budget = 0;
+    clearCounters(); updateControls(); setStatus('Zatrzymano');
+    $('operation').textContent = 'Przywrócono dane sprzed uruchomienia i wyzerowano liczniki.'; rafDraw();
+  }
+  function togglePause() {
+    if (!state.running) return;
+    state.paused = !state.paused; lastTime = null; budget = 0;
+    setStatus(state.paused ? 'Pauza' : 'Wyszukiwanie'); updateControls(); rafDraw();
+  }
+  function frame(now) {
+    frameId = null;
+    if (state.running && !state.paused && !document.hidden) {
+      if (lastTime !== null) budget += Math.min((now - lastTime) / 1000, .1) * Number(speedInput.value);
+      lastTime = now;
+      let count = 0;
+      while (budget >= 1 && state.running && count++ < 20) { nextStep(); budget--; }
+    } else lastTime = null;
+    if (dirty) { updateInfo(); draw(); dirty = false; }
+    if (state.running && !state.paused && !document.hidden && frameId === null) frameId = requestAnimationFrame(frame);
+  }
+
+  // Shared tooltip: hoverable, dismissible, and available by touch or keyboard.
+  const tooltip = $('algorithmTooltip');
+  let tipAnchor = null, pinned = false, tipTimer = null;
+  function closeTip() {
+    clearTimeout(tipTimer);
+    if (tipAnchor) { tipAnchor.removeAttribute('aria-describedby'); tipAnchor.setAttribute('aria-expanded', 'false'); }
+    tipAnchor = null; pinned = false; tooltip.hidden = true;
+  }
+  function placeTip() {
+    if (!tipAnchor) return;
+    const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth, viewportHeight = window.innerHeight;
+    const right = a.right + 12;
+    const x = right + box.width <= viewportWidth - 12 ? right : Math.max(12, a.left - box.width - 12);
+    const y = Math.max(12, Math.min(a.top - 16, viewportHeight - box.height - 12));
+    tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
+  }
+  function openTip(button, pin = false) {
+    clearTimeout(tipTimer);
+    if (tipAnchor !== button) closeTip();
+    tipAnchor = button; pinned = pin || pinned;
+    const info = ALGO_INFO[button.dataset.info];
+    tooltip.innerHTML = `<h3>${info.title}</h3><p>${info.description}</p><p><strong>Zalety:</strong> ${info.pros}</p><p><strong>Ograniczenia:</strong> ${info.cons}</p><p><strong>Zastosowania:</strong> ${info.uses}</p><p class="tip-metrics"><strong>Czas</strong> (najlepszy / średni / najgorszy):<br>${info.best} / ${info.average} / ${info.worst}<br><strong>Pamięć:</strong> ${info.memory} · ${info.sorted ? 'Wymaga danych rosnących' : 'Działa na dowolnych danych'}</p><p>${info.note}</p><small>Esc lub kliknięcie poza dymkiem zamyka opis.</small>`;
+    tooltip.hidden = false; button.setAttribute('aria-describedby', 'algorithmTooltip'); button.setAttribute('aria-expanded', 'true'); placeTip();
+  }
+  function deferClose() { if (!pinned) tipTimer = setTimeout(closeTip, 180); }
+  for (const [index, [key, info]] of Object.entries(ALGO_INFO).entries()) {
+    const row = document.createElement('div'); row.className = 'algorithm-row';
+    const pick = document.createElement('button'); pick.type = 'button'; pick.className = 'algorithm-pick'; pick.dataset.algorithm = key;
+    pick.innerHTML = `<span class="ordinal" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span><span>${info.name}</span>`;
+    pick.addEventListener('click', () => {
+      if (state.running) return;
+      state.selected = key; clearCounters(); renderLesson(); setStatus('Gotowy');
+      $('operation').textContent = 'Algorytm zmieniony. Dane i szukana wartość pozostały bez zmian.'; rafDraw();
+    });
+    const infoButton = document.createElement('button'); infoButton.type = 'button'; infoButton.className = 'info-button'; infoButton.dataset.info = key;
+    infoButton.innerHTML = '<span aria-hidden="true">i</span>';
+    infoButton.setAttribute('aria-label', `Informacje: ${info.title.toLowerCase()}`); infoButton.setAttribute('aria-expanded', 'false');
+    infoButton.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openTip(infoButton); });
+    infoButton.addEventListener('pointerleave', deferClose);
+    infoButton.addEventListener('focus', () => openTip(infoButton));
+    infoButton.addEventListener('blur', closeTip);
+    infoButton.addEventListener('click', () => { if (tipAnchor === infoButton && pinned) closeTip(); else openTip(infoButton, true); });
+    row.append(pick, infoButton); $('algorithmList').append(row);
+  }
+  tooltip.addEventListener('pointerenter', () => clearTimeout(tipTimer));
+  tooltip.addEventListener('pointerleave', deferClose);
+  document.addEventListener('pointerdown', event => { if (tipAnchor && !tooltip.contains(event.target) && !tipAnchor.contains(event.target)) closeTip(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeTip(); });
+  window.addEventListener('scroll', placeTip, { capture: true, passive: true });
+  window.addEventListener('resize', placeTip);
+  $('startBtn').addEventListener('click', () => begin());
+  $('pauseBtn').addEventListener('click', togglePause);
+  $('stepBtn').addEventListener('click', () => { if (!state.running) begin(true); if (state.paused) { nextStep(); $('stepAnnouncement').textContent = $('operation').textContent; rafDraw(); } });
+  $('stopBtn').addEventListener('click', stop);
+  $('randomBtn').addEventListener('click', () => generateData(Number(sizeInput.value)));
+  sizeInput.addEventListener('input', () => { $('sizeLabel').textContent = sizeInput.value; generateData(Number(sizeInput.value)); });
+  $('dataset').addEventListener('change', () => generateData(Number(sizeInput.value)));
+  $('target').addEventListener('change', () => {
+    if (state.running) return;
+    state.target = chooseTarget(); clearCounters(); setStatus('Gotowy');
+    $('operation').textContent = 'Szukana wartość zmieniona. Dane pozostały bez zmian.'; rafDraw();
+  });
+  speedInput.addEventListener('input', () => { $('speedLabel').textContent = `${speedInput.value} op./s`; speedInput.setAttribute('aria-valuetext', `${speedInput.value} kroków na sekundę`); });
+  $('dataDetails').addEventListener('toggle', updateInfo);
+  document.addEventListener('visibilitychange', () => { lastTime = null; budget = 0; if (!document.hidden) rafDraw(); });
+  new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+  generateData(Number(sizeInput.value)); renderLesson(); updateControls(); resizeCanvas();
+})();
+</script>
+</body>
+</html>

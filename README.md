@@ -12,7 +12,7 @@ README oraz symulacje w tym repozytorium są tworzone przy użyciu sztucznej int
 ## Spis treści
 
 - Wyznaczanie minimum i maksimum (planowane).
-- Algorytmy wyszukiwania (planowane).
+- [Algorytmy wyszukiwania](https://november7.github.io/AlgorithmsLab/search.html) - interaktywne laboratorium z ośmioma algorytmami wyszukiwania.
 - [Algorytmy sortowania](https://november7.github.io/AlgorithmsLab/sort.html) - interaktywne laboratorium z dziesięcioma algorytmami sortowania.
 - Algorytmy grafowe (planowane).
 
@@ -26,6 +26,6 @@ This README and the simulations in this repository are created using artificial 
 ## Contents
 
 - Finding minimum and maximum (planned).
-- Search algorithms (planned).
+- [Search algorithms](https://november7.github.io/AlgorithmsLab/search.html) - an interactive lab featuring eight search algorithms.
 - [Sorting algorithms](https://november7.github.io/AlgorithmsLab/sort.html) - an interactive lab featuring ten sorting algorithms.
 - Graph algorithms (planned).
