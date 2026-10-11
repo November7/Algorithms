@@ -18,9 +18,9 @@
     "status": "published"
   },
   {
-    "title": "Algorytmy grafowe",
+    "title": "Przeszukiwanie grafów — DFS i BFS",
     "description": "Interaktywne laboratorium DFS i BFS z przeszukiwaniem losowych grafów oraz rysowaniem drzew przeszukiwania na żywo.",
-    "url": "graph.html",
+    "url": "dfs-bfs.html",
     "status": "published"
   }
 ]

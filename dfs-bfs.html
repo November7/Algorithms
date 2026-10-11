@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Interaktywne laboratorium DFS i BFS. Przeszukuj losowe grafy krok po kroku, obserwuj stos, kolejkę i drzewo przeszukiwania.">
-    <title>Algorytmy grafowe · AlgorithmsLab</title>
+    <title>Przeszukiwanie grafów — DFS i BFS · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body class="graph-lab">
@@ -15,7 +15,7 @@
           <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
           AlgorithmsLab <span class="graph-brand-note"> / edukacja</span>
         </a>
-        <span class="meta">Algorytmy grafowe</span>
+        <span class="meta">Przeszukiwanie grafów · DFS i BFS</span>
       </header>
       <section class="intro" aria-labelledby="pageTitle">
         <div>
@@ -32,51 +32,51 @@
           <p class="sidebar-note">Wybierz ⓘ, aby przeczytać krótkie objaśnienie. Zmiana algorytmu zachowuje graf i wierzchołek startowy.</p>
           <p class="sidebar-note">Graf jest nieskierowany i nieważony. Sąsiadów sprawdzamy zawsze według rosnących numerów.</p>
         </aside>
-        <div class="main-column">
-          <section class="panel controls" aria-label="Ustawienia i sterowanie">
-            <div class="fields">
-              <div class="field">
-                <label for="dataset">Rodzaj grafu</label>
-                <select id="dataset">
-                  <option value="connected">Losowy spójny</option>
-                  <option value="tree">Losowe drzewo</option>
-                  <option value="disconnected">Dwie składowe</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="startVertex">Wierzchołek startowy</label>
-                <select id="startVertex"></select>
-              </div>
-              <div class="field">
-                <label for="scope">Zakres przeszukiwania</label>
-                <select id="scope">
-                  <option value="reachable">Osiągalne ze startu</option>
-                  <option value="all">Cały graf</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="size">Wierzchołki <output id="sizeLabel" for="size">12</output></label>
-                <input type="range" id="size" min="4" max="24" value="12" step="1">
-              </div>
-              <div class="field">
-                <label for="density">Dodatkowe krawędzie <output id="densityLabel" for="density">15%</output></label>
-                <input type="range" id="density" min="0" max="60" value="15" step="5" aria-describedby="densityHint">
-              </div>
-              <div class="field">
-                <label for="speed">Tempo <output id="speedLabel" for="speed">5 op./s</output></label>
-                <input type="range" id="speed" min="1" max="30" value="5" step="1" aria-describedby="tempoHint">
-              </div>
+        <section class="panel controls" aria-label="Ustawienia i sterowanie">
+          <div class="fields">
+            <div class="field">
+              <label for="dataset">Rodzaj grafu</label>
+              <select id="dataset">
+                <option value="connected">Losowy spójny</option>
+                <option value="tree">Losowe drzewo</option>
+                <option value="disconnected">Dwie składowe</option>
+              </select>
             </div>
-            <div class="actions">
-              <button type="button" id="startBtn" class="btn primary">▶ Start</button>
-              <button type="button" id="pauseBtn" class="btn" disabled>Pauza</button>
-              <button type="button" id="stepBtn" class="btn">Jeden krok</button>
-              <button type="button" id="stopBtn" class="btn" disabled>Stop</button>
-              <button type="button" id="randomBtn" class="btn">↻ Losuj graf</button>
+            <div class="field">
+              <label for="startVertex">Wierzchołek startowy</label>
+              <select id="startVertex"></select>
             </div>
-            <p class="control-hint" id="tempoHint">Tempo określa liczbę kroków animacji na sekundę. Stop zeruje przebieg, zachowując graf. Start po zakończeniu uruchamia symulację od początku.</p>
-            <p class="control-hint" id="densityHint">Najpierw łączymy każdą składową drzewem. Suwak określa szansę dodania każdej pozostałej krawędzi wewnątrz składowej; dla drzewa jest nieaktywny.</p>
-          </section>
+            <div class="field">
+              <label for="scope">Zakres przeszukiwania</label>
+              <select id="scope">
+                <option value="reachable">Osiągalne ze startu</option>
+                <option value="all">Cały graf</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="size">Wierzchołki <output id="sizeLabel" for="size">12</output></label>
+              <input type="range" id="size" min="4" max="24" value="12" step="1">
+            </div>
+            <div class="field">
+              <label for="density">Dodatkowe krawędzie <output id="densityLabel" for="density">15%</output></label>
+              <input type="range" id="density" min="0" max="60" value="15" step="5" aria-describedby="densityHint">
+            </div>
+            <div class="field">
+              <label for="speed">Tempo <output id="speedLabel" for="speed">5 op./s</output></label>
+              <input type="range" id="speed" min="1" max="30" value="5" step="1" aria-describedby="tempoHint">
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" id="startBtn" class="btn primary">▶ Start</button>
+            <button type="button" id="pauseBtn" class="btn" disabled>Pauza</button>
+            <button type="button" id="stepBtn" class="btn">Jeden krok</button>
+            <button type="button" id="stopBtn" class="btn" disabled>Stop</button>
+            <button type="button" id="randomBtn" class="btn">↻ Losuj graf</button>
+          </div>
+          <p class="control-hint" id="tempoHint">Tempo określa liczbę kroków animacji na sekundę. Stop zeruje przebieg, zachowując graf. Start po zakończeniu uruchamia symulację od początku.</p>
+          <p class="control-hint" id="densityHint">Najpierw łączymy każdą składową drzewem. Suwak określa szansę dodania każdej pozostałej krawędzi wewnątrz składowej; dla drzewa jest nieaktywny.</p>
+        </section>
+        <div class="main-column graph-results">
           <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
             <div class="chart-heading">
               <div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Przeszukiwanie wszerz (BFS)</h2></div>
