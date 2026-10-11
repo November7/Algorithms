@@ -9,7 +9,7 @@ Repozytorium zawiera zbiór interaktywnych symulacji znanych algorytmów. Przyk�
 
 README oraz symulacje w tym repozytorium są tworzone przy użyciu sztucznej inteligencji.
 
-Lista dostępnych symulacji znajduje się na [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github)](https://november7.github.io/AlgorithmsLab/)
+Lista dostępnych symulacji znajduje się na [GitHub Pages](https://november7.github.io/AlgorithmsLab/)
 
 # English
 
@@ -17,4 +17,4 @@ This repository is a collection of interactive simulations of well-known algorit
 
 This README and the simulations in this repository are created using artificial intelligence.
 
-The list of available simulations is on the [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github)](https://november7.github.io/AlgorithmsLab/)
+The list of available simulations is on the [GitHub Pages](https://november7.github.io/AlgorithmsLab/)
