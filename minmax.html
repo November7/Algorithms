@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interaktywne laboratorium pięciu algorytmów wyznaczania minimum i maksimum. Porównuj liczbę porównań i sprawdź, dlaczego 3n/2 wystarcza.">
+    <title>Minimum i maksimum · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          AlgorithmsLab
+          <span style="font-weight:400;color:var(--muted)"> / edukacja</span>
+        </a>
+        <span class="meta">Minimum i maksimum</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div>
+          <span class="eyebrow">Zrozum, zanim zapamiętasz</span>
+          <h1 id="pageTitle">Najmniejszy i największy.</h1>
+          <p>Odkryj, jak znaleźć minimum i maksimum zbioru. Obserwuj porównania i sprawdź, jak sprytniejsza kolejność zmniejsza ich liczbę o jedną czwartą.</p>
+        </div>
+        <span class="badge">5 algorytmów · jeden zestaw danych</span>
+      </section>
+      <div class="workspace">
+        <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
+          <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
+          <div id="algorithmList"></div>
+          <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p>
+        </aside>
+        <div class="main-column">
+          <section class="panel controls" aria-label="Ustawienia i sterowanie">
+            <div class="fields">
+              <div class="field">
+                <label for="dataset">Układ danych</label>
+                <select id="dataset">
+                  <option value="random">Losowy</option>
+                  <option value="sorted">Rosnący</option>
+                  <option value="reverse">Malejący</option>
+                  <option value="few">Wiele powtórzeń</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="size">
+                  Liczba elementów
+                  <output id="sizeLabel" for="size">40</output>
+                </label>
+                <input type="range" id="size" min="12" max="160" step="1" value="40">
+              </div>
+              <div class="field">
+                <label for="speed">
+                  Tempo
+                  <output id="speedLabel" for="speed">20 op./s</output>
+                </label>
+                <input type="range" id="speed" min="1" max="200" step="1" value="20" aria-describedby="tempoHint">
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" id="startBtn" class="btn primary">▶ Start</button>
+              <button type="button" id="pauseBtn" class="btn" disabled>Pauza</button>
+              <button type="button" id="stepBtn" class="btn">Jeden krok</button>
+              <button type="button" id="stopBtn" class="btn" disabled>Stop</button>
+              <button type="button" id="randomBtn" class="btn">↻ Losuj dane</button>
+            </div>
+            <p class="control-hint" id="tempoHint">Tempo określa liczbę kroków animacji na sekundę. Stop przywraca stan sprzed uruchomienia. Układ rosnący i malejący pokazuje najlepszy i najgorszy przypadek.</p>
+          </section>
+          <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+            <div class="chart-heading">
+              <div>
+                <div class="eyebrow">02 / Obserwuj działanie</div>
+                <h2 id="chartTitle">Jeden przebieg</h2>
+              </div>
+              <span id="statusText" role="status">Gotowy</span>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="board" role="img" aria-label="Wykres wartości tablicy z zaznaczonym minimum i maksimum" aria-describedby="chartDescription operation">Wartości tablicy są dostępne w sekcji „Dane w postaci tekstowej”.</canvas>
+            </div>
+            <div class="chart-caption" id="chartDescription">
+              <span>Ciemny słupek: bieżące porównanie. Zielony „min”, pomarańczowy „maks”: bieżący kandydat.</span>
+              <span>Blade słupki: poza rozpatrywanym przedziałem.</span>
+            </div>
+            <p id="operation">Wybierz Start lub wykonaj pierwszy krok.</p>
+          </section>
+          <section class="stats" aria-label="Statystyki operacji">
+            <div class="stat">
+              <span>Porównania</span>
+              <output aria-live="off" id="cmpCount">0</output>
+              <small id="cmpBound">granica: 0</small>
+            </div>
+            <div class="stat">
+              <span>Minimum</span>
+              <output aria-live="off" id="minValue">—</output>
+              <small id="minPos">pozycja: —</small>
+            </div>
+            <div class="stat">
+              <span>Maksimum</span>
+              <output aria-live="off" id="maxValue">—</output>
+              <small id="maxPos">pozycja: —</small>
+            </div>
+            <div class="stat">
+              <span>Elementy</span>
+              <output aria-live="off" id="lengthCount">40</output>
+              <small>dane tylko do odczytu</small>
+            </div>
+          </section>
+          <details class="data-details" id="dataDetails">
+            <summary>Dane w postaci tekstowej i zasady liczenia</summary>
+            <p id="dataText"></p>
+            <p>Porównanie dotyczy dwóch wartości z tablicy lub dwóch bieżących kandydatów. Testy indeksów w pętlach nie są liczone. „Granica” to wzór ⌈3n/2⌉ − 2: tyle porównań wystarcza w najgorszym przypadku i tyle potrzeba, żeby wyznaczyć oba krańce. Wyniki są liczbą operacji, a nie pomiarem czasu procesora. Pozycje w opisach liczymy od 1.</p>
+          </details>
+        </div>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div>
+            <p class="eyebrow">03 / Zrozum algorytm</p>
+            <h2 id="lessonTitle"></h2>
+          </div>
+          <span class="tag" id="family"></span>
+        </div>
+        <dl class="complexity" id="complexity"></dl>
+        <p class="complexity-note" id="complexityNote"></p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <p id="description"></p>
+            <ol id="steps"></ol>
+          </div>
+          <div>
+            <h3>Zalety</h3>
+            <p id="pros"></p>
+            <h3>Ograniczenia</h3>
+            <p id="cons"></p>
+          </div>
+          <div>
+            <h3>Kiedy się przydaje?</h3>
+            <p id="uses"></p>
+            <div class="exercise">
+              <h3>Sprawdź samodzielnie</h3>
+              <p id="exercise" style="margin:0"></p>
+            </div>
+          </div>
+        </div>
+        <details class="glossary">
+          <summary>Jak czytać liczbę porównań?</summary>
+          <div class="glossary-grid">
+            <div>
+              <h3>Czas</h3>
+              <p>n oznacza liczbę elementów. Wszystkie algorytmy są liniowe, Θ(n), ale różnią się współczynnikiem: 2n, 1,5n lub między n a 2n. Podajemy dokładną liczbę porównań, bo to ona odróżnia te metody.</p>
+            </div>
+            <div>
+              <h3>Pamięć pomocnicza</h3>
+              <p>Dodatkowa pamięć algorytmu bez danych wejściowych. Wersje iteracyjne potrzebują O(1), a dziel i zwyciężaj dodatkowo stosu rekurencji O(log n).</p>
+            </div>
+            <div>
+              <h3>Dlaczego ⌈3n/2⌉ − 2?</h3>
+              <p>Każdy element poza jednym musi przegrać w porównaniu (maksimum nie może przegrać) i każdy poza jednym musi wygrać (minimum nie może wygrać). Dobry algorytm w jednym porównaniu załatwia obie sprawy, więc dolna granica to około 1,5n.</p>
+            </div>
+          </div>
+        </details>
+      </section>
+      <footer>
+        <span>AlgorithmsLab · Interaktywna nauka algorytmów</span>
+        <span>
+          Materiały:
+          <a href="https://algs4.cs.princeton.edu/cheatsheet/" target="_blank" rel="noopener noreferrer">Princeton Algorithms</a>
+          ·
+          <a href="https://xlinux.nist.gov/dads/" target="_blank" rel="noopener noreferrer">NIST DADS</a>
+        </span>
+      </footer>
+    </main>
+    <p id="stepAnnouncement" class="sr-only" role="status"></p>
+    <div id="algorithmTooltip" class="tooltip" role="tooltip" hidden></div>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  // These descriptions refer to the exact variants implemented below.
+  const ALGO_INFO = {
+    twoPasses: { name: 'Dwa przebiegi', title: 'Minimum i maksimum w dwóch przebiegach', family: 'Przeglądanie po kolei', best: '2(n − 1)', average: '2(n − 1)', worst: '2(n − 1)', memory: 'O(1)',
+      description: 'Najpierw znajduje minimum przeglądając całą tablicę, potem osobnym przebiegiem maksimum.',
+      steps: ['Przejrzyj tablicę, zapamiętując najmniejszą dotąd wartość.', 'Przejrzyj ją jeszcze raz, zapamiętując największą.', 'Zwróć obie pozycje.'],
+      pros: 'Najprostszy do napisania; każda część działa niezależnie.', cons: 'Dwukrotnie czyta dane; zawsze 2(n − 1) porównań, nawet dla układów korzystnych.', uses: 'Gdy potrzebne jest tylko minimum albo tylko maksimum, bo wtedy wystarcza jeden przebieg.',
+      note: 'Każdy przebieg to n − 1 porównań. Dla danych w strumieniu, które można przeczytać raz, ta metoda się nie nadaje.', exercise: 'Zmień układ danych. Czy liczba porównań się zmienia?' },
+    both: { name: 'Jeden przebieg', title: 'Minimum i maksimum w jednym przebiegu', family: 'Przeglądanie po kolei', best: '2(n − 1)', average: '2(n − 1)', worst: '2(n − 1)', memory: 'O(1)',
+      description: 'Przegląda tablicę raz. Każdy element porównuje z bieżącym minimum i z bieżącym maksimum.',
+      steps: ['Przyjmij pierwszy element za minimum i maksimum.', 'Porównaj kolejny element z minimum i z maksimum.', 'Aktualizuj kandydatów, aż skończą się elementy.'],
+      pros: 'Czyta dane tylko raz; prosta logika.', cons: 'Zawsze dwa porównania na element, nawet gdy pierwsze rozstrzyga sprawę.', uses: 'Przetwarzanie strumieni i danych, które można odczytać jednokrotnie.',
+      note: 'Liczba porównań jest taka sama jak w dwóch przebiegach; zysk dotyczy odczytów danych.', exercise: 'Porównaj liczbę porównań z wersją „Z else”. Dla jakiego układu danych są równe?' },
+    elseIf: { name: 'Z pomijaniem', title: 'Jeden przebieg z pomijaniem porównania', family: 'Przeglądanie po kolei', best: 'n − 1', average: 'ok. 1,5n', worst: '2(n − 1)', memory: 'O(1)',
+      description: 'Porównuje element z maksimum. Tylko gdy nie jest większy, sprawdza jeszcze, czy jest mniejszy od minimum.',
+      steps: ['Porównaj element z bieżącym maksimum.', 'Jeśli jest większy, zaktualizuj maksimum i pomiń drugie porównanie.', 'W przeciwnym razie porównaj z minimum.'],
+      pros: 'Często pomija jedno porównanie; w układzie rosnącym wykonuje tylko n − 1.', cons: 'W najgorszym przypadku nadal 2(n − 1); wynik zależy od kolejności danych.', uses: 'Gdy dane są zwykle uporządkowane rosnąco lub prawie rosnąco.',
+      note: 'Dla losowej permutacji średnia to około 1,5n, ale bez gwarancji. Najgorszy przypadek to układ malejący.', exercise: 'Porównaj układy rosnący i malejący. Dlaczego różnica jest tak duża?' },
+    pairs: { name: 'Parami', title: 'Minimum i maksimum parami', family: 'Przetwarzanie par', best: '⌈3n/2⌉ − 2', average: '⌈3n/2⌉ − 2', worst: '⌈3n/2⌉ − 2', memory: 'O(1)',
+      description: 'Bierze elementy parami. Najpierw porównuje je ze sobą, potem większy z bieżącym maksimum, a mniejszy z bieżącym minimum.',
+      steps: ['Porównaj dwa kolejne elementy między sobą.', 'Większy porównaj z maksimum, mniejszy z minimum.', 'Przy nieparzystej liczbie elementów zacznij od pierwszego jako kandydata.'],
+      pros: 'Gwarantuje około 1,5n porównań niezależnie od danych; osiąga dolną granicę.', cons: 'Nieco trudniejszy do zapisania; wymaga obsługi nieparzystej liczby elementów.', uses: 'Gdy porównania są kosztowne, np. dla długich napisów lub złożonych obiektów.',
+      note: 'Trzy porównania na dwa elementy zamiast czterech. Dla n elementów wykonuje dokładnie ⌈3n/2⌉ − 2 porównań.', exercise: 'Dla 40 elementów policz porównania. Czy zgadza się z granicą 58?' },
+    divide: { name: 'Dziel i zwyciężaj', title: 'Minimum i maksimum metodą dziel i zwyciężaj', family: 'Dziel i zwyciężaj', best: '⌈3n/2⌉ − 2', average: '⌈3n/2⌉ − 2', worst: '⌈3n/2⌉ − 2', memory: 'O(log n)',
+      description: 'Dzieli tablicę na połowy, wyznacza minimum i maksimum w każdej, a potem łączy wyniki dwoma porównaniami.',
+      steps: ['Podziel przedział na dwie części.', 'Rekurencyjnie znajdź minimum i maksimum obu części.', 'Porównaj minima i maksima, aby wybrać wynik dla całości.'],
+      pros: 'Gwarantuje ⌈3n/2⌉ − 2 porównań dla n będącego potęgą dwójki; łatwy do zrównoleglenia.', cons: 'Rekurencja zużywa stos O(log n); gdy n nie jest potęgą dwójki, liczba porównań bywa większa od granicy (dla n ≤ 160 o maks. 16).', uses: 'Obliczenia równoległe i rozproszone, gdzie wyniki cząstkowe łączy się na końcu.',
+      note: 'Przedział o dwóch elementach kosztuje jedno porównanie, scalanie dwa. Dla n = 2ᵏ wynik to dokładnie 3n/2 − 2; dla innych n może być nieco większy.', exercise: 'Ustaw 32 elementy i porównaj wynik z granicą. Potem zmień na 40.' }
+  };
+
+  const MAX_VALUE = 100;
+  const canvas = $('board'), ctx = canvas.getContext('2d');
+  const sizeInput = $('size'), speedInput = $('speed');
+  const state = { data: [], active: new Set(), range: null, minIdx: -1, maxIdx: -1, comparisons: 0, running: false, paused: false, selected: 'twoPasses', iterator: null };
+  let frameId = null, lastTime = null, budget = 0, dirty = true, viewWidth = 1, viewHeight = 1;
+
+  const bound = n => Math.ceil(3 * n / 2) - 2;
+
+  function renderLesson() {
+    const info = ALGO_INFO[state.selected];
+    $('chartTitle').textContent = info.title;
+    $('lessonTitle').textContent = info.title;
+    $('family').textContent = info.family;
+    for (const key of ['description', 'pros', 'cons', 'uses', 'exercise']) $(key).textContent = info[key];
+    $('complexityNote').textContent = info.note;
+    $('steps').replaceChildren(...info.steps.map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
+    $('complexity').innerHTML = [['Najlepsza liczba porównań', info.best], ['Średnia', info.average], ['Najgorsza', info.worst], ['Pamięć pomocnicza', info.memory], ['Rząd czasu', 'Θ(n)']].map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
+    document.querySelectorAll('.algorithm-pick').forEach(button => {
+      const selected = button.dataset.algorithm === state.selected;
+      button.setAttribute('aria-pressed', String(selected));
+      button.parentElement.classList.toggle('selected', selected);
+    });
+  }
+  function updateInfo() {
+    const { data, minIdx, maxIdx } = state;
+    $('cmpCount').textContent = state.comparisons.toLocaleString('pl-PL');
+    $('cmpBound').textContent = `granica: ${bound(data.length)}`;
+    $('minValue').textContent = minIdx >= 0 ? data[minIdx] : '—';
+    $('minPos').textContent = `pozycja: ${minIdx >= 0 ? minIdx + 1 : '—'}`;
+    $('maxValue').textContent = maxIdx >= 0 ? data[maxIdx] : '—';
+    $('maxPos').textContent = `pozycja: ${maxIdx >= 0 ? maxIdx + 1 : '—'}`;
+    $('lengthCount').textContent = data.length;
+    if ($('dataDetails').open) $('dataText').textContent = data.join(', ');
+  }
+  function updateControls() {
+    $('startBtn').disabled = state.running;
+    $('pauseBtn').disabled = !state.running;
+    $('pauseBtn').textContent = state.paused ? 'Wznów' : 'Pauza';
+    $('pauseBtn').setAttribute('aria-pressed', String(state.paused));
+    $('stopBtn').disabled = !state.running;
+    $('stepBtn').disabled = state.running && !state.paused;
+    for (const id of ['size', 'dataset', 'randomBtn']) $(id).disabled = state.running;
+    document.querySelectorAll('.algorithm-pick').forEach(button => { button.disabled = state.running; });
+  }
+  function setStatus(text) { $('statusText').textContent = text; }
+  function clearCounters() { state.comparisons = 0; state.active.clear(); state.range = null; state.minIdx = state.maxIdx = -1; }
+
+  function generateData(length) {
+    if (state.running) return;
+    const kind = $('dataset').value;
+    state.data = Array.from({ length }, () => kind === 'few' ? 20 + Math.floor(Math.random() * 4) * 20 : 10 + Math.floor(Math.random() * 91));
+    if (kind === 'sorted' || kind === 'reverse') state.data.sort((a, b) => a - b);
+    if (kind === 'reverse') state.data.reverse();
+    clearCounters(); setStatus('Gotowy');
+    $('operation').textContent = 'Wybierz Start lub wykonaj pierwszy krok.';
+    rafDraw();
+  }
+
+  function rafDraw() { dirty = true; if (frameId === null) frameId = requestAnimationFrame(frame); }
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    viewWidth = Math.max(1, rect.width); viewHeight = Math.max(1, rect.height);
+    canvas.width = Math.round(viewWidth * dpr); canvas.height = Math.round(viewHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); rafDraw();
+  }
+  function draw() {
+    const width = viewWidth, height = viewHeight, left = 28, right = 12, top = 30, bottom = 24;
+    ctx.clearRect(0, 0, width, height);
+    const chartHeight = Math.max(1, height - top - bottom), chartWidth = Math.max(1, width - left - right);
+    ctx.font = '10px "Segoe UI", sans-serif'; ctx.textAlign = 'right';
+    for (let value = 0; value <= MAX_VALUE; value += 25) {
+      const y = top + chartHeight * (1 - value / MAX_VALUE);
+      ctx.fillStyle = '#657995'; ctx.fillText(String(value), left - 7, y + 3);
+      ctx.fillStyle = '#e7edf6'; ctx.fillRect(left, y, chartWidth, 1);
+    }
+    const slot = chartWidth / Math.max(1, state.data.length), barWidth = Math.max(.4, slot - Math.min(3, slot * .22));
+    for (let i = 0; i < state.data.length; i++) {
+      const h = state.data[i] / MAX_VALUE * chartHeight, x = left + i * slot, y = height - bottom - h;
+      const active = state.active.has(i), isMin = i === state.minIdx, isMax = i === state.maxIdx, radius = Math.min(3, barWidth / 2, h / 2);
+      const inRange = !state.range || (i >= state.range.lo && i <= state.range.hi);
+      ctx.fillStyle = active ? '#21457e' : isMin ? '#437c88' : isMax ? '#b5532f' : inRange ? '#779bce' : '#cfdaea';
+      ctx.beginPath(); ctx.moveTo(x, y + h); ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y); ctx.lineTo(x + barWidth - radius, y);
+      ctx.quadraticCurveTo(x + barWidth, y, x + barWidth, y + radius);
+      ctx.lineTo(x + barWidth, y + h); ctx.closePath(); ctx.fill();
+      ctx.textAlign = 'center'; ctx.fillStyle = '#253f63';
+      if (slot >= 20) ctx.fillText(String(state.data[i]), x + barWidth / 2, y - 7);
+      if (active) { ctx.beginPath(); ctx.arc(x + barWidth / 2, height - 12, Math.min(2.5, barWidth / 2), 0, 2 * Math.PI); ctx.fill(); }
+      else if (isMin || isMax) {
+        ctx.fillStyle = isMin ? '#437c88' : '#b5532f';
+        if (slot >= 16) ctx.fillText(isMin ? 'min' : 'maks', x + barWidth / 2, height - 8);
+        else ctx.fillRect(x, height - 12, barWidth, 2);
+      }
+    }
+  }
+
+  // A generator yields one visible operation. No delayed promise can survive
+  // cancellation and mutate a newly generated dataset.
+  function* markActive(indices, message) {
+    state.active = new Set(indices); $('operation').textContent = message; yield;
+  }
+  function setRange(lo, hi) { state.range = { lo, hi }; dirty = true; }
+  function setCandidates(minIdx, maxIdx) { state.minIdx = minIdx; state.maxIdx = maxIdx; dirty = true; }
+  function* compare(i, j, label) {
+    state.comparisons++;
+    const a = state.data[i], b = state.data[j];
+    const verdict = a === b ? 'są równe' : a < b ? 'pierwsza jest mniejsza' : 'pierwsza jest większa';
+    yield* markActive([i, j], `${label ? label + ' ' : ''}Porównanie pozycji ${i + 1} i ${j + 1}: ${a} oraz ${b} (${verdict}).`);
+    return a - b;
+  }
+
+  function* twoPassesSearch() {
+    const n = state.data.length;
+    let minIdx = 0;
+    setCandidates(0, -1);
+    for (let i = 1; i < n; i += 1) {
+      if ((yield* compare(i, minIdx, 'Przebieg 1 (min):')) < 0) { minIdx = i; setCandidates(minIdx, -1); }
+    }
+    let maxIdx = 0;
+    setCandidates(minIdx, 0);
+    for (let i = 1; i < n; i += 1) {
+      if ((yield* compare(i, maxIdx, 'Przebieg 2 (maks):')) > 0) { maxIdx = i; setCandidates(minIdx, maxIdx); }
+    }
+    return { minIdx, maxIdx };
+  }
+
+  function* bothSearch() {
+    const n = state.data.length;
+    let minIdx = 0, maxIdx = 0;
+    setCandidates(0, 0);
+    for (let i = 1; i < n; i += 1) {
+      if ((yield* compare(i, minIdx, 'Z minimum:')) < 0) minIdx = i;
+      if ((yield* compare(i, maxIdx, 'Z maksimum:')) > 0) maxIdx = i;
+      setCandidates(minIdx, maxIdx);
+    }
+    return { minIdx, maxIdx };
+  }
+
+  function* elseIfSearch() {
+    const n = state.data.length;
+    let minIdx = 0, maxIdx = 0;
+    setCandidates(0, 0);
+    for (let i = 1; i < n; i += 1) {
+      if ((yield* compare(i, maxIdx, 'Z maksimum:')) > 0) maxIdx = i;
+      else if ((yield* compare(i, minIdx, 'Z minimum:')) < 0) minIdx = i;
+      setCandidates(minIdx, maxIdx);
+    }
+    return { minIdx, maxIdx };
+  }
+
+  function* pairsSearch() {
+    const n = state.data.length;
+    let minIdx, maxIdx, i;
+    if (n % 2 === 1) { minIdx = maxIdx = 0; i = 1; }
+    else {
+      i = 2;
+      if ((yield* compare(0, 1, 'Para początkowa:')) < 0) { minIdx = 0; maxIdx = 1; } else { minIdx = 1; maxIdx = 0; }
+    }
+    setCandidates(minIdx, maxIdx);
+    for (; i + 1 < n; i += 2) {
+      setRange(i, i + 1);
+      let small = i, large = i + 1;
+      if ((yield* compare(i, i + 1, 'Para:')) > 0) { small = i + 1; large = i; }
+      if ((yield* compare(large, maxIdx, 'Większy z maksimum:')) > 0) maxIdx = large;
+      if ((yield* compare(small, minIdx, 'Mniejszy z minimum:')) < 0) minIdx = small;
+      setCandidates(minIdx, maxIdx);
+    }
+    return { minIdx, maxIdx };
+  }
+
+  function* divideSearch() {
+    function* rec(lo, hi) {
+      setRange(lo, hi);
+      if (lo === hi) return { minIdx: lo, maxIdx: lo };
+      if (hi === lo + 1) {
+        const r = (yield* compare(lo, hi, 'Dwa elementy:')) <= 0 ? { minIdx: lo, maxIdx: hi } : { minIdx: hi, maxIdx: lo };
+        setCandidates(r.minIdx, r.maxIdx);
+        return r;
+      }
+      const mid = Math.floor((lo + hi) / 2);
+      const a = yield* rec(lo, mid);
+      const b = yield* rec(mid + 1, hi);
+      setRange(lo, hi);
+      setCandidates(a.minIdx, a.maxIdx);
+      const minIdx = (yield* compare(b.minIdx, a.minIdx, 'Scalanie minimów:')) < 0 ? b.minIdx : a.minIdx;
+      const maxIdx = (yield* compare(b.maxIdx, a.maxIdx, 'Scalanie maksimów:')) > 0 ? b.maxIdx : a.maxIdx;
+      setCandidates(minIdx, maxIdx);
+      return { minIdx, maxIdx };
+    }
+    return yield* rec(0, state.data.length - 1);
+  }
+
+  const SEARCHERS = { twoPasses: twoPassesSearch, both: bothSearch, elseIf: elseIfSearch, pairs: pairsSearch, divide: divideSearch };
+
+  function begin(paused = false) {
+    if (state.running) return;
+    clearCounters();
+    state.iterator = SEARCHERS[state.selected](); state.running = true; state.paused = paused;
+    lastTime = null; budget = 0; updateControls(); setStatus(paused ? 'Pauza' : 'Szukanie'); rafDraw();
+  }
+  function finish(result) {
+    state.running = false; state.paused = false; state.iterator = null; state.active.clear();
+    state.range = null; setCandidates(result.minIdx, result.maxIdx);
+    setStatus('Zakończono');
+    $('operation').textContent = `Gotowe. Minimum ${state.data[result.minIdx]} (pozycja ${result.minIdx + 1}), maksimum ${state.data[result.maxIdx]} (pozycja ${result.maxIdx + 1}). Porównań: ${state.comparisons}.`;
+    updateControls(); dirty = true;
+  }
+  function nextStep() {
+    if (!state.iterator) return;
+    try { const step = state.iterator.next(); if (step.done) finish(step.value); }
+    catch (error) {
+      stop(); setStatus('Błąd — przywrócono stan');
+      $('operation').textContent = 'Nie udało się dokończyć wyszukiwania. Dane wejściowe zostały zachowane.';
+      console.error(error);
+    }
+    dirty = true;
+  }
+  function stop() {
+    if (!state.running) return;
+    state.iterator = null; state.running = false; state.paused = false; lastTime = null; budget = 0;
+    clearCounters(); updateControls(); setStatus('Zatrzymano');
+    $('operation').textContent = 'Przerwano i wyzerowano liczniki. Dane pozostały bez zmian.'; rafDraw();
+  }
+  function togglePause() {
+    if (!state.running) return;
+    state.paused = !state.paused; lastTime = null; budget = 0;
+    setStatus(state.paused ? 'Pauza' : 'Szukanie'); updateControls(); rafDraw();
+  }
+  function frame(now) {
+    frameId = null;
+    if (state.running && !state.paused && !document.hidden) {
+      if (lastTime !== null) budget += Math.min((now - lastTime) / 1000, .1) * Number(speedInput.value);
+      lastTime = now;
+      let count = 0;
+      while (budget >= 1 && state.running && count++ < 20) { nextStep(); budget--; }
+    } else lastTime = null;
+    if (dirty) { updateInfo(); draw(); dirty = false; }
+    if (state.running && !state.paused && !document.hidden && frameId === null) frameId = requestAnimationFrame(frame);
+  }
+
+  // Shared tooltip: hoverable, dismissible, and available by touch or keyboard.
+  const tooltip = $('algorithmTooltip');
+  let tipAnchor = null, pinned = false, tipTimer = null;
+  function closeTip() {
+    clearTimeout(tipTimer);
+    if (tipAnchor) { tipAnchor.removeAttribute('aria-describedby'); tipAnchor.setAttribute('aria-expanded', 'false'); }
+    tipAnchor = null; pinned = false; tooltip.hidden = true;
+  }
+  function placeTip() {
+    if (!tipAnchor) return;
+    const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth, viewportHeight = window.innerHeight;
+    const right = a.right + 12;
+    const x = right + box.width <= viewportWidth - 12 ? right : Math.max(12, a.left - box.width - 12);
+    const y = Math.max(12, Math.min(a.top - 16, viewportHeight - box.height - 12));
+    tooltip.style.left = `${x}px`; tooltip.style.top = `${y}px`;
+  }
+  function openTip(button, pin = false) {
+    clearTimeout(tipTimer);
+    if (tipAnchor !== button) closeTip();
+    tipAnchor = button; pinned = pin || pinned;
+    const info = ALGO_INFO[button.dataset.info];
+    tooltip.innerHTML = `<h3>${info.title}</h3><p>${info.description}</p><p><strong>Zalety:</strong> ${info.pros}</p><p><strong>Ograniczenia:</strong> ${info.cons}</p><p><strong>Zastosowania:</strong> ${info.uses}</p><p class="tip-metrics"><strong>Porównania</strong> (najlepszy / średni / najgorszy):<br>${info.best} / ${info.average} / ${info.worst}<br><strong>Pamięć:</strong> ${info.memory}</p><p>${info.note}</p><small>Esc lub kliknięcie poza dymkiem zamyka opis.</small>`;
+    tooltip.hidden = false; button.setAttribute('aria-describedby', 'algorithmTooltip'); button.setAttribute('aria-expanded', 'true'); placeTip();
+  }
+  function deferClose() { if (!pinned) tipTimer = setTimeout(closeTip, 180); }
+  for (const [index, [key, info]] of Object.entries(ALGO_INFO).entries()) {
+    const row = document.createElement('div'); row.className = 'algorithm-row';
+    const pick = document.createElement('button'); pick.type = 'button'; pick.className = 'algorithm-pick'; pick.dataset.algorithm = key;
+    pick.innerHTML = `<span class="ordinal" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span><span>${info.name}</span>`;
+    pick.addEventListener('click', () => {
+      if (state.running) return;
+      state.selected = key; clearCounters(); renderLesson(); setStatus('Gotowy');
+      $('operation').textContent = 'Algorytm zmieniony. Dane pozostały bez zmian.'; rafDraw();
+    });
+    const infoButton = document.createElement('button'); infoButton.type = 'button'; infoButton.className = 'info-button'; infoButton.dataset.info = key;
+    infoButton.innerHTML = '<span aria-hidden="true">i</span>';
+    infoButton.setAttribute('aria-label', `Informacje: ${info.title.toLowerCase()}`); infoButton.setAttribute('aria-expanded', 'false');
+    infoButton.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openTip(infoButton); });
+    infoButton.addEventListener('pointerleave', deferClose);
+    infoButton.addEventListener('focus', () => openTip(infoButton));
+    infoButton.addEventListener('blur', closeTip);
+    infoButton.addEventListener('click', () => { if (tipAnchor === infoButton && pinned) closeTip(); else openTip(infoButton, true); });
+    row.append(pick, infoButton); $('algorithmList').append(row);
+  }
+  tooltip.addEventListener('pointerenter', () => clearTimeout(tipTimer));
+  tooltip.addEventListener('pointerleave', deferClose);
+  document.addEventListener('pointerdown', event => { if (tipAnchor && !tooltip.contains(event.target) && !tipAnchor.contains(event.target)) closeTip(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeTip(); });
+  window.addEventListener('scroll', placeTip, { capture: true, passive: true });
+  window.addEventListener('resize', placeTip);
+  $('startBtn').addEventListener('click', () => begin());
+  $('pauseBtn').addEventListener('click', togglePause);
+  $('stepBtn').addEventListener('click', () => { if (!state.running) begin(true); if (state.paused) { nextStep(); $('stepAnnouncement').textContent = $('operation').textContent; rafDraw(); } });
+  $('stopBtn').addEventListener('click', stop);
+  $('randomBtn').addEventListener('click', () => generateData(Number(sizeInput.value)));
+  sizeInput.addEventListener('input', () => { $('sizeLabel').textContent = sizeInput.value; generateData(Number(sizeInput.value)); });
+  $('dataset').addEventListener('change', () => generateData(Number(sizeInput.value)));
+  speedInput.addEventListener('input', () => { $('speedLabel').textContent = `${speedInput.value} op./s`; speedInput.setAttribute('aria-valuetext', `${speedInput.value} kroków na sekundę`); });
+  $('dataDetails').addEventListener('toggle', updateInfo);
+  document.addEventListener('visibilitychange', () => { lastTime = null; budget = 0; if (!document.hidden) rafDraw(); });
+  new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+  generateData(Number(sizeInput.value)); renderLesson(); updateControls(); resizeCanvas();
+})();
+</script>
+</body>
+</html>

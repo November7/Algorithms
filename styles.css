@@ -704,3 +704,90 @@ footer {
   white-space: nowrap;
   border: 0;
 }
+
+/* Graph traversal lab: additions are scoped to preserve the other simulations. */
+.graph-brand-note {
+  font-weight:400;
+  color:var(--muted);
+}
+.graph-lab .graph-canvas {
+  height:clamp(330px,36vw,460px);
+  margin-bottom:12px;
+}
+.graph-legend {
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  gap:8px 16px;
+}
+.graph-legend span {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.graph-key {
+  display:inline-block;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.graph-key.unseen { background:#f7f9fd; border:1px solid #9bacc2; }
+.graph-key.discovered { background:var(--soft); border:3px solid var(--blue); }
+.graph-key.current { background:#21457e; }
+.graph-key.finished { background:#437c88; }
+.graph-trace {
+  padding:18px 24px;
+  display:grid;
+  gap:18px;
+}
+.graph-trace p {
+  margin:0 0 10px;
+  font-size:11px;
+  color:var(--muted);
+}
+.graph-tokens {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  padding:0;
+  margin:0;
+  list-style:none;
+  min-height:30px;
+}
+.graph-tokens li {
+  display:grid;
+  place-items:center;
+  min-width:30px;
+  padding:3px 8px;
+  border:1px solid #cbdafa;
+  border-radius:6px;
+  background:var(--soft);
+  color:var(--blue-dark);
+  font:12px/1.8 ui-monospace,Consolas,monospace;
+}
+.graph-tokens .graph-empty {
+  border-color:transparent;
+  background:transparent;
+  color:var(--muted);
+  padding-left:0;
+}
+.graph-table-wrap { overflow-x:auto; }
+.graph-table {
+  width:100%;
+  border-collapse:collapse;
+  text-align:left;
+  background:#ffffffa6;
+}
+.graph-table caption { text-align:left; margin-bottom:10px; }
+.graph-table th,.graph-table td {
+  padding:8px 12px;
+  border-bottom:1px solid var(--line);
+}
+.graph-table th { background:var(--soft); color:var(--ink); }
+.graph-lab .exercise p { margin:0; }
+@media(max-width:760px) {
+  .graph-lab .graph-canvas { height:400px; }
+  .graph-trace { padding:16px; }
+  .graph-lab .brand { flex-wrap:wrap; gap:6px; }
+  .graph-lab .graph-brand-note { display:none; }
+}

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interaktywne laboratorium DFS i BFS. Przeszukuj losowe grafy krok po kroku, obserwuj stos, kolejkę i drzewo przeszukiwania.">
+    <title>Algorytmy grafowe · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="graph-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          AlgorithmsLab <span class="graph-brand-note"> / edukacja</span>
+        </a>
+        <span class="meta">Algorytmy grafowe</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div>
+          <span class="eyebrow">Zrozum, zanim zapamiętasz</span>
+          <h1 id="pageTitle">Odkrywaj graf krok po kroku.</h1>
+          <p>W głąb czy wszerz? Porównaj DFS i BFS na tym samym grafie. Śledź odwiedzane wierzchołki, sprawdzane krawędzie oraz zawartość stosu i kolejki.</p>
+        </div>
+        <span class="badge">2 algorytmy · jeden graf</span>
+      </section>
+      <div class="workspace">
+        <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
+          <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
+          <div id="algorithmList"></div>
+          <p class="sidebar-note">Wybierz ⓘ, aby przeczytać krótkie objaśnienie. Zmiana algorytmu zachowuje graf i wierzchołek startowy.</p>
+          <p class="sidebar-note">Graf jest nieskierowany i nieważony. Sąsiadów sprawdzamy zawsze według rosnących numerów.</p>
+        </aside>
+        <div class="main-column">
+          <section class="panel controls" aria-label="Ustawienia i sterowanie">
+            <div class="fields">
+              <div class="field">
+                <label for="dataset">Rodzaj grafu</label>
+                <select id="dataset">
+                  <option value="connected">Losowy spójny</option>
+                  <option value="tree">Losowe drzewo</option>
+                  <option value="disconnected">Dwie składowe</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="startVertex">Wierzchołek startowy</label>
+                <select id="startVertex"></select>
+              </div>
+              <div class="field">
+                <label for="scope">Zakres przeszukiwania</label>
+                <select id="scope">
+                  <option value="reachable">Osiągalne ze startu</option>
+                  <option value="all">Cały graf</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="size">Wierzchołki <output id="sizeLabel" for="size">12</output></label>
+                <input type="range" id="size" min="4" max="24" value="12" step="1">
+              </div>
+              <div class="field">
+                <label for="density">Dodatkowe krawędzie <output id="densityLabel" for="density">15%</output></label>
+                <input type="range" id="density" min="0" max="60" value="15" step="5" aria-describedby="densityHint">
+              </div>
+              <div class="field">
+                <label for="speed">Tempo <output id="speedLabel" for="speed">5 op./s</output></label>
+                <input type="range" id="speed" min="1" max="30" value="5" step="1" aria-describedby="tempoHint">
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" id="startBtn" class="btn primary">▶ Start</button>
+              <button type="button" id="pauseBtn" class="btn" disabled>Pauza</button>
+              <button type="button" id="stepBtn" class="btn">Jeden krok</button>
+              <button type="button" id="stopBtn" class="btn" disabled>Stop</button>
+              <button type="button" id="randomBtn" class="btn">↻ Losuj graf</button>
+            </div>
+            <p class="control-hint" id="tempoHint">Tempo określa liczbę kroków animacji na sekundę. Stop zeruje przebieg, zachowując graf. Start po zakończeniu uruchamia symulację od początku.</p>
+            <p class="control-hint" id="densityHint">Najpierw łączymy każdą składową drzewem. Suwak określa szansę dodania każdej pozostałej krawędzi wewnątrz składowej; dla drzewa jest nieaktywny.</p>
+          </section>
+          <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+            <div class="chart-heading">
+              <div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Przeszukiwanie wszerz (BFS)</h2></div>
+              <span id="statusText" role="status">Gotowy</span>
+            </div>
+            <div class="canvas-wrap graph-canvas">
+              <canvas id="board" role="img" aria-label="Graf nieskierowany z zaznaczonym przebiegiem przeszukiwania" aria-describedby="chartDescription operation">Lista sąsiedztwa i stan wierzchołków są dostępne w sekcji „Dane w postaci tekstowej”.</canvas>
+            </div>
+            <div class="chart-caption graph-legend" id="chartDescription">
+              <span><i class="graph-key unseen" aria-hidden="true"></i>Nieodkryty</span>
+              <span><i class="graph-key discovered" aria-hidden="true"></i>Odkryty · obwódka</span>
+              <span><i class="graph-key current" aria-hidden="true"></i>Bieżący · ▶</span>
+              <span><i class="graph-key finished" aria-hidden="true"></i>Zakończony · ✓</span>
+              <span>Pogrubiona krawędź: drzewo przeszukiwania. Przerywana: sprawdzana.</span>
+            </div>
+            <p id="operation">Wybierz Start lub wykonaj pierwszy krok.</p>
+          </section>
+          <section class="panel graph-trace" aria-label="Przebieg przeszukiwania">
+            <div><h3 id="frontierTitle">Kolejka BFS</h3><p id="frontierHint">Początek po lewej · dodajemy na końcu, pobieramy z początku.</p><ol id="frontier" class="graph-tokens" aria-labelledby="frontierTitle"></ol></div>
+            <div><h3 id="orderTitle">Kolejność odkrywania</h3><ol id="visitOrder" class="graph-tokens" aria-labelledby="orderTitle"></ol></div>
+          </section>
+          <section class="stats" aria-label="Statystyki operacji">
+            <div class="stat"><span>Odkryte</span><output id="visitedCount" aria-live="off">0</output><small id="vertexCount">z 12 wierzchołków</small></div>
+            <div class="stat"><span>Sprawdzenia</span><output id="edgeCount" aria-live="off">0</output><small>wpisów list sąsiedztwa</small></div>
+            <div class="stat"><span>Składowe</span><output id="componentCount" aria-live="off">0</output><small>odkryte w tym przebiegu</small></div>
+            <div class="stat"><span id="peakTitle">Maks. kolejka</span><output id="peakCount" aria-live="off">0</output><small id="graphSize">krawędzi: 0</small></div>
+          </section>
+          <details class="data-details" id="dataDetails">
+            <summary>Dane w postaci tekstowej i zasady liczenia</summary>
+            <p id="dataText"></p>
+            <p>Odkrycie oznacza pierwsze oznaczenie wierzchołka. Każdą krawędź nieskierowaną sprawdzamy z obu końców: pełne przejście grafu daje 2E sprawdzeń. Jeden krok to odkrycie, pobranie z kolejki, sprawdzenie sąsiada lub zakończenie wierzchołka. Liczniki nie mierzą czasu procesora.</p>
+            <div class="graph-table-wrap"><table class="graph-table"><caption id="distanceCaption">Stan wierzchołków i odległość od korzenia składowej</caption><thead><tr><th scope="col">Wierzchołek</th><th scope="col">Stan</th><th scope="col">Rodzic</th><th scope="col" id="depthTitle">Odległość BFS</th></tr></thead><tbody id="vertexTable"></tbody></table></div>
+          </details>
+        </div>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">03 / Zrozum algorytm</p><h2 id="lessonTitle"></h2></div><span class="tag" id="family"></span></div>
+        <dl class="complexity" id="complexity"></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E to liczba krawędzi. Dla list sąsiedztwa pełne przejście ma czas Θ(V + E) i pamięć pomocniczą O(V), bez grafu wejściowego. Przy przejściu tylko jednej składowej przeglądamy jej wierzchołki i krawędzie; tablice stanu w tej symulacji nadal zajmują O(V).</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><p id="description"></p><ol id="steps"></ol></div>
+          <div><h3>Zalety</h3><p id="pros"></p><h3>Ograniczenia</h3><p id="cons"></p></div>
+          <div><h3>Kiedy się przydaje?</h3><p id="uses"></p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p id="exercise"></p></div></div>
+        </div>
+        <details class="glossary">
+          <summary>Składowe, drzewo przeszukiwania i odległości</summary>
+          <div class="glossary-grid">
+            <div><h3>Graf niespójny</h3><p>Ze startu można dotrzeć tylko do jego składowej. W trybie „Cały graf” po jej przejściu wybieramy najmniejszy nieodkryty numer jako nowy korzeń. Nie istnieje krawędź łącząca te korzenie.</p></div>
+            <div><h3>Drzewo przeszukiwania</h3><p>Krawędź, przez którą odkrywamy wierzchołek, łączy go z rodzicem. Te krawędzie tworzą drzewo, a przy wielu składowych — las. Pozostałe krawędzie nadal należą do grafu.</p></div>
+            <div><h3>BFS a DFS</h3><p>BFS wyznacza najkrótszą odległość w liczbie krawędzi od korzenia danej składowej. DFS pokazuje głębokość w swoim drzewie, która nie musi być najkrótszą odległością. Korzeń ma wartość 0, a nieodkryty wierzchołek — kreskę.</p></div>
+          </div>
+        </details>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <p id="stepAnnouncement" class="sr-only" role="status"></p>
+    <div id="algorithmTooltip" class="tooltip" role="tooltip" hidden></div>
+    <script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const ALGO_INFO = {
+    bfs: {
+      name: 'Wszerz (BFS)', title: 'Przeszukiwanie wszerz (BFS)', family: 'Kolejka · FIFO',
+      description: 'Odkrywa graf warstwami. Najpierw sąsiedzi startu, potem ich nieodkryci sąsiedzi. Kolejka zachowuje kolejność zgłoszeń.',
+      steps: ['Oznacz start jako odkryty i dodaj go do kolejki.', 'Pobierz pierwszy wierzchołek i sprawdź kolejno jego sąsiadów.', 'Nieodkrytego sąsiada oznacz od razu, zapisz rodzica i dodaj na koniec kolejki.', 'Po sprawdzeniu sąsiadów zakończ wierzchołek. Powtarzaj do opróżnienia kolejki.'],
+      pros: 'Wyznacza najkrótsze ścieżki w grafie nieważonym. Oznaczenie przy dodawaniu zapobiega duplikatom w kolejce.',
+      cons: 'Szeroka warstwa może wymagać dużej kolejki. Przy różnych wagach krawędzi nie gwarantuje najkrótszych ścieżek.',
+      uses: 'Minimalna liczba ruchów w łamigłówce, odległości w sieci znajomości, przeszukiwanie labiryntu.',
+      exercise: 'Uruchom BFS, a potem DFS na tym samym grafie. Porównaj kolejność odkrywania i wartości w tabeli. Czy BFS odkrywa wierzchołki według niemalejącej odległości od startu?'
+    },
+    dfs: {
+      name: 'W głąb (DFS)', title: 'Przeszukiwanie w głąb (DFS)', family: 'Stos · LIFO',
+      description: 'Podąża do pierwszego nieodkrytego sąsiada i wraca dopiero po zbadaniu całej gałęzi. Jawny stos przechowuje aktywną ścieżkę i miejsce powrotu, tak jak wywołania rekurencyjne.',
+      steps: ['Oznacz start jako odkryty i umieść go na stosie.', 'Sprawdź następnego sąsiada wierzchołka ze szczytu stosu.', 'Jeśli sąsiad jest nieodkryty, zapisz rodzica, oznacz go i zejdź do niego, odkładając go na stos.', 'Gdy zabraknie sąsiadów, zakończ wierzchołek i zdejmij go ze stosu. Wróć do poprzedniego.'],
+      pros: 'Naturalnie pokazuje zagłębianie i powroty. Jawny stos pozwala uniknąć ograniczenia głębokości rekurencji.',
+      cons: 'Nie gwarantuje najkrótszej ścieżki. Długa gałąź może zająć O(V) miejsc na stosie.',
+      uses: 'Wyznaczanie składowych, podstawa wykrywania cykli, przeszukiwanie z nawrotami. W grafach skierowanych także podstawa sortowania topologicznego.',
+      exercise: 'Wylosuj drzewo i przechodź pojedynczymi krokami. Obserwuj stos przy dojściu do liścia i podczas powrotu. Następnie porównaj maksymalny stos DFS z maksymalną kolejką BFS.'
+    }
+  };
+  const state = { selected: 'bfs', adjacency: [], edges: [], positions: [], running: false, paused: false, iterator: null };
+  const canvas = $('board'), ctx = canvas.getContext('2d');
+  let viewWidth = 1, viewHeight = 1, frameId = null, lastTime = null, budget = 0, dirty = true;
+  const edgeKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
+  const vertexName = v => String(v + 1);
+
+  function resetTraversal(message = 'Wybierz Start lub wykonaj pierwszy krok.') {
+    state.iterator = null; state.running = false; state.paused = false;
+    state.marks = state.adjacency.map(() => 'unseen');
+    state.parent = state.adjacency.map(() => -1); state.depth = state.adjacency.map(() => null);
+    state.order = []; state.frontier = []; state.treeEdges = new Set();
+    state.active = -1; state.edge = null; state.checks = 0; state.components = 0; state.peak = 0;
+    lastTime = null; budget = 0;
+    $('operation').textContent = message; $('statusText').textContent = 'Gotowy';
+    $('stepAnnouncement').textContent = '';
+    updateControls(); rafDraw();
+  }
+
+  function generateGraph() {
+    if (state.running) return;
+    const n = Number($('size').value), kind = $('dataset').value;
+    const probability = Number($('density').value) / 100;
+    const previousStart = Number($('startVertex').value || 0);
+    state.adjacency = Array.from({ length: n }, () => []); state.edges = [];
+    const existing = new Set();
+    function addEdge(a, b) {
+      const key = edgeKey(a, b);
+      if (a === b || existing.has(key)) return;
+      existing.add(key); state.edges.push([a, b]);
+      state.adjacency[a].push(b); state.adjacency[b].push(a);
+    }
+    const vertices = Array.from({ length: n }, (_, i) => i);
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [vertices[i], vertices[j]] = [vertices[j], vertices[i]];
+    }
+    const split = Math.floor(n / 2);
+    const groups = kind === 'disconnected' ? [vertices.slice(0, split), vertices.slice(split)] : [vertices];
+    for (const group of groups) {
+      // A random spanning tree guarantees exactly the requested components.
+      for (let i = 1; i < group.length; i++) addEdge(group[i], group[Math.floor(Math.random() * i)]);
+      if (kind !== 'tree') {
+        for (let i = 0; i < group.length; i++) {
+          for (let j = i + 1; j < group.length; j++) {
+            if (!existing.has(edgeKey(group[i], group[j])) && Math.random() < probability) addEdge(group[i], group[j]);
+          }
+        }
+      }
+    }
+    state.adjacency.forEach(neighbors => neighbors.sort((a, b) => a - b));
+    // Stable circular positions keep every vertex distinct at all screen sizes.
+    state.positions = vertices.map((_, i) => {
+      const angle = -Math.PI / 2 + 2 * Math.PI * i / n;
+      return { x: Math.cos(angle), y: Math.sin(angle) };
+    });
+    $('startVertex').replaceChildren(...state.adjacency.map((_, i) => {
+      const option = document.createElement('option'); option.value = i; option.textContent = `Wierzchołek ${i + 1}`; return option;
+    }));
+    $('startVertex').value = Math.min(previousStart, n - 1);
+    $('sizeLabel').textContent = n; $('densityLabel').textContent = `${$('density').value}%`;
+    resetTraversal('Nowy graf jest gotowy. Wybierz Start lub wykonaj pierwszy krok.');
+  }
+
+  function updateControls() {
+    $('startBtn').disabled = state.running;
+    $('pauseBtn').disabled = !state.running;
+    $('pauseBtn').textContent = state.paused ? 'Wznów' : 'Pauza';
+    $('pauseBtn').setAttribute('aria-pressed', String(state.paused));
+    $('stopBtn').disabled = !state.running && state.order.length === 0;
+    $('stepBtn').disabled = state.running && !state.paused;
+    for (const id of ['dataset', 'startVertex', 'scope', 'size', 'randomBtn']) $(id).disabled = state.running;
+    $('density').disabled = state.running || $('dataset').value === 'tree';
+    document.querySelectorAll('.algorithm-pick').forEach(button => { button.disabled = state.running; });
+  }
+
+  function renderLesson() {
+    const info = ALGO_INFO[state.selected], bfs = state.selected === 'bfs';
+    for (const id of ['description', 'pros', 'cons', 'uses', 'exercise', 'family']) $(id).textContent = info[id];
+    $('chartTitle').textContent = $('lessonTitle').textContent = info.title;
+    $('steps').replaceChildren(...info.steps.map(text => { const li = document.createElement('li'); li.textContent = text; return li; }));
+    $('complexity').innerHTML = `<div><dt>Pełne przejście</dt><dd>Θ(V + E)</dd></div><div><dt>Pamięć pomocnicza</dt><dd>O(V)</dd></div><div><dt>Struktura</dt><dd>${bfs ? 'Kolejka FIFO' : 'Stos LIFO'}</dd></div><div><dt>Najkrótsze ścieżki</dt><dd>${bfs ? 'Tak, bez wag' : 'Brak gwarancji'}</dd></div><div><dt>Reprezentacja</dt><dd>Listy sąsiedztwa</dd></div>`;
+    $('frontierTitle').textContent = bfs ? 'Kolejka BFS' : 'Stos DFS';
+    $('frontierHint').textContent = bfs ? 'Początek po lewej · dodajemy na końcu, pobieramy z początku.' : 'Szczyt po prawej · aktywna ścieżka od korzenia do bieżącego wierzchołka.';
+    $('peakTitle').textContent = bfs ? 'Maks. kolejka' : 'Maks. stos';
+    $('depthTitle').textContent = bfs ? 'Odległość BFS' : 'Głębokość DFS';
+    $('distanceCaption').textContent = bfs ? 'Stan wierzchołków i najkrótsza odległość od korzenia ich składowej' : 'Stan wierzchołków i głębokość w drzewie DFS (nie musi być najkrótszą odległością)';
+    document.querySelectorAll('.algorithm-pick').forEach(button => {
+      const selected = button.dataset.algorithm === state.selected;
+      button.setAttribute('aria-pressed', String(selected)); button.parentElement.classList.toggle('selected', selected);
+    });
+  }
+
+  function renderTokens(id, vertices) {
+    const list = $(id);
+    list.replaceChildren(...vertices.map(v => { const item = document.createElement('li'); item.textContent = vertexName(v); return item; }));
+    if (!vertices.length) { const item = document.createElement('li'); item.className = 'graph-empty'; item.textContent = 'Pusto'; list.append(item); }
+  }
+  function updateInfo() {
+    $('visitedCount').textContent = state.order.length; $('vertexCount').textContent = `z ${state.adjacency.length} wierzchołków`;
+    $('edgeCount').textContent = state.checks; $('componentCount').textContent = state.components;
+    $('peakCount').textContent = state.peak; $('graphSize').textContent = `krawędzi: ${state.edges.length}`;
+    renderTokens('frontier', state.frontier); renderTokens('visitOrder', state.order);
+    if (!$('dataDetails').open) return;
+    $('dataText').textContent = `Start: ${Number($('startVertex').value) + 1}. Listy sąsiedztwa: ${state.adjacency.map((neighbors, i) => `${i + 1}: [${neighbors.map(vertexName).join(', ')}]`).join('; ')}.`;
+    const labels = { unseen: 'Nieodkryty', discovered: 'Odkryty', finished: 'Zakończony' };
+    $('vertexTable').replaceChildren(...state.marks.map((mark, v) => {
+      const row = document.createElement('tr');
+      [vertexName(v), v === state.active ? 'Bieżący' : labels[mark], state.parent[v] < 0 ? '—' : vertexName(state.parent[v]), state.depth[v] ?? '—'].forEach(value => {
+        const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
+      });
+      return row;
+    }));
+  }
+
+  function discover(v, parent) {
+    state.marks[v] = 'discovered'; state.parent[v] = parent;
+    state.depth[v] = parent < 0 ? 0 : state.depth[parent] + 1;
+    state.order.push(v);
+    if (parent >= 0) state.treeEdges.add(edgeKey(parent, v));
+  }
+  function setFrontier(vertices) {
+    state.frontier = vertices; state.peak = Math.max(state.peak, vertices.length);
+  }
+  function* operation(message) { $('operation').textContent = message; yield; }
+  function* inspect(v, neighbor) {
+    state.active = v; state.edge = [v, neighbor]; state.checks++;
+    yield* operation(`Sprawdź ${v + 1} → ${neighbor + 1}. ${state.marks[neighbor] === 'unseen' ? 'Sąsiad jest nieodkryty.' : 'Sąsiad był już odkryty — pomiń.'}`);
+    state.edge = null;
+  }
+  function* breadthFirst(root) {
+    const queue = [root]; let head = 0;
+    discover(root, -1); setFrontier(queue.slice(head));
+    yield* operation(`Składowa ${state.components}: odkryj korzeń ${root + 1} i dodaj go do kolejki.`);
+    while (head < queue.length) {
+      const v = queue[head++]; state.active = v; setFrontier(queue.slice(head));
+      yield* operation(`Pobierz ${v + 1} z początku kolejki. Odległość od korzenia: ${state.depth[v]}.`);
+      for (const neighbor of state.adjacency[v]) {
+        yield* inspect(v, neighbor);
+        if (state.marks[neighbor] === 'unseen') {
+          discover(neighbor, v); queue.push(neighbor); setFrontier(queue.slice(head));
+          yield* operation(`Odkryj ${neighbor + 1} przez ${v + 1} i dodaj na koniec kolejki. Odległość: ${state.depth[neighbor]}.`);
+        }
+      }
+      state.marks[v] = 'finished'; state.active = -1;
+      yield* operation(`Zakończ ${v + 1}: wszyscy jego sąsiedzi zostali sprawdzeni.`);
+    }
+  }
+  function* depthFirst(root) {
+    // Each frame remembers the next neighbor, matching recursive DFS exactly.
+    const stack = [{ vertex: root, next: 0 }];
+    discover(root, -1); state.active = root; setFrontier([root]);
+    yield* operation(`Składowa ${state.components}: odkryj korzeń ${root + 1} i połóż go na stosie.`);
+    while (stack.length) {
+      const top = stack[stack.length - 1], v = top.vertex;
+      if (top.next < state.adjacency[v].length) {
+        const neighbor = state.adjacency[v][top.next++];
+        yield* inspect(v, neighbor);
+        if (state.marks[neighbor] === 'unseen') {
+          discover(neighbor, v); stack.push({ vertex: neighbor, next: 0 }); state.active = neighbor;
+          setFrontier(stack.map(frame => frame.vertex));
+          yield* operation(`Odkryj ${neighbor + 1} przez ${v + 1} i połóż na szczycie stosu. Głębokość: ${state.depth[neighbor]}.`);
+        }
+      } else {
+        stack.pop(); state.marks[v] = 'finished'; setFrontier(stack.map(frame => frame.vertex));
+        state.active = stack.length ? stack[stack.length - 1].vertex : -1;
+        yield* operation(`Zakończ ${v + 1} i zdejmij ze stosu.${state.active >= 0 ? ` Wróć do ${state.active + 1}.` : ' Stos jest pusty.'}`);
+      }
+    }
+  }
+  function* traverse() {
+    const start = Number($('startVertex').value);
+    const roots = [start, ...state.adjacency.map((_, i) => i).filter(v => v !== start)];
+    for (const root of roots) {
+      if (state.marks[root] !== 'unseen') continue;
+      state.components++;
+      yield* (state.selected === 'bfs' ? breadthFirst(root) : depthFirst(root));
+      if ($('scope').value === 'reachable') break;
+    }
+  }
+
+  function begin(paused = false) {
+    if (state.running) return;
+    resetTraversal(); state.running = true; state.paused = paused; state.iterator = traverse();
+    $('statusText').textContent = paused ? 'Pauza' : 'Przeszukiwanie'; updateControls(); rafDraw();
+  }
+  function nextStep() {
+    if (!state.iterator) return;
+    if (state.iterator.next().done) {
+      state.iterator = null; state.running = false; state.paused = false; state.active = -1; state.edge = null;
+      const remaining = state.adjacency.length - state.order.length;
+      $('statusText').textContent = 'Zakończono';
+      $('operation').textContent = `Gotowe. Odkryto ${state.order.length} z ${state.adjacency.length} wierzchołków.${remaining ? ` Nieosiągalne ze startu: ${remaining}. Wybierz „Cały graf”, aby przejść pozostałe składowe.` : ` Liczba odwiedzonych składowych: ${state.components}.`}`;
+      updateControls();
+    }
+    dirty = true;
+  }
+  function togglePause() {
+    if (!state.running) return;
+    state.paused = !state.paused; lastTime = null; budget = 0;
+    $('statusText').textContent = state.paused ? 'Pauza' : 'Przeszukiwanie'; updateControls(); rafDraw();
+  }
+  function rafDraw() { dirty = true; if (frameId === null) frameId = requestAnimationFrame(frame); }
+  function frame(now) {
+    frameId = null;
+    if (state.running && !state.paused && !document.hidden) {
+      if (lastTime !== null) budget += Math.min((now - lastTime) / 1000, .1) * Number($('speed').value);
+      lastTime = now;
+      while (budget >= 1 && state.running) { nextStep(); budget--; }
+    } else lastTime = null;
+    if (dirty) { updateInfo(); draw(); dirty = false; }
+    if (state.running && !state.paused && !document.hidden) frameId = requestAnimationFrame(frame);
+  }
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    viewWidth = Math.max(1, rect.width); viewHeight = Math.max(1, rect.height);
+    canvas.width = Math.round(viewWidth * dpr); canvas.height = Math.round(viewHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); rafDraw();
+  }
+  function draw() {
+    ctx.clearRect(0, 0, viewWidth, viewHeight);
+    const rx = Math.max(1, viewWidth / 2 - 31), ry = Math.max(1, viewHeight / 2 - 35);
+    const radius = Math.max(10, Math.min(18, Math.PI * Math.min(rx, ry) / state.adjacency.length - 3));
+    const points = state.positions.map(p => ({ x: viewWidth / 2 + p.x * rx, y: viewHeight / 2 + p.y * ry }));
+    function line(a, b, color, width, dashed = false) {
+      ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dashed ? [6, 5] : []);
+      ctx.beginPath(); ctx.moveTo(points[a].x, points[a].y); ctx.lineTo(points[b].x, points[b].y); ctx.stroke(); ctx.setLineDash([]);
+    }
+    for (const [a, b] of state.edges) line(a, b, '#d0dae7', 1.2);
+    for (const [a, b] of state.edges) if (state.treeEdges.has(edgeKey(a, b))) line(a, b, '#437c88', 2.8);
+    if (state.edge) line(...state.edge, '#21457e', 3, true);
+    points.forEach((p, v) => {
+      const mark = state.marks[v], current = v === state.active;
+      ctx.fillStyle = current ? '#21457e' : mark === 'finished' ? '#437c88' : mark === 'discovered' ? '#edf3ff' : '#f7f9fd';
+      ctx.strokeStyle = mark === 'unseen' ? '#9bacc2' : '#315fb1'; ctx.lineWidth = mark === 'discovered' ? 3 : 1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, radius, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.font = `600 ${radius < 14 ? 11 : 13}px "Segoe UI", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = current || mark === 'finished' ? '#fff' : '#182a45'; ctx.fillText(vertexName(v), p.x, p.y);
+      ctx.font = '11px "Segoe UI", sans-serif'; ctx.fillStyle = '#234b92';
+      const marker = current ? '▶' : mark === 'finished' ? '✓' : v === Number($('startVertex').value) ? 'S' : '';
+      if (marker) ctx.fillText(marker, p.x, p.y - radius - 9);
+    });
+  }
+
+  const tooltip = $('algorithmTooltip');
+  let tipAnchor = null, pinned = false, tipTimer = null;
+  function closeTip() {
+    clearTimeout(tipTimer);
+    if (tipAnchor) { tipAnchor.removeAttribute('aria-describedby'); tipAnchor.setAttribute('aria-expanded', 'false'); }
+    tipAnchor = null; pinned = false; tooltip.hidden = true;
+  }
+  function placeTip() {
+    if (!tipAnchor) return;
+    const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
+    const width = document.documentElement.clientWidth;
+    tooltip.style.left = `${a.right + 12 + box.width <= width - 12 ? a.right + 12 : Math.max(12, a.left - box.width - 12)}px`;
+    tooltip.style.top = `${Math.max(12, Math.min(a.top - 16, window.innerHeight - box.height - 12))}px`;
+  }
+  function openTip(button, pin = false) {
+    clearTimeout(tipTimer);
+    if (tipAnchor !== button) closeTip();
+    tipAnchor = button; pinned = pin || pinned;
+    const info = ALGO_INFO[button.dataset.info];
+    tooltip.innerHTML = `<h3>${info.title}</h3><p>${info.description}</p><p><strong>Zalety:</strong> ${info.pros}</p><p><strong>Ograniczenia:</strong> ${info.cons}</p><p class="tip-metrics">Pełne przejście: Θ(V + E)<br>Pamięć pomocnicza: O(V)<br>${info.family}</p><small>Esc lub kliknięcie poza dymkiem zamyka opis.</small>`;
+    tooltip.hidden = false; button.setAttribute('aria-describedby', 'algorithmTooltip'); button.setAttribute('aria-expanded', 'true'); placeTip();
+  }
+  function deferClose() { if (!pinned) tipTimer = setTimeout(closeTip, 180); }
+  for (const [index, [key, info]] of Object.entries(ALGO_INFO).entries()) {
+    const row = document.createElement('div'); row.className = 'algorithm-row';
+    const pick = document.createElement('button'); pick.type = 'button'; pick.className = 'algorithm-pick'; pick.dataset.algorithm = key;
+    pick.innerHTML = `<span class="ordinal" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span><span>${info.name}</span>`;
+    pick.addEventListener('click', () => {
+      if (state.running) return;
+      state.selected = key; resetTraversal('Algorytm zmieniony. Graf i start pozostały bez zmian.'); renderLesson();
+    });
+    const infoButton = document.createElement('button'); infoButton.type = 'button'; infoButton.className = 'info-button'; infoButton.dataset.info = key;
+    infoButton.innerHTML = '<span aria-hidden="true">i</span>';
+    infoButton.setAttribute('aria-label', `Informacje: ${info.title}`); infoButton.setAttribute('aria-expanded', 'false');
+    infoButton.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openTip(infoButton); });
+    infoButton.addEventListener('pointerleave', deferClose); infoButton.addEventListener('focus', () => openTip(infoButton));
+    infoButton.addEventListener('blur', closeTip);
+    infoButton.addEventListener('click', () => { if (tipAnchor === infoButton && pinned) closeTip(); else openTip(infoButton, true); });
+    row.append(pick, infoButton); $('algorithmList').append(row);
+  }
+  tooltip.addEventListener('pointerenter', () => clearTimeout(tipTimer)); tooltip.addEventListener('pointerleave', deferClose);
+  document.addEventListener('pointerdown', event => { if (tipAnchor && !tooltip.contains(event.target) && !tipAnchor.contains(event.target)) closeTip(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeTip(); });
+  window.addEventListener('scroll', placeTip, { capture: true, passive: true }); window.addEventListener('resize', placeTip);
+  $('startBtn').addEventListener('click', () => begin()); $('pauseBtn').addEventListener('click', togglePause);
+  $('stepBtn').addEventListener('click', () => {
+    if (!state.running) begin(true);
+    if (state.paused) { nextStep(); $('stepAnnouncement').textContent = $('operation').textContent; rafDraw(); }
+  });
+  $('stopBtn').addEventListener('click', () => { resetTraversal('Przebieg i liczniki wyzerowano. Graf pozostał bez zmian.'); $('statusText').textContent = 'Zatrzymano'; });
+  $('randomBtn').addEventListener('click', generateGraph); $('dataset').addEventListener('change', generateGraph);
+  $('size').addEventListener('input', generateGraph); $('density').addEventListener('input', generateGraph);
+  for (const id of ['startVertex', 'scope']) $(id).addEventListener('change', () => resetTraversal());
+  $('speed').addEventListener('input', () => {
+    $('speedLabel').textContent = `${$('speed').value} op./s`; $('speed').setAttribute('aria-valuetext', `${$('speed').value} kroków na sekundę`);
+  });
+  $('dataDetails').addEventListener('toggle', updateInfo);
+  document.addEventListener('visibilitychange', () => { lastTime = null; budget = 0; if (!document.hidden) rafDraw(); });
+  new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+  generateGraph(); renderLesson(); resizeCanvas();
+})();
+    </script>
+  </body>
+</html>
