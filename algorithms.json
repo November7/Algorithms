@@ -19,7 +19,7 @@
   },
   {
     "title": "Algorytmy grafowe",
-    "description": "Interaktywne laboratorium DFS i BFS z przeszukiwaniem losowych grafów krok po kroku.",
+    "description": "Interaktywne laboratorium DFS i BFS z przeszukiwaniem losowych grafów oraz rysowaniem drzew przeszukiwania na żywo.",
     "url": "graph.html",
     "status": "published"
   }

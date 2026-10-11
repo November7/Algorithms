@@ -785,9 +785,54 @@ footer {
 }
 .graph-table th { background:var(--soft); color:var(--ink); }
 .graph-lab .exercise p { margin:0; }
+.graph-diagrams { display:grid; grid-template-columns:minmax(0,1fr); margin-top:18px; }
+.graph-diagram { min-width:0; }
+.graph-diagram-title { margin:0 24px; }
+.graph-tree-panel { border-top:1px solid var(--line); }
+.graph-tree-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:16px 24px 0;
+}
+.graph-tree-heading h3 { margin:0; }
+.graph-tree-viewport {
+  height:clamp(330px,36vw,460px);
+  overflow:auto;
+  overscroll-behavior:contain;
+  margin:12px 16px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#f8faff;
+}
+.graph-tree-viewport:focus-visible { outline-offset:-4px; }
+.graph-tree-board { display:block; max-width:none; }
+.graph-tree-empty { margin:0; padding:36px 24px; text-align:center; color:var(--muted); font-size:12px; }
+.graph-tree-edge { stroke:#437c88; stroke-width:2.5; }
+.graph-tree-node circle { fill:var(--soft); stroke:var(--blue); stroke-width:3; }
+.graph-tree-node text { text-anchor:middle; font:600 13px "Segoe UI",sans-serif; fill:var(--ink); }
+.graph-tree-node.finished circle { fill:#437c88; stroke:#437c88; stroke-width:1; }
+.graph-tree-node.current circle { fill:#21457e; stroke:#21457e; }
+.graph-tree-node.finished .graph-tree-number,.graph-tree-node.current .graph-tree-number { fill:white; }
+.graph-tree-node .graph-tree-root,.graph-tree-node .graph-tree-marker { fill:var(--blue-dark); font-size:11px; font-weight:400; }
+.graph-tree-summary,.graph-tree-hint { margin:0; padding:0 24px 12px; font-size:11px; color:var(--muted); }
+.graph-tree-follow { display:flex; align-items:center; gap:8px; padding:0 24px 14px; font-size:11px; color:var(--muted); }
+.graph-tree-follow input { accent-color:var(--blue); }
+@media(min-width:1200px) {
+  .graph-diagrams { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .graph-tree-panel { border-top:0; border-left:1px solid var(--line); }
+  .graph-tree-heading { padding-top:0; min-height:28px; }
+  .graph-diagram-title { min-height:28px; margin-bottom:0; }
+}
 @media(max-width:760px) {
   .graph-lab .graph-canvas { height:400px; }
   .graph-trace { padding:16px; }
   .graph-lab .brand { flex-wrap:wrap; gap:6px; }
   .graph-lab .graph-brand-note { display:none; }
+  .graph-tree-viewport { height:360px; margin:12px; }
+  .graph-tree-heading { padding:16px 16px 0; }
+  .graph-diagram-title { margin:0 16px; }
+  .graph-tree-summary,.graph-tree-hint,.graph-tree-follow { padding-left:16px; padding-right:16px; }
 }
