@@ -9,36 +9,23 @@ Repozytorium zawiera zbiór interaktywnych symulacji znanych algorytmów. Przyk�
 
 README oraz symulacje w tym repozytorium są tworzone przy użyciu sztucznej inteligencji.
 
-## Przykłady
+## Spis treści
 
+- Wyznaczanie minimum i maksimum (planowane).
+- Algorytmy wyszukiwania (planowane).
 - [Algorytmy sortowania](./sort.html) - interaktywne laboratorium z dziesięcioma algorytmami sortowania.
+- Algorytmy grafowe (planowane).
 
-Każda symulacja jest osobnym plikiem HTML. Wszystkie przykłady korzystają ze wspólnego arkusza [styles.css](./styles.css), aby zachować spójny wygląd.
-
-## Uruchomienie
-
-Otwórz plik `sort.html` w przeglądarce. Symulacja działa lokalnie i nie wymaga instalowania zależności.
-
-## Publikacja w GitHub Pages
-
-W ustawieniach repozytorium wybierz **Settings → Pages → Deploy from a branch**, a następnie gałąź `main` i katalog główny (`/`). Po opublikowaniu [otwórz symulację na GitHub Pages](https://november7.github.io/Algorithms/sort.html).
 
 # English
 
-This repository is a collection of interactive simulations of well-known algorithms. The examples are built with HTML, CSS, and JavaScript so you can observe how algorithms work, step by step. The collection includes sorting algorithms and can be extended with other algorithms that can be presented as visual simulations.
+This repository is a collection of interactive simulations of well-known algorithms. The examples are built as HTML, CSS, and JavaScript pages so you can observe how algorithms work, step by step. It currently includes sorting algorithms and can be expanded with other algorithms that can be presented as visual simulations.
 
-This README and the simulations in this repository are created with the help of artificial intelligence.
+This README and the simulations in this repository are created using artificial intelligence.
 
-## Examples
+## Contents
 
+- Finding minimum and maximum (planned).
+- Search algorithms (planned).
 - [Sorting algorithms](./sort.html) - an interactive lab featuring ten sorting algorithms.
-
-Each simulation lives in its own HTML file. All examples share the [styles.css](./styles.css) stylesheet to keep their appearance consistent.
-
-## Run locally
-
-Open `sort.html` in a web browser. The simulation runs locally and requires no dependencies.
-
-## Publish with GitHub Pages
-
-In the repository settings, choose **Settings → Pages → Deploy from a branch**, then select the `main` branch and the repository root (`/`). Once published, [open the simulation on GitHub Pages](https://november7.github.io/Algorithms/sort.html).
+- Graph algorithms (planned).
