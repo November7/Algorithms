@@ -1,4 +1,4 @@
-[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github)](https://november7.github.io/Algorithms/sort.html)
+[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github)](https://november7.github.io/AlgorithmsLab/sort.html)
 [![AI Generated](https://img.shields.io/badge/README-AI%20Generated-4B8BF5?style=flat&logo=githubcopilot&logoColor=white)](#)
 [![Language-English-success](https://img.shields.io/badge/Language-English-success)](#english)
 [![J%C4%99zyk-Polski-red](https://img.shields.io/badge/J%C4%99zyk-Polski-red)](#polski)
