@@ -13,7 +13,7 @@ README oraz symulacje w tym repozytorium są tworzone przy użyciu sztucznej int
 
 - Wyznaczanie minimum i maksimum (planowane).
 - Algorytmy wyszukiwania (planowane).
-- [Algorytmy sortowania](./sort.html) - interaktywne laboratorium z dziesięcioma algorytmami sortowania.
+- [Algorytmy sortowania](https://november7.github.io/AlgorithmsLab/sort.html) - interaktywne laboratorium z dziesięcioma algorytmami sortowania.
 - Algorytmy grafowe (planowane).
 
 
@@ -27,5 +27,5 @@ This README and the simulations in this repository are created using artificial 
 
 - Finding minimum and maximum (planned).
 - Search algorithms (planned).
-- [Sorting algorithms](./sort.html) - an interactive lab featuring ten sorting algorithms.
+- [Sorting algorithms](https://november7.github.io/AlgorithmsLab/sort.html) - an interactive lab featuring ten sorting algorithms.
 - Graph algorithms (planned).
