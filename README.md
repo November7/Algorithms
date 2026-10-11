@@ -7,9 +7,11 @@
 
 Repozytorium zawiera zbiór interaktywnych symulacji znanych algorytmów. Przykłady są przygotowane jako strony HTML, CSS i JavaScript, które pozwalają obserwować działanie algorytmów krok po kroku. Znajdują się tu algorytmy sortowania, a zbiór może być rozszerzany o inne algorytmy, które da się przedstawić w formie wizualnej symulacji.
 
+README oraz symulacje w tym repozytorium są tworzone przy użyciu sztucznej inteligencji.
+
 ## Przykłady
 
-- [Algorytmy sortowania](./sort.html) — interaktywne laboratorium z dziesięcioma algorytmami sortowania.
+- [Algorytmy sortowania](./sort.html) - interaktywne laboratorium z dziesięcioma algorytmami sortowania.
 
 Każda symulacja jest osobnym plikiem HTML. Wszystkie przykłady korzystają ze wspólnego arkusza [styles.css](./styles.css), aby zachować spójny wygląd.
 
@@ -25,9 +27,11 @@ W ustawieniach repozytorium wybierz **Settings → Pages → Deploy from a branc
 
 This repository is a collection of interactive simulations of well-known algorithms. The examples are built with HTML, CSS, and JavaScript so you can observe how algorithms work, step by step. The collection includes sorting algorithms and can be extended with other algorithms that can be presented as visual simulations.
 
+This README and the simulations in this repository are created with the help of artificial intelligence.
+
 ## Examples
 
-- [Sorting algorithms](./sort.html) — an interactive lab featuring ten sorting algorithms.
+- [Sorting algorithms](./sort.html) - an interactive lab featuring ten sorting algorithms.
 
 Each simulation lives in its own HTML file. All examples share the [styles.css](./styles.css) stylesheet to keep their appearance consistent.
 
