@@ -421,6 +421,9 @@
   color:var(--muted);
   padding:0 5px;
 }
+.jump-wrap { max-height:260px; overflow:auto; }
+.jump-table td.jump-a { background:rgba(37,99,235,.28); font-weight:700; }
+.jump-table td.jump-b { background:rgba(234,88,12,.28); font-weight:700; }
 :where(html:not(.index-page)) summary {
   cursor:pointer;
   font-weight:600;
@@ -859,7 +862,7 @@
 .lca-fields .field label { display:flex; justify-content:space-between; gap:8px; font-size:12px; font-weight:600; margin-bottom:8px; }
 .lca-actions { margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; }
 .lca-actions #randomBtn { margin-left:auto; }
-.tree-viewport { overflow:auto; min-height:300px; max-height:620px; padding:18px; }
+.tree-viewport { overflow:auto; min-height:300px; max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); padding:18px; }
 .tree-board { display:block; width:auto; min-width:560px; }
 .tree-edge { stroke:#cbd7e7; stroke-width:2; }
 .tree-edge.path-a { stroke:#4775bb; stroke-width:3; }

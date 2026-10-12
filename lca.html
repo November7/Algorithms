@@ -28,6 +28,13 @@
       <section class="panel lca-controls" aria-label="Ustawienia zapytania LCA">
         <div class="lca-fields">
           <div class="field">
+            <label for="method">Algorytm</label>
+            <select id="method">
+              <option value="simple">Wyrównywanie głębokości - O(h)</option>
+              <option value="lift">Binary lifting - O(log V)</option>
+            </select>
+          </div>
+          <div class="field">
             <label for="vertexA">Pierwszy wierzchołek</label>
             <select id="vertexA"></select>
           </div>
@@ -37,7 +44,7 @@
           </div>
           <div class="field">
             <label for="size">Liczba wierzchołków <output id="sizeLabel" for="size">15</output></label>
-            <input type="range" id="size" min="5" max="30" value="15" step="1">
+            <input type="range" id="size" min="5" max="40" value="15" step="1">
           </div>
         </div>
         <div class="lca-actions">
@@ -54,6 +61,17 @@
             <div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="treeTitle">Drzewo i ścieżki do korzenia</h2></div>
             <span id="statusText" role="status">Gotowy</span>
           </div>
+          <details class="data-details" id="jumpDetails" hidden>
+            <summary>Tablica skoków up[k][v] (przodek o 2<sup>k</sup> poziomów wyżej)</summary>
+            <p class="control-hint">Wiersz = wierzchołek, kolumna k = skok o 2<sup>k</sup>. Up[k][v] = up[k−1][up[k−1][v]]. Korzeń jest własnym przodkiem. Podświetlone komórki są aktualnie używane.</p>
+            <div class="graph-table-wrap jump-wrap">
+              <table class="parent-table jump-table">
+                <caption>Tablica przodków dla binary lifting</caption>
+                <thead id="jumpHead"></thead>
+                <tbody id="jumpBody"></tbody>
+              </table>
+            </div>
+          </details>
           <div class="tree-viewport" id="treeViewport" tabindex="0" role="region" aria-label="Ukorzenione drzewo - przewijany widok">
             <svg id="treeBoard" class="tree-board" role="img" aria-labelledby="treeTitle treeDescription"></svg>
           </div>
@@ -87,9 +105,9 @@
         </div>
         <dl class="complexity">
           <div><dt>Wejście</dt><dd>Ukorzenione drzewo</dd></div>
-          <div><dt>Przygotowanie</dt><dd>Θ(V)</dd></div>
-          <div><dt>Czas zapytania</dt><dd>O(h)</dd></div>
-          <div><dt>Pamięć</dt><dd>O(V)</dd></div>
+          <div><dt>Przygotowanie</dt><dd id="cxPrep">Θ(V)</dd></div>
+          <div><dt>Czas zapytania</dt><dd id="cxQuery">O(h)</dd></div>
+          <div><dt>Pamięć</dt><dd id="cxMem">O(V)</dd></div>
           <div><dt>Wysokość drzewa</dt><dd>h</dd></div>
         </dl>
         <p class="complexity-note">Najpierw przygotowujemy tablice rodziców i głębokości przez przejście drzewa. Ta demonstracja animuje samo zapytanie; każdy krok przechodzi do rodzica jednego lub obu wierzchołków.</p>
@@ -107,6 +125,8 @@
             <p>Po wyrównaniu głębokości oba wierzchołki są w tej samej odległości od korzenia. Idąc równocześnie w górę, zachowujemy tę odległość, aż trafimy na ich pierwszego wspólnego przodka - najniższego z nich.</p>
           </div>
           <div>
+            <h3>Binary lifting</h3>
+            <p>Dla każdego wierzchołka pamiętamy przodków o 1, 2, 4, 8… poziomów wyżej. Głębszy wierzchołek podnosimy o różnicę głębokości, skacząc po jej bitach. Potem, od największego k, skaczemy oboma wierzchołkami, jeśli ich przodkowie up[k] są różni. Na końcu LCA to rodzic któregokolwiek z nich. Przygotowanie: Θ(V log V), zapytanie: O(log V).</p>
             <h3>Zastosowania i ograniczenia</h3>
             <p>LCA przydaje się m.in. przy zapytaniach o odległość w drzewie, analizie hierarchii i strukturach drzewiastych. To rozwiązanie jest proste, ale dla bardzo wielu zapytań można przygotować tablicę przodków 2<sup>k</sup> (binary lifting), by obsługiwać każde zapytanie w O(log V).</p>
           </div>
@@ -127,8 +147,62 @@
     parent: [], depth: [], children: [], positions: [], size: 15,
     currentA: 0, currentB: 0, originalA: 0, originalB: 0, nextSelection: 'A',
     pathA: new Set(), pathB: new Set(), answer: -1, steps: 0,
-    iterator: null, running: false, frameId: null, lastTime: null, budget: 0
+    iterator: null, running: false, frameId: null, lastTime: null, budget: 0,
+    method: 'simple', up: [], log: 1, highlights: []
   };
+
+  function buildJumpTable() {
+    const maxDepth = Math.max(...state.depth);
+    state.log = Math.max(1, Math.ceil(Math.log2(maxDepth + 1)));
+    state.up = [state.parent.map(parent => (parent < 0 ? 0 : parent))];
+    for (let k = 1; k < state.log; k++) {
+      const previous = state.up[k - 1];
+      state.up.push(previous.map(ancestor => previous[ancestor]));
+    }
+  }
+
+  function renderJumpTable() {
+    $('jumpDetails').hidden = state.method !== 'lift';
+    if (state.method !== 'lift') return;
+    const headRow = document.createElement('tr');
+    for (const text of ['v', ...Array.from({ length: state.log }, (_, k) => `k=${k} (2^${k})`)]) {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = text;
+      headRow.append(th);
+    }
+    $('jumpHead').replaceChildren(headRow);
+    $('jumpBody').replaceChildren(...state.parent.map((_, vertex) => {
+      const row = document.createElement('tr');
+      const label = document.createElement('th');
+      label.scope = 'row';
+      label.textContent = String(vertex + 1);
+      row.append(label);
+      for (let k = 0; k < state.log; k++) {
+        const cell = document.createElement('td');
+        cell.textContent = String(state.up[k][vertex] + 1);
+        const hit = state.highlights.find(item => item.v === vertex && item.k === k);
+        if (hit) cell.className = `jump-${hit.cls}`;
+        row.append(cell);
+      }
+      return row;
+    }));
+  }
+
+  function markPath(set, from, to) {
+    for (let vertex = from; ; vertex = state.parent[vertex]) {
+      set.add(vertex);
+      if (vertex === to || state.parent[vertex] < 0) break;
+    }
+  }
+
+  function applyMethod() {
+    state.method = $('method').value;
+    $('cxPrep').textContent = state.method === 'lift' ? 'Θ(V log V)' : 'Θ(V)';
+    $('cxQuery').textContent = state.method === 'lift' ? 'O(log V)' : 'O(h)';
+    $('cxMem').textContent = state.method === 'lift' ? 'O(V log V)' : 'O(V)';
+    $('size').max = '40';
+  }
 
   function makeTree(size) {
     state.size = size;
@@ -137,11 +211,15 @@
     state.depth = Array(size).fill(0);
     state.children = Array.from({ length: size }, () => []);
     for (let vertex = 1; vertex < size; vertex++) {
-      const parent = Math.floor(Math.random() * vertex);
+      // W trybie binary lifting rodzic jest jednym z ostatnich wierzchołków, co daje głębokie drzewa.
+      const parent = state.method === 'lift'
+        ? vertex - 1 - Math.floor(Math.random() * Math.min(vertex, 3))
+        : Math.floor(Math.random() * vertex);
       state.parent[vertex] = parent;
       state.depth[vertex] = state.depth[parent] + 1;
       state.children[parent].push(vertex);
     }
+    buildJumpTable();
     state.positions = Array(size);
     const gapX = 64;
     const gapY = 76;
@@ -202,7 +280,7 @@
     state.pathB = new Set([state.currentB]);
     state.answer = -1;
     state.steps = 0;
-    state.lastTime = null;
+    state.highlights = [];
     state.budget = 0;
     $('statusText').textContent = 'Gotowy';
     $('startBtn').textContent = '▶ Start';
@@ -246,11 +324,56 @@
     }
   }
 
+  function* liftSteps() {
+    let a = state.currentA, b = state.currentB;
+    const diff = Math.abs(state.depth[a] - state.depth[b]);
+    const deeperIsA = state.depth[a] > state.depth[b];
+    const name = deeperIsA ? 'A' : 'B';
+    for (let k = state.log - 1; k >= 0 && diff > 0; k--) {
+      if (!(diff >> k & 1)) continue;
+      const from = deeperIsA ? a : b;
+      const to = state.up[k][from];
+      markPath(deeperIsA ? state.pathA : state.pathB, from, to);
+      if (deeperIsA) { a = to; state.currentA = a; } else { b = to; state.currentB = b; }
+      state.highlights = [{ v: from, k, cls: deeperIsA ? 'a' : 'b' }];
+      state.steps++;
+      yield `Różnica głębokości: ${diff} (bit k=${k} ustawiony). Skocz ${name} o 2^${k} = ${2 ** k}: ${from + 1} → ${to + 1}.`;
+    }
+    if (a === b) return;
+    for (let k = state.log - 1; k >= 0; k--) {
+      const ua = state.up[k][a], ub = state.up[k][b];
+      state.highlights = [{ v: a, k, cls: 'a' }, { v: b, k, cls: 'b' }];
+      if (ua === ub) {
+        state.steps++;
+        yield `k=${k}: up[${k}][${a + 1}] = up[${k}][${b + 1}] = ${ua + 1}. Przodkowie są równi, więc nie skaczemy (możemy przeskoczyć LCA).`;
+        continue;
+      }
+      markPath(state.pathA, a, ua);
+      markPath(state.pathB, b, ub);
+      a = ua; b = ub;
+      state.currentA = a; state.currentB = b;
+      state.steps++;
+      yield `k=${k}: przodkowie ${ua + 1} i ${ub + 1} są różni. Skocz oboma o 2^${k}: A → ${a + 1}, B → ${b + 1}.`;
+    }
+    const lca = state.up[0][a];
+    state.highlights = [{ v: a, k: 0, cls: 'a' }, { v: b, k: 0, cls: 'b' }];
+    markPath(state.pathA, a, lca);
+    markPath(state.pathB, b, lca);
+    state.currentA = lca; state.currentB = lca;
+    state.steps++;
+    yield `Wierzchołki ${a + 1} i ${b + 1} są różne, ale ich rodzice są równi. LCA = ${lca + 1}.`;
+  }
+
+  function newIterator() {
+    return state.method === 'lift' ? liftSteps() : querySteps();
+  }
+
   function advance() {
     if (!state.iterator) return;
     const result = state.iterator.next();
     if (result.done || state.currentA === state.currentB) {
       state.answer = state.currentA;
+      state.highlights = [];
       state.iterator = null;
       stopAnimation();
       $('statusText').textContent = 'Zakończono';
@@ -266,7 +389,7 @@
   function start() {
     if (state.running) return;
     resetQuery();
-    state.iterator = querySteps();
+    state.iterator = newIterator();
     state.running = true;
     $('statusText').textContent = 'Wyszukiwanie';
     $('startBtn').textContent = 'Ⅱ Pauza';
@@ -380,6 +503,7 @@
       return row;
     }));
     if (state.answer >= 0) $('answer').textContent = String(state.answer + 1);
+    renderJumpTable();
   }
 
   function selectVertex(vertex) {
@@ -406,6 +530,10 @@
     selectVertex(Number(node.dataset.vertex));
   });
 
+  $('method').addEventListener('change', () => {
+    applyMethod();
+    makeTree(state.size);
+  });
   $('vertexA').addEventListener('change', resetQuery);
   $('vertexB').addEventListener('change', resetQuery);
   $('size').addEventListener('input', () => {
@@ -417,7 +545,7 @@
   $('stepBtn').addEventListener('click', () => {
     if (!state.iterator) {
       resetQuery();
-      state.iterator = querySteps();
+      state.iterator = newIterator();
     }
     stopAnimation();
     state.budget = 0;
@@ -430,6 +558,7 @@
     if (document.hidden) state.lastTime = null;
   });
 
+  applyMethod();
   makeTree(state.size);
 })();
     </script>
