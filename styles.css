@@ -863,7 +863,7 @@
 .lca-actions { margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; }
 .lca-actions #randomBtn { margin-left:auto; }
 .tree-viewport { overflow:auto; min-height:300px; max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); padding:18px; }
-.tree-board { display:block; width:auto; min-width:560px; }
+.tree-board { display:block; width:auto; min-width:560px; margin-inline:auto; }
 .tree-edge { stroke:#cbd7e7; stroke-width:2; }
 .tree-edge.path-a { stroke:#4775bb; stroke-width:3; }
 .tree-edge.path-b { stroke:#bd7a42; stroke-width:3; }
@@ -895,6 +895,49 @@
 .parent-table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
 .parent-table th,.parent-table td { border-bottom:1px solid var(--line); padding:7px 10px; text-align:left; }
 .parent-table th { color:var(--muted); font-weight:600; }
+.dijkstra-controls { padding:20px 24px; }
+.dijkstra-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px 24px; }
+.dijkstra-fields .field label { display:flex; justify-content:space-between; gap:8px; font-size:12px; font-weight:600; margin-bottom:8px; }
+.dijkstra-controls .actions { margin-top:16px; }
+.dijkstra-controls #randomBtn { margin-left:auto; }
+.dijkstra-results { margin-top:16px; }
+.dijkstra-viewport { width:75%; margin:12px auto 0; overflow:auto; }
+.dijkstra-canvas { min-width:600px; height:clamp(375px,47.5vw,550px); margin:0; }
+.dijkstra-canvas canvas { cursor:pointer; }
+.dijkstra-legend { flex-wrap:wrap; justify-content:flex-start; gap:8px 16px; }
+.dijkstra-legend span { display:inline-flex; align-items:center; gap:6px; }
+.dijkstra-key { display:inline-block; width:12px; height:12px; border:1px solid #9bacc2; border-radius:50%; background:#f7f9fd; }
+.dijkstra-key.source { border:2px solid var(--blue); background:#e6efff; }
+.dijkstra-key.target { border:2px solid #d06b2c; background:#fff0e4; }
+.dijkstra-key.current { border-color:#21457e; background:#21457e; }
+.dijkstra-key.settled { border-color:#315f67; background:#f7f9fd; }
+.dijkstra-key.route { border-color:#437c88; background:#437c88; }
+.dijkstra-stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.dijkstra-table-panel { padding:20px 24px; }
+.dijkstra-table-panel h2 { margin-bottom:4px; }
+.dijkstra-table-panel > p { margin:0 0 12px; color:var(--muted); font-size:11px; }
+.dijkstra-table-panel .graph-table th,.dijkstra-table-panel .graph-table td { font-variant-numeric:tabular-nums; }
+.dijkstra-table-panel .settled-row td { background:#f1f7f6; }
+.dijkstra-table-panel .target-row td:first-child { font-weight:700; color:var(--blue-dark); }
+.dijkstra-lab .data-details { padding:12px 5px; }
+.dijkstra-lab #adjacencyText,.dijkstra-lab #pathText { overflow-wrap:anywhere; font-size:11px; }
+@media(max-width:850px) {
+  .dijkstra-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:760px) {
+  .dijkstra-controls { padding:18px 16px; }
+  .dijkstra-controls #randomBtn { margin-left:0; }
+  .dijkstra-fields { gap:10px; }
+  .dijkstra-viewport { width:calc(100% - 32px); margin:8px auto 0; }
+  .dijkstra-canvas { height:400px; }
+  .dijkstra-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .dijkstra-stats .stat:nth-child(2) { border-right:0; }
+  .dijkstra-stats .stat:nth-child(-n+2) { border-bottom:1px solid var(--line); }
+  .dijkstra-table-panel { padding:18px 16px; }
+}
+@media(max-width:560px) {
+  .dijkstra-fields { grid-template-columns:1fr; }
+}
 @media(max-width:850px) {
   .lca-fields { grid-template-columns:1fr 1fr; }
 }

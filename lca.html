@@ -101,7 +101,7 @@
       <section class="panel lesson" aria-labelledby="lessonTitle">
         <div class="lesson-header">
           <div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Najniższy wspólny przodek (LCA)</h2></div>
-          <span class="tag">Wyrównywanie głębokości</span>
+          <span class="tag" id="methodTag">Wyrównywanie głębokości</span>
         </div>
         <dl class="complexity">
           <div><dt>Wejście</dt><dd>Ukorzenione drzewo</dd></div>
@@ -110,10 +110,10 @@
           <div><dt>Pamięć</dt><dd id="cxMem">O(V)</dd></div>
           <div><dt>Wysokość drzewa</dt><dd>h</dd></div>
         </dl>
-        <p class="complexity-note">Najpierw przygotowujemy tablice rodziców i głębokości przez przejście drzewa. Ta demonstracja animuje samo zapytanie; każdy krok przechodzi do rodzica jednego lub obu wierzchołków.</p>
+        <p class="complexity-note" id="methodNote">Najpierw przygotowujemy tablice rodziców i głębokości przez przejście drzewa. Ta demonstracja animuje samo zapytanie; każdy krok przechodzi do rodzica jednego lub obu wierzchołków.</p>
         <div class="lesson-columns">
           <div>
-            <h3>Jak to działa?</h3>
+            <h3>Wyrównywanie głębokości — jak to działa?</h3>
             <ol>
               <li>Jeśli wierzchołki mają różne głębokości, podnieś głębszy do poziomu płytszego.</li>
               <li>Jeśli są różne, podnieś oba o jeden poziom.</li>
@@ -126,7 +126,7 @@
           </div>
           <div>
             <h3>Binary lifting</h3>
-            <p>Dla każdego wierzchołka pamiętamy przodków o 1, 2, 4, 8… poziomów wyżej. Głębszy wierzchołek podnosimy o różnicę głębokości, skacząc po jej bitach. Potem, od największego k, skaczemy oboma wierzchołkami, jeśli ich przodkowie up[k] są różni. Na końcu LCA to rodzic któregokolwiek z nich. Przygotowanie: Θ(V log V), zapytanie: O(log V).</p>
+            <p>Dla każdego wierzchołka pamiętamy przodków o 1, 2, 4, 8… poziomów wyżej. Głębszy wierzchołek podnosimy o różnicę głębokości, skacząc po jej bitach. Jeśli po wyrównaniu głębokości A = B, ten wierzchołek jest LCA i kończymy zapytanie. W przeciwnym razie, od największego k, skaczemy oboma wierzchołkami, jeśli ich przodkowie up[k] są różni. Po tych skokach LCA to wspólny rodzic obu wierzchołków. Przygotowanie: Θ(V log V), zapytanie: O(log V).</p>
             <h3>Zastosowania i ograniczenia</h3>
             <p>LCA przydaje się m.in. przy zapytaniach o odległość w drzewie, analizie hierarchii i strukturach drzewiastych. To rozwiązanie jest proste, ale dla bardzo wielu zapytań można przygotować tablicę przodków 2<sup>k</sup> (binary lifting), by obsługiwać każde zapytanie w O(log V).</p>
           </div>
@@ -198,6 +198,10 @@
 
   function applyMethod() {
     state.method = $('method').value;
+    $('methodTag').textContent = state.method === 'lift' ? 'Binary lifting' : 'Wyrównywanie głębokości';
+    $('methodNote').textContent = state.method === 'lift'
+      ? 'Najpierw przygotowujemy tablice rodziców, głębokości i przodków o 2^k poziomów wyżej. Ta demonstracja animuje samo zapytanie; krok sprawdza przodków lub wykonuje skok jednego albo obu wierzchołków.'
+      : 'Najpierw przygotowujemy tablice rodziców i głębokości przez przejście drzewa. Ta demonstracja animuje samo zapytanie; każdy krok przechodzi do rodzica jednego lub obu wierzchołków.';
     $('cxPrep').textContent = state.method === 'lift' ? 'Θ(V log V)' : 'Θ(V)';
     $('cxQuery').textContent = state.method === 'lift' ? 'O(log V)' : 'O(h)';
     $('cxMem').textContent = state.method === 'lift' ? 'O(V log V)' : 'O(V)';
@@ -435,13 +439,17 @@
 
   function drawTree() {
     const svg = $('treeBoard');
+    const focusedVertex = svg.contains(document.activeElement)
+      ? document.activeElement.getAttribute('data-vertex') : null;
+    let focusTarget = null;
     const xs = state.positions.map(point => point.x);
     const ys = state.positions.map(point => point.y);
     const minX = Math.min(...xs), maxX = Math.max(...xs), maxY = Math.max(...ys);
     const paddingX = 40, paddingY = 36;
     const width = Math.max(560, maxX - minX + paddingX * 2);
     const height = maxY + paddingY * 2 + 10;
-    svg.setAttribute('viewBox', `${minX - paddingX} ${-paddingY} ${width} ${height}`);
+    const viewLeft = (minX + maxX - width) / 2;
+    svg.setAttribute('viewBox', `${viewLeft} ${-paddingY} ${width} ${height}`);
     svg.setAttribute('width', String(width));
     svg.setAttribute('height', String(height));
     svg.replaceChildren();
@@ -482,7 +490,9 @@
       label.textContent = String(vertex + 1);
       group.append(label);
       svg.append(group);
+      if (String(vertex) === focusedVertex) focusTarget = group;
     }
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
   }
 
   function updateInfo() {

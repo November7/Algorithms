@@ -1,32 +1,38 @@
 [
   {
     "title": "Wyznaczanie minimum i maksimum",
-    "description": "Interaktywne laboratorium z algorytmami wyznaczania minimum i maksimum.",
+    "description": "Algorytmy wyznaczania minimum i maksimum.",
     "url": "minmax.html",
     "status": "published"
   },
   {
     "title": "Algorytmy wyszukiwania",
-    "description": "Interaktywne laboratorium z algorytmami wyszukiwania.",
+    "description": "Algorytmy wyszukiwania.",
     "url": "search.html",
     "status": "published"
   },
   {
     "title": "Algorytmy sortowania",
-    "description": "Interaktywne laboratorium z algorytmami sortowania.",
+    "description": "Algorytmy sortowania.",
     "url": "sort.html",
     "status": "published"
   },
   {
     "title": "Przeszukiwanie grafów - DFS i BFS",
-    "description": "Interaktywne laboratorium DFS i BFS z przeszukiwaniem losowych grafów oraz rysowaniem drzew przeszukiwania na żywo.",
+    "description": "Algorytmy przeszukiwania grafów - DFS i BFS.",
     "url": "dfs-bfs.html",
     "status": "published"
   },
   {
     "title": "Najniższy wspólny przodek (LCA)",
-    "description": "Interaktywna symulacja znajdowania najniższego wspólnego przodka dwóch wierzchołków w drzewie.",
+    "description": "Algorytm znajdowania najniższego wspólnego przodka (LCA) dwóch wierzchołków w drzewie.",
     "url": "lca.html",
+    "status": "published"
+  },
+  {
+    "title": "Algorytm Dijkstry",
+    "description": "Algorytm Dijkstry do wyznaczania najkrótszych ścieżek w grafie.",
+    "url": "dijkstra.html",
     "status": "published"
   }
 ]

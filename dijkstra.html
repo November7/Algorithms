@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interaktywne laboratorium algorytmu Dijkstry. Obserwuj wyznaczanie najkrótszych ścieżek w ważonym grafie krok po kroku.">
+    <title>Algorytm Dijkstry · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="dijkstra-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          AlgorithmsLab <span class="graph-brand-note"> / edukacja</span>
+        </a>
+        <span class="meta">Grafy ważone - Dijkstra</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div>
+          <span class="eyebrow">Zrozum, zanim zapamiętasz</span>
+          <h1 id="pageTitle">Znajdź najkrótszą drogę.</h1>
+          <p>Śledź, jak algorytm Dijkstry wybiera najbliższy wierzchołek i poprawia oszacowania odległości. Warstwy grafu tworzą wiele konkurencyjnych tras o różnych wagach.</p>
+        </div>
+        <span class="badge">Najkrótsze ścieżki · krok po kroku</span>
+      </section>
+      <section class="panel dijkstra-controls" aria-label="Ustawienia i sterowanie">
+        <div class="dijkstra-fields">
+          <div class="field">
+            <label for="startVertex">Wierzchołek startowy</label>
+            <select id="startVertex"></select>
+          </div>
+          <div class="field">
+            <label for="targetVertex">Cel ścieżki</label>
+            <select id="targetVertex"></select>
+          </div>
+          <div class="field">
+            <label for="size">Liczba wierzchołków <output id="sizeLabel" for="size">8</output></label>
+            <input type="range" id="size" min="8" max="12" value="8" step="1">
+          </div>
+          <div class="field">
+            <label for="density">Dodatkowe krawędzie <output id="densityLabel" for="density">25%</output></label>
+            <input type="range" id="density" min="0" max="60" value="25" step="5">
+          </div>
+          <div class="field">
+            <label for="speed">Tempo <output id="speedLabel" for="speed">3 op./s</output></label>
+            <input type="range" id="speed" min="1" max="12" value="3" step="1">
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" id="startBtn" class="btn primary">▶ Start</button>
+          <button type="button" id="pauseBtn" class="btn" disabled>Pauza</button>
+          <button type="button" id="stepBtn" class="btn">Jeden krok</button>
+          <button type="button" id="stopBtn" class="btn" disabled>Reset</button>
+          <button type="button" id="randomBtn" class="btn">↻ Losuj graf</button>
+        </div>
+        <p class="control-hint" id="tempoHint">Jeden krok wybiera wierzchołek lub sprawdza jedną krawędź. Start animuje kolejne kroki, a Reset zachowuje graf.</p>
+        <p class="control-hint" id="selectionHint">Kliknij wierzchołek na grafie, aby wybrać start; kolejne kliknięcie wybiera cel. Wybór możesz też zmienić listami powyżej.</p>
+        <p class="control-hint">Graf ma pięć warstw, więc każda trasa między skrajnymi wierzchołkami przechodzi przez co najmniej cztery krawędzie. Dodatkowe połączenia powstają tylko między sąsiednimi warstwami. Wagi są dodatnie; Dijkstra nie działa poprawnie dla ujemnych wag.</p>
+      </section>
+      <div class="main-column dijkstra-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading">
+            <div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf i badane krawędzie</h2></div>
+            <span id="statusText" role="status">Gotowy</span>
+          </div>
+          <div class="dijkstra-viewport" tabindex="0" role="region" aria-label="Graf ważony — przewijany widok">
+            <div class="canvas-wrap dijkstra-canvas">
+              <canvas id="board" role="img" aria-label="Ważony graf. Kliknij wierzchołki kolejno, aby wybrać start i cel." aria-describedby="chartDescription operation selectionHint">Graf z wagami krawędzi.</canvas>
+            </div>
+          </div>
+          <div class="chart-caption dijkstra-legend" id="chartDescription">
+            <span><i class="dijkstra-key source" aria-hidden="true"></i>Start</span>
+            <span><i class="dijkstra-key target" aria-hidden="true"></i>Cel</span>
+            <span><i class="dijkstra-key current" aria-hidden="true"></i>Wybrany teraz · ▶</span>
+            <span><i class="dijkstra-key settled" aria-hidden="true"></i>Odwiedzony · ✓</span>
+            <span><i class="dijkstra-key route" aria-hidden="true"></i>Najkrótsza znaleziona trasa do celu</span>
+            <span>Waga krawędzi jest jej długością.</span>
+          </div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats dijkstra-stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Ustalono</span><output id="settledCount">0</output><small id="vertexCount">z 8 wierzchołków</small></div>
+          <div class="stat"><span>Sprawdzone krawędzie</span><output id="edgeCount">0</output><small>relaksacje i porównania</small></div>
+          <div class="stat"><span>Odległość do celu</span><output id="targetDistance">∞</output><small id="targetPath">Brak znanej trasy</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>operacje algorytmu</small></div>
+        </section>
+        <section class="panel dijkstra-table-panel" aria-labelledby="distanceTitle">
+          <h2 id="distanceTitle">Odległości i poprzednicy</h2>
+          <p>„Tymczasowa” oznacza najlepszą trasę znaną do tej pory. Wartość staje się ostateczna po wybraniu wierzchołka.</p>
+          <div class="graph-table-wrap">
+            <table class="graph-table">
+              <caption>Stan odległości od wierzchołka startowego</caption>
+              <thead><tr><th scope="col">Wierzchołek</th><th scope="col">Odległość</th><th scope="col">Poprzednik na trasie</th><th scope="col">Stan</th></tr></thead>
+              <tbody id="distanceTable"></tbody>
+            </table>
+          </div>
+        </section>
+        <details class="data-details">
+          <summary>Listy sąsiedztwa i wynikowa ścieżka</summary>
+          <p id="adjacencyText"></p>
+          <p id="pathText">Wybierz wierzchołek startowy i cel, aby rozpocząć.</p>
+        </details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Algorytm Dijkstry</h2></div>
+          <span class="tag">Relaksacja krawędzi</span>
+        </div>
+        <dl class="complexity">
+          <div><dt>Reprezentacja</dt><dd>Listy sąsiedztwa</dd></div>
+          <div><dt>Czas</dt><dd>O(V² + E)</dd></div>
+          <div><dt>Pamięć</dt><dd>O(V + E)</dd></div>
+          <div><dt>Wagi</dt><dd>Nieujemne</dd></div>
+        </dl>
+        <p class="complexity-note">Ta wersja liniowo wyszukuje najbliższy nieustalony wierzchołek, dlatego jej czas wynosi O(V² + E). Kopiec priorytetowy pozwala uzyskać O((V + E) log V). V oznacza liczbę wierzchołków, a E — liczbę krawędzi.</p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <ol>
+              <li>Ustaw odległość startu na 0, a pozostałych wierzchołków na nieskończoność.</li>
+              <li>Wybierz nieustalony wierzchołek o najmniejszej znanej odległości i ustal tę odległość.</li>
+              <li>Dla każdego sąsiada sprawdź, czy droga przez wybrany wierzchołek jest krótsza. Jeśli tak, zaktualizuj odległość i poprzednika.</li>
+              <li>Powtarzaj, aż nie będzie można wybrać kolejnego osiągalnego wierzchołka.</li>
+            </ol>
+          </div>
+          <div>
+            <h3>Dlaczego to działa?</h3>
+            <p>Wszystkie wagi są nieujemne, więc droga, która opuszcza wierzchołek o najmniejszej tymczasowej odległości, nie może później poprawić jego wyniku. Możemy bezpiecznie uznać go za ostateczny, a następnie sprawdzić jego sąsiadów.</p>
+          </div>
+          <div>
+            <h3>Ograniczenia i zastosowania</h3>
+            <p>Ujemne wagi łamią założenie algorytmu — do takich grafów służy m.in. algorytm Bellmana-Forda. Dijkstra jest używana w nawigacji, routingu sieciowym i wyznaczaniu kosztu dojścia w grafach.</p>
+            <div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Ustaw różne wierzchołki startowy i docelowy. Zatrzymuj animację przed końcem i obserwuj, jak odległość tymczasowa zmienia się po znalezieniu krótszej drogi.</p></div>
+          </div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const canvas = $('board'), ctx = canvas.getContext('2d');
+  const state = {
+    adjacency: [], edges: [], positions: [], layers: [], distance: [], previous: [],
+    settled: [], current: -1, activeEdge: null, checks: 0, steps: 0,
+    running: false, paused: false, done: false, iterator: null, nextSelection: 'startVertex'
+  };
+  let width = 1, height = 1, frameId = null, lastTime = null, budget = 0;
+  const edgeKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
+  const name = vertex => `Wierzchołek ${vertex + 1}`;
+
+  function reset(message = 'Wybierz Start lub wykonaj pierwszy krok.') {
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null; lastTime = null; budget = 0;
+    state.distance = state.adjacency.map((_, i) => i === Number($('startVertex').value) ? 0 : Infinity);
+    state.previous = state.adjacency.map(() => -1);
+    state.settled = state.adjacency.map(() => false);
+    state.current = -1; state.activeEdge = null; state.checks = 0; state.steps = 0;
+    state.running = false; state.paused = false; state.done = false; state.iterator = null;
+    $('statusText').textContent = 'Gotowy';
+    $('operation').textContent = message;
+    render();
+  }
+
+  function generateGraph() {
+    const n = Number($('size').value), probability = Number($('density').value) / 100;
+    const oldStart = Number($('startVertex').value || 0), oldTarget = Number($('targetVertex').value || n - 1);
+    state.adjacency = Array.from({ length: n }, () => []);
+    state.edges = [];
+    const existing = new Set();
+    function addEdge(a, b) {
+      const key = edgeKey(a, b);
+      if (a === b || existing.has(key)) return;
+      existing.add(key);
+      const edge = { a, b, weight: 1 + Math.floor(Math.random() * 9) };
+      state.edges.push(edge);
+      state.adjacency[a].push({ to: b, weight: edge.weight });
+      state.adjacency[b].push({ to: a, weight: edge.weight });
+    }
+    const innerSize = n - 2;
+    const layerSizes = [1];
+    for (let layer = 0; layer < 3; layer++) {
+      layerSizes.push(Math.floor(innerSize / 3) + (layer < innerSize % 3 ? 1 : 0));
+    }
+    layerSizes.push(1);
+    state.layers = [];
+    let nextVertex = 0;
+    for (const size of layerSizes) {
+      state.layers.push(Array.from({ length: size }, () => nextVertex++));
+    }
+    state.layers.forEach((layer, depth) => {
+      if (depth === 0) return;
+      const previousLayer = state.layers[depth - 1];
+      const linkCount = Math.max(previousLayer.length, layer.length);
+      for (let i = 0; i < linkCount; i++) {
+        addEdge(previousLayer[i % previousLayer.length], layer[i % layer.length]);
+        if (i + 1 < linkCount) {
+          addEdge(previousLayer[(i + 1) % previousLayer.length], layer[i % layer.length]);
+        }
+      }
+    });
+    for (let depth = 0; depth < state.layers.length - 1; depth++) {
+      const left = state.layers[depth], right = state.layers[depth + 1];
+      for (const a of left) {
+        for (const b of right) {
+          if (!existing.has(edgeKey(a, b)) && Math.random() < probability) addEdge(a, b);
+        }
+      }
+    }
+    state.adjacency.forEach(neighbors => neighbors.sort((a, b) => a.to - b.to));
+    state.positions = Array(n);
+    state.layers.forEach((layer, depth) => {
+      layer.forEach((vertex, row) => {
+        state.positions[vertex] = {
+          x: -1 + 2 * depth / (state.layers.length - 1),
+          y: layer.length === 1 ? 0 : (row - (layer.length - 1) / 2) * 1.5 / (layer.length - 1)
+        };
+      });
+    });
+    for (const id of ['startVertex', 'targetVertex']) {
+      const select = $(id);
+      select.replaceChildren(...state.adjacency.map((_, i) => {
+        const option = document.createElement('option');
+        option.value = i; option.textContent = name(i); return option;
+      }));
+    }
+    $('startVertex').value = String(Math.min(oldStart, n - 1));
+    $('targetVertex').value = String(Math.min(oldTarget, n - 1));
+    if ($('startVertex').value === $('targetVertex').value && n > 1) {
+      $('targetVertex').value = String((Number($('startVertex').value) + 1) % n);
+    }
+    $('sizeLabel').textContent = n;
+    $('densityLabel').textContent = `${$('density').value}%`;
+    $('vertexCount').textContent = `z ${n} wierzchołków`;
+    state.nextSelection = 'startVertex';
+    $('selectionHint').textContent = 'Kliknij wierzchołek na grafie, aby wybrać start; kolejne kliknięcie wybiera cel. Wybór możesz też zmienić listami powyżej.';
+    $('adjacencyText').textContent = state.adjacency.map((neighbors, v) =>
+      `${v + 1}: ${neighbors.map(edge => `${edge.to + 1} (waga ${edge.weight})`).join(', ') || 'brak'}`
+    ).join(' · ');
+    reset('Nowy graf warstwowy jest gotowy. Porównaj alternatywne trasy podczas kolejnych kroków.');
+  }
+
+  function* runDijkstra() {
+    while (true) {
+      let next = -1;
+      for (let vertex = 0; vertex < state.distance.length; vertex++) {
+        if (!state.settled[vertex] && state.distance[vertex] < Infinity
+          && (next < 0 || state.distance[vertex] < state.distance[next])) next = vertex;
+      }
+      if (next < 0) break;
+      state.current = next;
+      state.activeEdge = null;
+      state.settled[next] = true;
+      yield `${name(next)} ma najmniejszą tymczasową odległość (${state.distance[next]}) — ustalamy jej wartość.`;
+      for (const edge of state.adjacency[next]) {
+        state.activeEdge = edgeKey(next, edge.to);
+        state.checks++;
+        const candidate = state.distance[next] + edge.weight;
+        if (!state.settled[edge.to] && candidate < state.distance[edge.to]) {
+          state.distance[edge.to] = candidate;
+          state.previous[edge.to] = next;
+          yield `Relaksacja: ${name(next)} → ${name(edge.to)} daje odległość ${candidate} (waga ${edge.weight}) — poprawiamy wynik.`;
+        } else {
+          yield `Sprawdzamy krawędź ${next + 1}–${edge.to + 1} (waga ${edge.weight}); odległość ${state.distance[edge.to] === Infinity ? '∞' : state.distance[edge.to]} pozostaje bez zmian.`;
+        }
+      }
+    }
+    state.current = -1; state.activeEdge = null; state.done = true;
+    yield 'Gotowe — ustalono odległości do wszystkich osiągalnych wierzchołków.';
+  }
+
+  function pathTo(target) {
+    if (state.distance[target] === Infinity) return [];
+    const path = [];
+    for (let vertex = target, count = 0; vertex >= 0 && count <= state.distance.length; vertex = state.previous[vertex], count++) {
+      path.push(vertex);
+      if (vertex === Number($('startVertex').value)) return path.reverse();
+    }
+    return [];
+  }
+
+  function renderTable() {
+    $('distanceTable').replaceChildren(...state.distance.map((distance, vertex) => {
+      const row = document.createElement('tr');
+      if (state.settled[vertex]) row.className = 'settled-row';
+      if (vertex === Number($('targetVertex').value)) row.className += ' target-row';
+      const values = [
+        name(vertex),
+        distance === Infinity ? '∞' : String(distance),
+        state.previous[vertex] < 0 ? '—' : String(state.previous[vertex] + 1),
+        state.settled[vertex] ? 'Ustalona' : distance === Infinity ? (state.done ? 'Nieosiągalna' : 'Nieodkryta') : 'Tymczasowa'
+      ];
+      for (const value of values) {
+        const cell = document.createElement('td');
+        cell.textContent = value;
+        row.append(cell);
+      }
+      return row;
+    }));
+  }
+
+  function draw() {
+    const ratio = window.devicePixelRatio || 1;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    const paddingX = 54, paddingY = 64;
+    const points = state.positions.map(position => ({
+      x: width / 2 + position.x * Math.max(1, width / 2 - paddingX),
+      y: height / 2 + position.y * Math.max(1, height / 2 - paddingY)
+    }));
+    const route = pathTo(Number($('targetVertex').value));
+    const routeVertices = new Set(route);
+    const routeEdges = new Set(route.slice(1).map((vertex, i) => edgeKey(vertex, route[i])));
+    for (const edge of state.edges) {
+      const a = points[edge.a], b = points[edge.b], key = edgeKey(edge.a, edge.b);
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = key === state.activeEdge ? '#d06b2c' : routeEdges.has(key) ? '#437c88' : '#cbd7e7';
+      ctx.lineWidth = key === state.activeEdge ? 4 : routeEdges.has(key) ? 4 : 2;
+      ctx.stroke();
+    }
+    // Draw weights after all edges, and move colliding labels along their edges.
+    const weightLabels = [];
+    for (const edge of state.edges) {
+      const a = points[edge.a], b = points[edge.b];
+      const candidates = [0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8].map(t => ({
+        x: a.x + (b.x - a.x) * t,
+        y: a.y + (b.y - a.y) * t
+      }));
+      const clearance = point => Math.min(
+        ...weightLabels.map(label => Math.hypot(point.x - label.x, point.y - label.y) - 26),
+        ...points.map(node => Math.hypot(point.x - node.x, point.y - node.y) - 34)
+      );
+      const label = candidates.find(point => clearance(point) >= 0)
+        || candidates.reduce((best, point) => clearance(point) > clearance(best) ? point : best);
+      weightLabels.push(label);
+      const { x, y } = label;
+      ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = '#cbd7e7'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = '#314d76'; ctx.font = '600 11px Segoe UI, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(edge.weight), x, y);
+    }
+    points.forEach((point, vertex) => {
+      const source = vertex === Number($('startVertex').value);
+      const target = vertex === Number($('targetVertex').value);
+      const current = vertex === state.current;
+      const marker = current ? '▶' : state.settled[vertex] ? '✓' : source ? 'S' : target ? 'T' : '';
+      ctx.beginPath(); ctx.arc(point.x, point.y, 19, 0, Math.PI * 2);
+      ctx.fillStyle = current ? '#21457e' : routeVertices.has(vertex) ? '#437c88' : '#f7f9fd';
+      ctx.fill();
+      ctx.strokeStyle = current ? '#21457e' : target ? '#d06b2c' : source ? '#315fb1' : state.settled[vertex] ? '#315f67' : '#9bacc2';
+      ctx.lineWidth = source || target || current ? 3 : 1.5; ctx.stroke();
+      if (source && target) {
+        ctx.beginPath(); ctx.arc(point.x, point.y, 24, 0, Math.PI * 2);
+        ctx.strokeStyle = '#d06b2c'; ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.fillStyle = current || routeVertices.has(vertex) ? '#fff' : '#182a45';
+      ctx.font = '600 12px Segoe UI, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(vertex + 1), point.x, point.y);
+      if (marker) {
+        ctx.fillStyle = current ? '#21457e' : state.settled[vertex] ? '#315f67' : source ? '#234b92' : '#b9652e';
+        ctx.font = '700 12px Segoe UI, sans-serif';
+        ctx.fillText(marker, point.x, point.y - 30);
+      }
+      const label = state.distance[vertex] === Infinity ? '∞' : String(state.distance[vertex]);
+      ctx.fillStyle = '#586b85'; ctx.font = '11px Segoe UI, sans-serif';
+      ctx.fillText(label, point.x, point.y + 30);
+    });
+  }
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    width = Math.max(1, rect.width); height = Math.max(1, rect.height);
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
+    draw();
+  }
+
+  function selectVertex(event) {
+    if (state.running) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) * width / rect.width;
+    const y = (event.clientY - rect.top) * height / rect.height;
+    const vertex = state.positions.findIndex(position => {
+      const pointX = width / 2 + position.x * Math.max(1, width / 2 - 54);
+      const pointY = height / 2 + position.y * Math.max(1, height / 2 - 64);
+      return (x - pointX) ** 2 + (y - pointY) ** 2 <= 24 ** 2;
+    });
+    if (vertex < 0) return;
+    const id = state.nextSelection;
+    $(id).value = String(vertex);
+    state.nextSelection = id === 'startVertex' ? 'targetVertex' : 'startVertex';
+    $('selectionHint').textContent = `Wybrano ${id === 'startVertex' ? 'start' : 'cel'}: ${name(vertex)}. Kliknij, aby wybrać ${state.nextSelection === 'startVertex' ? 'start' : 'cel'}; możesz też zmienić wybór listami powyżej.`;
+    reset('Wierzchołki wybrane. Uruchom algorytm lub wykonaj jeden krok.');
+  }
+
+  function updateControls() {
+    $('startBtn').disabled = state.running && !state.paused;
+    $('startBtn').textContent = state.running && state.paused ? '▶ Wznów' : state.done ? '▶ Uruchom ponownie' : '▶ Start';
+    $('pauseBtn').disabled = !state.running;
+    $('pauseBtn').textContent = state.paused ? 'Wznów' : 'Pauza';
+    $('stepBtn').disabled = state.running && !state.paused;
+    $('stopBtn').disabled = !state.running && state.steps === 0;
+    for (const id of ['startVertex', 'targetVertex', 'size', 'density', 'randomBtn']) $(id).disabled = state.running;
+  }
+
+  function render() {
+    renderTable();
+    const target = Number($('targetVertex').value);
+    const route = pathTo(target);
+    $('settledCount').textContent = state.settled.filter(Boolean).length;
+    $('edgeCount').textContent = state.checks;
+    $('stepCount').textContent = state.steps;
+    $('targetDistance').textContent = state.distance[target] === Infinity ? '∞' : String(state.distance[target]);
+    $('targetPath').textContent = route.length ? route.map(vertex => vertex + 1).join(' → ') : 'Brak znanej trasy';
+    $('pathText').textContent = route.length
+      ? `Najkrótsza znana ścieżka: ${route.map(vertex => vertex + 1).join(' → ')}; łączna waga: ${state.distance[target]}.`
+      : state.done ? 'Cel jest nieosiągalny z wybranego wierzchołka startowego.' : 'Nie znaleziono jeszcze ścieżki do celu.';
+    draw(); updateControls();
+  }
+
+  function finish() {
+    state.running = false; state.paused = false; state.done = true;
+    state.iterator = null;
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null; lastTime = null; budget = 0;
+    $('statusText').textContent = 'Zakończono';
+    render();
+  }
+
+  function nextStep() {
+    if (state.done) return false;
+    if (!state.iterator) state.iterator = runDijkstra();
+    const result = state.iterator.next();
+    if (result.done) { finish(); return false; }
+    state.steps++;
+    $('operation').textContent = result.value;
+    if (state.done) { finish(); return false; }
+    $('statusText').textContent = state.paused ? 'Pauza' : 'W trakcie';
+    render();
+    return true;
+  }
+
+  function animate(time) {
+    if (!state.running || state.paused) { frameId = null; return; }
+    if (lastTime === null) lastTime = time;
+    budget += Math.min(time - lastTime, 100) * Number($('speed').value) / 1000;
+    lastTime = time;
+    let safety = 0;
+    while (budget >= 1 && state.running && safety++ < 100) {
+      budget--;
+      if (!nextStep()) break;
+    }
+    if (state.running && !state.paused) frameId = requestAnimationFrame(animate);
+    else frameId = null;
+  }
+
+  function start() {
+    if (state.running && state.paused) {
+      state.paused = false; $('statusText').textContent = 'W trakcie'; updateControls();
+    } else {
+      if (state.done) reset();
+      if (!state.iterator) state.iterator = runDijkstra();
+      state.running = true; state.paused = false; lastTime = null; budget = 0;
+      $('statusText').textContent = 'W trakcie'; updateControls();
+    }
+    if (frameId === null) frameId = requestAnimationFrame(animate);
+  }
+
+  $('startBtn').addEventListener('click', start);
+  $('pauseBtn').addEventListener('click', () => {
+    if (!state.running) return;
+    state.paused = !state.paused;
+    $('statusText').textContent = state.paused ? 'Pauza' : 'W trakcie';
+    if (state.paused && frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null; lastTime = null; updateControls();
+    if (!state.paused) frameId = requestAnimationFrame(animate);
+  });
+  $('stepBtn').addEventListener('click', () => {
+    if (state.done) reset();
+    if (!state.iterator) state.iterator = runDijkstra();
+    state.running = true; state.paused = true;
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null; lastTime = null; budget = 0;
+    nextStep();
+    if (!state.done) { state.running = true; state.paused = true; $('statusText').textContent = 'Krok ręczny'; }
+    updateControls();
+  });
+  $('stopBtn').addEventListener('click', () => reset());
+  $('randomBtn').addEventListener('click', generateGraph);
+  canvas.addEventListener('click', selectVertex);
+  for (const id of ['startVertex', 'targetVertex']) $(id).addEventListener('change', () => reset('Ustawienia zmienione. Uruchom algorytm, aby obliczyć ścieżkę.'));
+  $('size').addEventListener('input', () => { $('sizeLabel').textContent = $('size').value; });
+  $('size').addEventListener('change', generateGraph);
+  $('density').addEventListener('input', () => { $('densityLabel').textContent = `${$('density').value}%`; });
+  $('density').addEventListener('change', generateGraph);
+  $('speed').addEventListener('input', () => { $('speedLabel').textContent = `${$('speed').value} op./s`; });
+  document.addEventListener('visibilitychange', () => { lastTime = null; });
+  window.addEventListener('resize', resizeCanvas);
+  new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+
+  generateGraph();
+  resizeCanvas();
+})();
+    </script>
+  </body>
+</html>
