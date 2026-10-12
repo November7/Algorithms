@@ -866,6 +866,7 @@
 .tree-edge.path-b { stroke:#bd7a42; stroke-width:3; }
 .tree-edge.shared-path { stroke:#7456a3; stroke-width:4; }
 .tree-node circle { fill:#f7f9fd; stroke:#9bacc2; stroke-width:1.5; }
+.tree-node { cursor:pointer; }
 .tree-node text { fill:#182a45; font:600 12px "Segoe UI",sans-serif; text-anchor:middle; dominant-baseline:central; pointer-events:none; }
 .tree-node.endpoint-a circle { fill:#e6efff; stroke:#4775bb; stroke-width:3; }
 .tree-node.endpoint-b circle { fill:#fff0e4; stroke:#bd7a42; stroke-width:3; }
@@ -875,6 +876,7 @@
 .tree-node.ancestor-a circle { fill:#e6efff; stroke:#4775bb; stroke-width:2.5; }
 .tree-node.ancestor-b circle { fill:#fff0e4; stroke:#bd7a42; stroke-width:2.5; }
 .tree-node.answer circle { fill:#437c88; stroke:#315f67; stroke-width:4; }
+.tree-node:focus-visible circle { stroke:#182a45; stroke-width:4; }
 .tree-legend { display:flex; flex-wrap:wrap; gap:12px 20px; padding:0 24px 16px; color:var(--muted); font-size:11px; }
 .tree-legend span { display:inline-flex; align-items:center; gap:7px; }
 .legend-dot { width:12px; height:12px; border:2px solid #9bacc2; border-radius:50%; background:#f7f9fd; }
