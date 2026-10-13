@@ -903,7 +903,7 @@
 .dijkstra-results { margin-top:16px; }
 .dijkstra-viewport { width:75%; margin:12px auto 0; overflow:auto; }
 .dijkstra-canvas { min-width:600px; height:clamp(375px,47.5vw,550px); margin:0; }
-.dijkstra-canvas canvas { cursor:pointer; }
+.dijkstra-canvas canvas { cursor:default; touch-action:none; }
 .dijkstra-legend { flex-wrap:wrap; justify-content:flex-start; gap:8px 16px; }
 .dijkstra-legend span { display:inline-flex; align-items:center; gap:6px; }
 .dijkstra-key { display:inline-block; width:12px; height:12px; border:1px solid #9bacc2; border-radius:50%; background:#f7f9fd; }

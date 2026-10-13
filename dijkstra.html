@@ -57,7 +57,7 @@
         </div>
         <p class="control-hint" id="tempoHint">Jeden krok wybiera wierzchołek lub sprawdza jedną krawędź. Start animuje kolejne kroki, a Reset zachowuje graf.</p>
         <p class="control-hint" id="selectionHint">Kliknij wierzchołek na grafie, aby wybrać start; kolejne kliknięcie wybiera cel. Wybór możesz też zmienić listami powyżej.</p>
-        <p class="control-hint">Graf ma pięć warstw, więc każda trasa między skrajnymi wierzchołkami przechodzi przez co najmniej cztery krawędzie. Dodatkowe połączenia powstają tylko między sąsiednimi warstwami. Wagi są dodatnie; Dijkstra nie działa poprawnie dla ujemnych wag.</p>
+        <p class="control-hint">Przeciągnij węzeł, aby zmienić graf. Wagi aktualizują się na bieżąco: 100 px między środkami węzłów to waga 1, z dokładnością do jednego miejsca po przecinku. Zmiana położenia resetuje przebieg algorytmu. Graf ma pięć warstw, a połączenia powstają tylko między sąsiednimi warstwami. Wagi są nieujemne.</p>
       </section>
       <div class="main-column dijkstra-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
@@ -67,7 +67,7 @@
           </div>
           <div class="dijkstra-viewport" tabindex="0" role="region" aria-label="Graf ważony — przewijany widok">
             <div class="canvas-wrap dijkstra-canvas">
-              <canvas id="board" role="img" aria-label="Ważony graf. Kliknij wierzchołki kolejno, aby wybrać start i cel." aria-describedby="chartDescription operation selectionHint">Graf z wagami krawędzi.</canvas>
+              <canvas id="board" role="img" aria-label="Ważony graf. Kliknij wierzchołki kolejno, aby wybrać start i cel. Przeciągnij węzeł, aby zmienić położenie i wagi krawędzi." aria-describedby="chartDescription operation selectionHint">Graf z wagami krawędzi.</canvas>
             </div>
           </div>
           <div class="chart-caption dijkstra-legend" id="chartDescription">
@@ -76,7 +76,7 @@
             <span><i class="dijkstra-key current" aria-hidden="true"></i>Wybrany teraz · ▶</span>
             <span><i class="dijkstra-key settled" aria-hidden="true"></i>Odwiedzony · ✓</span>
             <span><i class="dijkstra-key route" aria-hidden="true"></i>Najkrótsza znaleziona trasa do celu</span>
-            <span>Waga krawędzi jest jej długością.</span>
+            <span>Waga = odległość między środkami węzłów / 100 px.</span>
           </div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
         </section>
@@ -149,8 +149,34 @@
     running: false, paused: false, done: false, iterator: null, nextSelection: 'startVertex'
   };
   let width = 1, height = 1, frameId = null, lastTime = null, budget = 0;
+  let drag = null, suppressClick = false;
   const edgeKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
   const name = vertex => `Wierzchołek ${vertex + 1}`;
+  const formatDistance = value => value === Infinity ? '∞' : String(value).replace('.', ',');
+
+  function graphPoints() {
+    return state.positions.map(position => ({
+      x: width / 2 + position.x * Math.max(1, width / 2 - 54),
+      y: height / 2 + position.y * Math.max(1, height / 2 - 64)
+    }));
+  }
+
+  function updateWeights() {
+    const points = graphPoints();
+    let changed = false;
+    for (const edge of state.edges) {
+      const a = points[edge.a], b = points[edge.b];
+      const weight = Math.round(Math.hypot(a.x - b.x, a.y - b.y) / 10) / 10;
+      changed ||= edge.weight !== weight;
+      edge.weight = weight;
+      state.adjacency[edge.a].find(neighbor => neighbor.to === edge.b).weight = weight;
+      state.adjacency[edge.b].find(neighbor => neighbor.to === edge.a).weight = weight;
+    }
+    $('adjacencyText').textContent = state.adjacency.map((neighbors, v) =>
+      `${v + 1}: ${neighbors.map(edge => `${edge.to + 1} (waga ${formatDistance(edge.weight)})`).join(', ') || 'brak'}`
+    ).join(' · ');
+    return changed;
+  }
 
   function reset(message = 'Wybierz Start lub wykonaj pierwszy krok.') {
     if (frameId !== null) cancelAnimationFrame(frameId);
@@ -175,7 +201,7 @@
       const key = edgeKey(a, b);
       if (a === b || existing.has(key)) return;
       existing.add(key);
-      const edge = { a, b, weight: 1 + Math.floor(Math.random() * 9) };
+      const edge = { a, b, weight: 0 };
       state.edges.push(edge);
       state.adjacency[a].push({ to: b, weight: edge.weight });
       state.adjacency[b].push({ to: a, weight: edge.weight });
@@ -237,9 +263,7 @@
     $('vertexCount').textContent = `z ${n} wierzchołków`;
     state.nextSelection = 'startVertex';
     $('selectionHint').textContent = 'Kliknij wierzchołek na grafie, aby wybrać start; kolejne kliknięcie wybiera cel. Wybór możesz też zmienić listami powyżej.';
-    $('adjacencyText').textContent = state.adjacency.map((neighbors, v) =>
-      `${v + 1}: ${neighbors.map(edge => `${edge.to + 1} (waga ${edge.weight})`).join(', ') || 'brak'}`
-    ).join(' · ');
+    updateWeights();
     reset('Nowy graf warstwowy jest gotowy. Porównaj alternatywne trasy podczas kolejnych kroków.');
   }
 
@@ -254,17 +278,17 @@
       state.current = next;
       state.activeEdge = null;
       state.settled[next] = true;
-      yield `${name(next)} ma najmniejszą tymczasową odległość (${state.distance[next]}) — ustalamy jej wartość.`;
+      yield `${name(next)} ma najmniejszą tymczasową odległość (${formatDistance(state.distance[next])}) — ustalamy jej wartość.`;
       for (const edge of state.adjacency[next]) {
         state.activeEdge = edgeKey(next, edge.to);
         state.checks++;
-        const candidate = state.distance[next] + edge.weight;
+        const candidate = Math.round(state.distance[next] * 10 + edge.weight * 10) / 10;
         if (!state.settled[edge.to] && candidate < state.distance[edge.to]) {
           state.distance[edge.to] = candidate;
           state.previous[edge.to] = next;
-          yield `Relaksacja: ${name(next)} → ${name(edge.to)} daje odległość ${candidate} (waga ${edge.weight}) — poprawiamy wynik.`;
+          yield `Relaksacja: ${name(next)} → ${name(edge.to)} daje odległość ${formatDistance(candidate)} (waga ${formatDistance(edge.weight)}) — poprawiamy wynik.`;
         } else {
-          yield `Sprawdzamy krawędź ${next + 1}–${edge.to + 1} (waga ${edge.weight}); odległość ${state.distance[edge.to] === Infinity ? '∞' : state.distance[edge.to]} pozostaje bez zmian.`;
+          yield `Sprawdzamy krawędź ${next + 1}–${edge.to + 1} (waga ${formatDistance(edge.weight)}); odległość ${formatDistance(state.distance[edge.to])} pozostaje bez zmian.`;
         }
       }
     }
@@ -289,7 +313,7 @@
       if (vertex === Number($('targetVertex').value)) row.className += ' target-row';
       const values = [
         name(vertex),
-        distance === Infinity ? '∞' : String(distance),
+        formatDistance(distance),
         state.previous[vertex] < 0 ? '—' : String(state.previous[vertex] + 1),
         state.settled[vertex] ? 'Ustalona' : distance === Infinity ? (state.done ? 'Nieosiągalna' : 'Nieodkryta') : 'Tymczasowa'
       ];
@@ -306,11 +330,7 @@
     const ratio = window.devicePixelRatio || 1;
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     ctx.clearRect(0, 0, width, height);
-    const paddingX = 54, paddingY = 64;
-    const points = state.positions.map(position => ({
-      x: width / 2 + position.x * Math.max(1, width / 2 - paddingX),
-      y: height / 2 + position.y * Math.max(1, height / 2 - paddingY)
-    }));
+    const points = graphPoints();
     const route = pathTo(Number($('targetVertex').value));
     const routeVertices = new Set(route);
     const routeEdges = new Set(route.slice(1).map((vertex, i) => edgeKey(vertex, route[i])));
@@ -340,7 +360,7 @@
       ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2);
       ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = '#cbd7e7'; ctx.lineWidth = 1; ctx.stroke();
       ctx.fillStyle = '#314d76'; ctx.font = '600 11px Segoe UI, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(edge.weight), x, y);
+      ctx.fillText(formatDistance(edge.weight), x, y);
     }
     points.forEach((point, vertex) => {
       const source = vertex === Number($('startVertex').value);
@@ -364,7 +384,7 @@
         ctx.font = '700 12px Segoe UI, sans-serif';
         ctx.fillText(marker, point.x, point.y - 30);
       }
-      const label = state.distance[vertex] === Infinity ? '∞' : String(state.distance[vertex]);
+      const label = formatDistance(state.distance[vertex]);
       ctx.fillStyle = '#586b85'; ctx.font = '11px Segoe UI, sans-serif';
       ctx.fillText(label, point.x, point.y + 30);
     });
@@ -375,19 +395,63 @@
     width = Math.max(1, rect.width); height = Math.max(1, rect.height);
     const ratio = window.devicePixelRatio || 1;
     canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
-    draw();
+    if (updateWeights()) reset('Rozmiar grafu zmienił odległości i wagi. Uruchom algorytm ponownie.');
+    else draw();
+  }
+
+  function pointerPoint(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * width / rect.width,
+      y: (event.clientY - rect.top) * height / rect.height
+    };
+  }
+
+  function vertexAt(point) {
+    return graphPoints().findLastIndex(node => Math.hypot(point.x - node.x, point.y - node.y) <= 24);
+  }
+
+  function beginDrag(event) {
+    if (event.button !== 0 || drag) return;
+    suppressClick = false;
+    const point = pointerPoint(event), vertex = vertexAt(point);
+    if (vertex < 0) return;
+    const node = graphPoints()[vertex];
+    drag = { pointerId: event.pointerId, vertex, start: point, offsetX: node.x - point.x, offsetY: node.y - point.y, moved: false };
+    canvas.setPointerCapture(event.pointerId);
+  }
+
+  function moveDrag(event) {
+    const point = pointerPoint(event);
+    if (!drag) {
+      canvas.style.cursor = vertexAt(point) >= 0 ? 'grab' : 'default';
+      return;
+    }
+    if (event.pointerId !== drag.pointerId) return;
+    if (!drag.moved && Math.hypot(point.x - drag.start.x, point.y - drag.start.y) < 4) return;
+    drag.moved = true;
+    suppressClick = true;
+    canvas.style.cursor = 'grabbing';
+    const radiusX = Math.max(1, width / 2 - 54), radiusY = Math.max(1, height / 2 - 64);
+    state.positions[drag.vertex] = {
+      x: Math.max(-1, Math.min(1, (point.x + drag.offsetX - width / 2) / radiusX)),
+      y: Math.max(-1, Math.min(1, (point.y + drag.offsetY - height / 2) / radiusY))
+    };
+    updateWeights();
+    reset('Położenie węzła i wagi zmienione. Uruchom algorytm lub wykonaj jeden krok.');
+  }
+
+  function endDrag(event) {
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    drag = null;
+    if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    canvas.style.cursor = vertexAt(pointerPoint(event)) >= 0 ? 'grab' : 'default';
   }
 
   function selectVertex(event) {
+    if (suppressClick) { suppressClick = false; return; }
     if (state.running) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left) * width / rect.width;
-    const y = (event.clientY - rect.top) * height / rect.height;
-    const vertex = state.positions.findIndex(position => {
-      const pointX = width / 2 + position.x * Math.max(1, width / 2 - 54);
-      const pointY = height / 2 + position.y * Math.max(1, height / 2 - 64);
-      return (x - pointX) ** 2 + (y - pointY) ** 2 <= 24 ** 2;
-    });
+    const vertex = vertexAt(pointerPoint(event));
     if (vertex < 0) return;
     const id = state.nextSelection;
     $(id).value = String(vertex);
@@ -413,10 +477,10 @@
     $('settledCount').textContent = state.settled.filter(Boolean).length;
     $('edgeCount').textContent = state.checks;
     $('stepCount').textContent = state.steps;
-    $('targetDistance').textContent = state.distance[target] === Infinity ? '∞' : String(state.distance[target]);
+    $('targetDistance').textContent = formatDistance(state.distance[target]);
     $('targetPath').textContent = route.length ? route.map(vertex => vertex + 1).join(' → ') : 'Brak znanej trasy';
     $('pathText').textContent = route.length
-      ? `Najkrótsza znana ścieżka: ${route.map(vertex => vertex + 1).join(' → ')}; łączna waga: ${state.distance[target]}.`
+      ? `Najkrótsza znana ścieżka: ${route.map(vertex => vertex + 1).join(' → ')}; łączna waga: ${formatDistance(state.distance[target])}.`
       : state.done ? 'Cel jest nieosiągalny z wybranego wierzchołka startowego.' : 'Nie znaleziono jeszcze ścieżki do celu.';
     draw(); updateControls();
   }
@@ -491,6 +555,11 @@
   $('stopBtn').addEventListener('click', () => reset());
   $('randomBtn').addEventListener('click', generateGraph);
   canvas.addEventListener('click', selectVertex);
+  canvas.addEventListener('pointerdown', beginDrag);
+  canvas.addEventListener('pointermove', moveDrag);
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('lostpointercapture', endDrag);
   for (const id of ['startVertex', 'targetVertex']) $(id).addEventListener('change', () => reset('Ustawienia zmienione. Uruchom algorytm, aby obliczyć ścieżkę.'));
   $('size').addEventListener('input', () => { $('sizeLabel').textContent = $('size').value; });
   $('size').addEventListener('change', generateGraph);
@@ -501,8 +570,8 @@
   window.addEventListener('resize', resizeCanvas);
   new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
 
-  generateGraph();
   resizeCanvas();
+  generateGraph();
 })();
     </script>
   </body>
