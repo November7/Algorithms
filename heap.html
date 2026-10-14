@@ -30,7 +30,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Kopiec jako drzewo</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Kopiec jako drzewo</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="group" aria-label="Kopiec binarny narysowany jako drzewo"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Przesuwany element</span><span><i class="lab-key ready" aria-hidden="true"></i>Porównywany sąsiad</span><span><i class="lab-key accepted" aria-hidden="true"></i>Element na miejscu</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start, wstaw wartość lub wykonaj pierwszy krok.</p>
@@ -115,7 +115,7 @@ window.Lab = (() => {
       sync() {
         $('startBtn').disabled = api.running || api.done || manual();
         $('pauseBtn').disabled = !api.started || api.done || manual();
-        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        text('pauseBtn', api.started && !api.running ? 'Wznów' : 'Pauza');
         $('stepBtn').disabled = api.running || api.done || manual();
         $('stopBtn').disabled = false;
         locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
@@ -159,8 +159,8 @@ window.Lab = (() => {
     $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
     document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
     document.addEventListener('keydown', event => {
-      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.target.closest('input, select, textarea') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ' && !event.target.closest('button, [role="button"], [role="gridcell"]')) { event.preventDefault(); api.running ? api.pause() : api.start(); }
       if (event.key.toLowerCase() === 'n' && !api.running) api.next();
       if (event.key.toLowerCase() === 'r') api.reset();
     });

@@ -30,7 +30,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela odległości</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela odległości</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <p class="lab-table-hint" id="tableHint">D[i, j] to najmniejsza liczba operacji zamieniająca pierwsze i liter słowa źródłowego w pierwsze j liter słowa docelowego.</p>
           <div class="lab-dp-viewport" tabindex="0" role="region" aria-label="Przewijana tabela programowania dynamicznego" aria-describedby="tableHint"><table id="dpTable" class="graph-table lab-dp"><caption>Wiersze: litery słowa źródłowego · kolumny: litery słowa docelowego</caption><thead id="dpHead"></thead><tbody id="dpBody"></tbody></table></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Obliczana / odtwarzana</span><span><i class="lab-key ready" aria-hidden="true"></i>Odczytywane sąsiednie komórki</span><span><i class="lab-key accepted" aria-hidden="true"></i>Ścieżka przekształcenia</span></div>
@@ -115,7 +115,7 @@ window.Lab = (() => {
       sync() {
         $('startBtn').disabled = api.running || api.done || manual();
         $('pauseBtn').disabled = !api.started || api.done || manual();
-        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        text('pauseBtn', api.started && !api.running ? 'Wznów' : 'Pauza');
         $('stepBtn').disabled = api.running || api.done || manual();
         $('stopBtn').disabled = false;
         locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
@@ -159,8 +159,8 @@ window.Lab = (() => {
     $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
     document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
     document.addEventListener('keydown', event => {
-      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.target.closest('input, select, textarea') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ' && !event.target.closest('button, [role="button"], [role="gridcell"]')) { event.preventDefault(); api.running ? api.pause() : api.start(); }
       if (event.key.toLowerCase() === 'n' && !api.running) api.next();
       if (event.key.toLowerCase() === 'r') api.reset();
     });

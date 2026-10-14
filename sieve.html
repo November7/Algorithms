@@ -30,7 +30,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Siatka liczb od 2 do n</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Siatka liczb od 2 do n</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <div class="lab-viewport"><div id="grid" class="lab-sieve-grid" role="grid" aria-label="Siatka liczb do wykreślenia"></div></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Bieżąca liczba pierwsza p</span><span><i class="lab-key rejected" aria-hidden="true"></i>Skreślona wielokrotność</span><span><i class="lab-key accepted" aria-hidden="true"></i>Liczba pierwsza</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
@@ -114,7 +114,7 @@ window.Lab = (() => {
       sync() {
         $('startBtn').disabled = api.running || api.done || manual();
         $('pauseBtn').disabled = !api.started || api.done || manual();
-        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        text('pauseBtn', api.started && !api.running ? 'Wznów' : 'Pauza');
         $('stepBtn').disabled = api.running || api.done || manual();
         $('stopBtn').disabled = false;
         locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
@@ -158,8 +158,8 @@ window.Lab = (() => {
     $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
     document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
     document.addEventListener('keydown', event => {
-      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.target.closest('input, select, textarea') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ' && !event.target.closest('button, [role="button"], [role="gridcell"]')) { event.preventDefault(); api.running ? api.pause() : api.start(); }
       if (event.key.toLowerCase() === 'n' && !api.running) api.next();
       if (event.key.toLowerCase() === 'r') api.reset();
     });
@@ -175,8 +175,9 @@ window.Lab = (() => {
   let n, divisor, crossedAt, primes, p, current, crosses, highlight, focusNumber = 2;
   function reset() { n = Number($('limit').value); divisor = Array(n + 1).fill(0); crossedAt = []; primes = []; p = 0; current = 0; crosses = 0; highlight = 0; text('limitLabel', n); }
   function* run() {
-    for (p = 2; p * p <= n; p++) {
-      if (divisor[p]) continue;
+    for (let candidate = 2; candidate * candidate <= n; candidate++) {
+      if (divisor[candidate]) continue;
+      p = candidate;
       primes.push(p); current = p; yield `${p} to najmniejsza kolejna nieskreślona liczba, więc jest pierwsza.`;
       for (let k = $('optimization').value === 'square' ? p * p : 2 * p; k <= n; k += p) {
         const repeated = !!divisor[k]; crosses++; current = k;
@@ -194,6 +195,9 @@ window.Lab = (() => {
   function inspect(k) {
     if (ctl.running) return;
     if (!ctl.done && !divisor[k] && !primes.includes(k)) {
+      if (p && current && current < Math.floor(n / p) * p) {
+        text('operation', `Najpierw dokończ skreślanie wielokrotności ${p}, używając „Jeden krok” lub Start.`); return;
+      }
       let next = Math.max(2, p); while (next <= n && (divisor[next] || primes.includes(next))) next++;
       if (k !== next) { text('operation', `Kolejna najmniejsza nieskreślona liczba to ${next}; wybierz ją lub użyj „Jeden krok”.`); return; }
       // Advance the same generator: manual selection cannot corrupt the sieve state.
