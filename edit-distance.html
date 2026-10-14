@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Odległość edycyjna Levenshteina krok po kroku: tabela programowania dynamicznego, wstawianie, usuwanie i zamiana znaków.">
+    <title>Odległość edycyjna (Levenshtein) · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Programowanie dynamiczne · Napisy</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Odległość edycyjna (Levenshtein)</h1><p>Ile najmniej poprawek dzieli jedno słowo od drugiego? Obserwuj, jak tabela podproblemów zamienia „kot” w „kołtun”, a potem odczytaj konkretne wstawienia, usunięcia i zamiany.</p></div>
+        <span class="badge">Levenshtein · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Zestaw słów</label><select id="scenario"><option value="example">Przykład: kitten → sitting</option><option value="same">Identyczne słowa</option><option value="empty">Jedno słowo puste</option><option value="custom">Własne słowa</option></select></div>
+          <div class="field"><label for="wordA">Słowo źródłowe</label><input id="wordA" type="text" maxlength="8" value="kitten" autocomplete="off"></div>
+          <div class="field"><label for="wordB">Słowo docelowe</label><input id="wordB" type="text" maxlength="8" value="sitting" autocomplete="off"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">6 op./s</output></label><input id="speed" type="range" min="1" max="30" value="6"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj słowa</button></div>
+        <p class="control-hint">Jeden krok oblicza jedną komórkę tabeli albo cofa się o jedną operację podczas odtwarzania ścieżki. Słowa mają do 8 liter; wielkość liter ma znaczenie.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela odległości</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <p class="lab-table-hint" id="tableHint">D[i, j] to najmniejsza liczba operacji zamieniająca pierwsze i liter słowa źródłowego w pierwsze j liter słowa docelowego.</p>
+          <div class="lab-dp-viewport" tabindex="0" role="region" aria-label="Przewijana tabela programowania dynamicznego" aria-describedby="tableHint"><table id="dpTable" class="graph-table lab-dp"><caption>Wiersze: litery słowa źródłowego · kolumny: litery słowa docelowego</caption><thead id="dpHead"></thead><tbody id="dpBody"></tbody></table></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Obliczana / odtwarzana</span><span><i class="lab-key ready" aria-hidden="true"></i>Odczytywane sąsiednie komórki</span><span><i class="lab-key accepted" aria-hidden="true"></i>Ścieżka przekształcenia</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Obliczone komórki</span><output id="cellCount">0</output><small>bez wiersza i kolumny bazowej</small></div>
+          <div class="stat"><span>Odległość edycyjna</span><output id="distance">—</output><small>minimum operacji</small></div>
+          <div class="stat"><span>Zamiany / wstawienia / usunięcia</span><output id="opMix">—</output><small>na odtworzonej ścieżce</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>obliczenia i odtwarzanie</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Przekształcenie słowa</h2><p id="phaseText">Najpierw wypełnimy tabelę, potem odczytamy operacje.</p><ol id="chosen" class="graph-tokens" aria-label="Kolejne operacje edycyjne"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Reguła przejścia</summary><p>D[i, 0] = i oraz D[0, j] = j. Dla pozostałych komórek: D[i, j] = min(D[i − 1, j] + 1, D[i, j − 1] + 1, D[i − 1, j − 1] + (A[i] ≠ B[j] ? 1 : 0)).</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Odległość edycyjna</h2></div><span class="tag">Programowanie dynamiczne</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n · m)</dd></div><div><dt>Pamięć</dt><dd>O(n · m)</dd></div><div><dt>Sama wartość</dt><dd>O(min(n, m)) pamięci</dd></div><div><dt>Operacje</dt><dd>Wstaw, usuń, zamień</dd></div><div><dt>Odtwarzanie</dt><dd>O(n + m)</dd></div></dl>
+        <p class="complexity-note">n i m to długości słów. Pełna tabela jest potrzebna tylko do odtworzenia listy operacji; samą odległość można policzyć, trzymając dwa wiersze.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Zamiana pustego słowa na prefiks długości j kosztuje j wstawień, a odwrotnie — j usunięć.</li><li>Dla każdej pary prefiksów wybierz najtańszą z trzech operacji na ostatnim znaku.</li><li>Zgodne litery nie kosztują nic, różne kosztują 1 za zamianę.</li><li>Od prawego dolnego rogu cofaj się do komórki, z której pochodzi minimum.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Ostatni znak słowa źródłowego jest albo dopasowany, albo zamieniony, albo usunięty, albo trzeba dopisać ostatni znak docelowy. Każdy z tych przypadków sprowadza się do mniejszego, już policzonego podproblemu.</p><h3>Remisy</h3><p>Gdy kilka operacji daje to samo minimum, wynik nie jest jedyny. Symulacja powinna jasno opisać przyjętą kolejność wyboru.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy sprawdzaniu pisowni i podpowiedziach „czy chodziło o…?”, porównywaniu sekwencji DNA, wykrywaniu zmian między wersjami tekstu oraz w wyszukiwaniu przybliżonym.</p></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
+// Wzorzec: knapsack.html (tabela DP, generator kroków, zegar, Start/Pauza/Krok/Reset).
+//
+// DO ZAIMPLEMENTOWANIA
+// 1. Stan: słowa A i B, tabela dp (n+1 x m+1, null = nieobliczona), kierunki wyboru, ścieżka, faza ('fill' | 'trace' | 'done'), liczniki.
+// 2. Generator kroków (function*): wiersz i kolumna bazowa -> komórki wierszami, każda jako jeden krok z opisem w #operation
+//    (który z trzech wariantów wygrał: wstawienie / usunięcie / zamiana / zgodność) -> odtwarzanie ścieżki od D[n, m] do D[0, 0].
+// 3. Renderowanie: nagłówki z literami słów; klasy komórek lab-current, lab-dependency (3 sąsiedzi), lab-accepted (ścieżka);
+//    strzałki ↖ ↑ ← w komórkach; #chosen = lista operacji, #opMix, #distance, #cellCount, #stepCount, #statusText.
+// 4. Dane: scenariusze z #scenario, losowanie (#randomBtn), walidacja pól #wordA/#wordB (długość, puste słowo dozwolone),
+//    przełączenie na "Własne słowa" po ręcznej edycji. Każda zmiana danych wywołuje reset().
+// 5. Sterowanie: Start/Pauza/Jeden krok/Reset, #speed (tempo), blokowanie pól podczas działania, aria-live w #operation.
+//
+// PRZEWIDZIANA INTERAKCJA
+// - Klik w komórkę tabeli po zakończeniu: podświetl jej zależności (trzech sąsiadów) i pokaż w #operation, skąd wzięła się wartość.
+// - Najechanie / fokus na komórce: tooltip "D[i, j] = min(...)" z trzema kandydatami; komórki mają tabindex i obsługę Enter/Spacji.
+// - Klik w operację na liście #chosen: podświetl odpowiadający fragment ścieżki w tabeli i literę w słowach.
+// - Klawiatura: strzałki przesuwają fokus po komórkach tabeli; Spacja = pauza/wznowienie, N = jeden krok.
+// - Opcjonalnie: wizualizacja przekształcenia "kitten" -> "sitting" literka po literce pod tabelą (animacja operacji).
+(() => {
+  'use strict';
+  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+})();
+    </script>
+  </body>
+</html>

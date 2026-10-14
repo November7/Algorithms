@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Algorytm Bellmana-Forda krok po kroku: najkrótsze ścieżki z ujemnymi wagami, relaksacja krawędzi i wykrywanie ujemnego cyklu.">
+    <title>Algorytm Bellmana-Forda · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Grafy ważone · Bellman-Ford</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Algorytm Bellmana-Forda</h1><p>Dijkstra przestaje działać, gdy krawędź może mieć ujemną wagę. Bellman-Ford wielokrotnie poprawia odległości wzdłuż wszystkich krawędzi i potrafi zauważyć ujemny cykl, który psuje pojęcie „najkrótszej” drogi.</p></div>
+        <span class="badge">Ujemne wagi · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Graf</label><select id="scenario"><option value="example">Przykład: ujemna krawędź</option><option value="dijkstra">Pułapka dla Dijkstry</option><option value="cycle">Ujemny cykl</option><option value="random">Losowy</option></select></div>
+          <div class="field"><label for="startVertex">Wierzchołek startowy</label><select id="startVertex"></select></div>
+          <div class="field"><label for="size">Liczba wierzchołków <output id="sizeLabel" for="size">6</output></label><input id="size" type="range" min="4" max="8" value="6"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">3 op./s</output></label><input id="speed" type="range" min="1" max="12" value="3"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj graf</button></div>
+        <p class="control-hint">Jeden krok sprawdza jedną krawędź: czy droga przez nią skraca dotychczasową odległość. Jedna runda to przejrzenie wszystkich krawędzi. Wagi mogą być ujemne, krawędzie są skierowane.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf skierowany z wagami</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 400" role="img" aria-label="Graf skierowany z wagami krawędzi"></svg></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Sprawdzana krawędź</span><span><i class="lab-key accepted" aria-hidden="true"></i>Udana relaksacja</span><span><i class="lab-key rejected" aria-hidden="true"></i>Bez poprawy / ujemny cykl</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Runda</span><output id="roundCount">0</output><small id="roundGoal">z najwyżej V − 1 + 1 kontrolna</small></div>
+          <div class="stat"><span>Sprawdzone krawędzie</span><output id="edgeCount">0</output><small>łącznie we wszystkich rundach</small></div>
+          <div class="stat"><span>Udane relaksacje</span><output id="relaxCount">0</output><small>poprawy odległości</small></div>
+          <div class="stat"><span>Ujemny cykl</span><output id="cycleFlag">—</output><small>wynik rundy kontrolnej</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="distTitle"><h2 id="distTitle">Odległości od startu</h2><p>Dla każdego wierzchołka: aktualna odległość i poprzednik na najlepszej znanej drodze.</p><table id="distTable" class="graph-table"><caption>Wierzchołki · odległość · poprzednik</caption><thead id="distHead"></thead><tbody id="distBody"></tbody></table><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Dane wejściowe i reguła relaksacji</summary><p id="dataText"></p><p>Początkowo d[start] = 0, a pozostałe d[v] = ∞. Dla krawędzi (u, v) o wadze w: jeśli d[u] + w &lt; d[v], ustaw d[v] = d[u] + w i poprzednik[v] = u. Po V − 1 rundach odległości są ostateczne; poprawa w kolejnej rundzie oznacza ujemny cykl osiągalny ze startu.</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Bellman-Ford</h2></div><span class="tag">Najkrótsze ścieżki</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(V · E)</dd></div><div><dt>Pamięć</dt><dd>O(V)</dd></div><div><dt>Ujemne wagi</dt><dd>Obsługuje</dd></div><div><dt>Ujemny cykl</dt><dd>Wykrywa</dd></div><div><dt>Rund</dt><dd>V − 1 (+1 kontrolna)</dd></div></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E — krawędzi. Wolniejszy od Dijkstry, ale bardziej ogólny. Wczesne zakończenie jest możliwe, gdy w całej rundzie nic się nie poprawiło.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Ustaw odległość startu na 0, pozostałych na nieskończoność.</li><li>Przejrzyj wszystkie krawędzie i popraw odległość tam, gdzie droga przez krawędź jest krótsza.</li><li>Powtórz przeglądanie V − 1 razy.</li><li>Zrób jedną rundę kontrolną: jeśli coś się jeszcze poprawia, istnieje ujemny cykl.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Najkrótsza droga bez cyklu ma najwyżej V − 1 krawędzi. Po k rundach odległości są poprawne dla wszystkich dróg o najwyżej k krawędziach, więc V − 1 rund wystarcza.</p><h3>Ujemny cykl</h3><p>Gdy cykl ma ujemną sumę wag, każde okrążenie skraca drogę. „Najkrótsza” droga nie istnieje, a algorytm to zgłasza.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy kursach walut i wykrywaniu arbitrażu, w protokołach routingu wektora odległości oraz wszędzie tam, gdzie koszty mogą być ujemne, np. zyski lub ulgi.</p></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
+// Wzorzec: kruskal.html i dijkstra.html (rysowanie grafu w SVG, klasy .lab-node/.lab-edge/.lab-weight-bg/.lab-node-note).
+//
+// DO ZAIMPLEMENTOWANIA
+// 1. Dane: graf skierowany z wagami (także ujemnymi) dla scenariuszy z #scenario; układ wierzchołków na okręgu/siatce;
+//    scenariusze: ujemna krawędź, pułapka dla Dijkstry (zachłanność zawodzi), ujemny cykl, losowy (bez ujemnych cykli, chyba że wybrano "cycle").
+// 2. Stan: d[], poprzednik[], numer rundy, indeks krawędzi, flaga zmiany w rundzie, wykryty cykl, faza ('rounds' | 'check' | 'done').
+// 3. Generator kroków: jedna krawędź = jeden krok (opis w #operation: "d[u] + w < d[v]? tak/nie"); po rundzie bez zmian
+//    zakończ wcześniej; po V−1 rundach wykonaj rundę kontrolną i oznacz krawędzie ujemnego cyklu.
+// 4. Renderowanie: krawędzie skierowane (strzałki), etykiety wag w .lab-weight-bg, odległości w .lab-node-note pod węzłami,
+//    #distBody (odległość, poprzednik, runda ostatniej poprawy), drzewo najkrótszych dróg po zakończeniu (accepted).
+// 5. Statystyki i stan: #roundCount, #edgeCount, #relaxCount, #cycleFlag, #statusText, #resultText (także komunikat o ujemnym cyklu).
+//
+// PRZEWIDZIANA INTERAKCJA
+// - Klik w wierzchołek: ustawia go jako startowy (zsynchronizuj z #startVertex) i robi reset().
+// - Przeciąganie wierzchołków myszą/dotykiem (pointer events): zmienia układ grafu, krawędzie i etykiety podążają za nim.
+// - Klik w etykietę wagi: edycja wagi (np. okienko lub input w miejscu, zakres −9..9, Enter zatwierdza, Esc anuluje) i reset().
+// - Klik w puste miejsce planszy z wierzchołkiem źródłowym, potem docelowym: dodanie krawędzi (opcjonalnie, z domyślną wagą);
+//   klik w krawędź z Shift/Delete: usunięcie krawędzi.
+// - Klik w wiersz tabeli #distBody po zakończeniu: podświetl najkrótszą drogę do tego wierzchołka (po poprzednikach).
+// - Klawiatura: Tab po wierzchołkach (tabindex, role="button"), Enter = ustaw jako start; Spacja = pauza, N = jeden krok.
+// - Przycisk "Pokaż dane" (details) powinien zawierać listę krawędzi w kolejności przeglądania.
+(() => {
+  'use strict';
+  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+})();
+    </script>
+  </body>
+</html>

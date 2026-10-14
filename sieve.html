@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sito Eratostenesa krok po kroku: znajdowanie liczb pierwszych przez wykreślanie wielokrotności.">
+    <title>Sito Eratostenesa · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Teoria liczb · Liczby pierwsze</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Sito Eratostenesa</h1><p>Zamiast sprawdzać, czy każda liczba jest pierwsza, wykreślaj to, co na pewno pierwsze nie jest. Weź najmniejszą nieskreśloną liczbę i skreśl jej wielokrotności; to, co zostanie, to liczby pierwsze.</p></div>
+        <span class="badge">Liczby pierwsze · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Zakres</label><select id="scenario"><option value="example">Przykład: do 50</option><option value="small">Mały zakres: do 30</option><option value="large">Duży zakres: do 100</option><option value="custom">Własna granica</option></select></div>
+          <div class="field"><label for="limit">Granica n <output id="limitLabel" for="limit">50</output></label><input id="limit" type="range" min="10" max="120" value="50"></div>
+          <div class="field"><label for="optimization">Optymalizacja</label><select id="optimization"><option value="square">Zaczynaj skreślanie od p² (zalecane)</option><option value="naive">Zaczynaj od 2p (wersja podstawowa)</option></select></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">8 op./s</output></label><input id="speed" type="range" min="1" max="30" value="8"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button></div>
+        <p class="control-hint">Jeden krok skreśla jedną liczbę albo wybiera następną liczbę pierwszą. Algorytm kończy się, gdy p² przekroczy n. Zakres 2–n; liczba 1 nie jest pierwsza.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Siatka liczb od 2 do n</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><div id="grid" class="lab-sieve-grid" role="grid" aria-label="Siatka liczb do wykreślenia"></div></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Bieżąca liczba pierwsza p</span><span><i class="lab-key rejected" aria-hidden="true"></i>Skreślona wielokrotność</span><span><i class="lab-key accepted" aria-hidden="true"></i>Liczba pierwsza</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Bieżące p</span><output id="currentPrime">—</output><small>liczba, której wielokrotności skreślamy</small></div>
+          <div class="stat"><span>Znalezione liczby pierwsze</span><output id="primeCount">0</output><small>potwierdzone</small></div>
+          <div class="stat"><span>Skreślenia</span><output id="crossCount">0</output><small>łącznie, także powtórne</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>wybory p i skreślenia</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Liczby pierwsze</h2><p id="phaseText">Liczby pierwsze pojawią się tutaj, gdy algorytm je potwierdzi.</p><ol id="chosen" class="graph-tokens" aria-label="Znalezione liczby pierwsze"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Reguła algorytmu</summary><p>Zacznij od zbioru {2, …, n}. Dopóki p² ≤ n: weź najmniejszą nieskreśloną liczbę p, skreśl p², p² + p, p² + 2p, … aż do n. Wszystkie nieskreślone liczby są pierwsze. Mniejsze wielokrotności p zostały już skreślone przez mniejsze liczby pierwsze.</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Sito Eratostenesa</h2></div><span class="tag">Teoria liczb</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n log log n)</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Naiwnie</dt><dd>O(n√n)</dd></div><div><dt>Granica pętli</dt><dd>p² ≤ n</dd></div><div><dt>Wynik</dt><dd>Wszystkie liczby pierwsze ≤ n</dd></div></dl>
+        <p class="complexity-note">n to górna granica zakresu. Sito jest najlepsze, gdy potrzebujemy wszystkich liczb pierwszych w zakresie, a nie testu jednej liczby.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Wypisz liczby od 2 do n i żadnej nie skreślaj.</li><li>Weź najmniejszą nieskreśloną liczbę p — jest pierwsza.</li><li>Skreśl jej wielokrotności, zaczynając od p².</li><li>Powtarzaj, aż p² będzie większe niż n.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Każda liczba złożona m ma dzielnik pierwszy nie większy niż √m, więc zostanie skreślona przez jedną z liczb pierwszych, które sprawdzimy. Liczba, której nikt nie skreślił, nie ma takiego dzielnika.</p><h3>Dlaczego p²?</h3><p>Mniejsze wielokrotności p mają mniejszy czynnik pierwszy i zostały już skreślone wcześniej.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy rozkładzie na czynniki pierwsze, w kryptografii (wstępne generowanie liczb pierwszych), w zadaniach z teorii liczb oraz jako klasyczny przykład algorytmu o niemal liniowym czasie.</p></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
+// Wzorzec: sort.html (siatka/słupki) i knapsack.html (generator kroków, zegar).
+//
+// DO ZAIMPLEMENTOWANIA
+// 1. Stan: tablica stanów liczb 2..n ('unknown' | 'prime' | 'crossed' | 'current'), bieżące p, bieżąca wielokrotność, liczniki, faza.
+// 2. Generator kroków: wybór p (opis: "najmniejsza nieskreślona to p, więc jest pierwsza") -> kolejne wielokrotności od p² (lub 2p)
+//    jako osobne kroki (liczba już skreślona wcześniej też jest krokiem, ale oznaczona jako "powtórne skreślenie") ->
+//    po p² > n: wszystkie nieskreślone oznacz jako pierwsze (może być jeden zbiorczy krok z opisem).
+// 3. Siatka #grid: stworzyć style .lab-sieve-grid (CSS grid, ok. 10 kolumn) i komórki z numerem; kolory zgodne z legendą;
+//    skreślenie jako przekreślony tekst + przygaszone tło, aby nie polegać wyłącznie na kolorze (dostępność).
+// 4. Statystyki i wynik: #currentPrime, #primeCount, #crossCount, #stepCount, #chosen (lista liczb pierwszych), #phaseText, #resultText
+//    (np. "Do 50 jest 15 liczb pierwszych"). Porównaj w #resultText liczbę skreśleń dla obu wariantów #optimization.
+// 5. Dane: #limit i #scenario synchronizowane (suwak przełącza na "Własna granica"); każda zmiana = reset().
+//
+// PRZEWIDZIANA INTERAKCJA
+// - Klik w liczbę przed startem lub w pauzie: wybór własnego p do ręcznego skreślenia (tryb "Spróbuj sam"; błędny wybór -> komunikat dlaczego).
+// - Klik w liczbę po zakończeniu: pokaż w #operation, kto ją skreślił (najmniejszy dzielnik pierwszy) albo że jest pierwsza.
+// - Najechanie / fokus na liczbie: tooltip z rozkładem (np. 42 = 2 · 3 · 7) i informacją, w którym kroku ją skreślono.
+// - Kliknięcie liczby pierwszej w #chosen: podświetl wszystkie jej skreślone wielokrotności w siatce.
+// - Klawiatura: strzałki poruszają fokus po siatce (role="grid", tabindex dla jednej komórki naraz), Enter = akcja jak klik; Spacja = pauza, N = krok.
+(() => {
+  'use strict';
+  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+})();
+    </script>
+  </body>
+</html>

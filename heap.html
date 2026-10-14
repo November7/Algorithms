@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Kopiec binarny i kolejka priorytetowa krok po kroku: wstawianie, usuwanie minimum, przesuwanie w górę i w dół oraz sortowanie przez kopcowanie.">
+    <title>Kopiec binarny (kolejka priorytetowa) · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Struktury danych · Kopiec</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Kopiec binarny (kolejka priorytetowa)</h1><p>Najmniejszy element zawsze czeka na samej górze. Zobacz, jak kopiec utrzymuje ten porządek, gdy dodajesz i usuwasz elementy, i jak drzewo mieści się w zwykłej tablicy.</p></div>
+        <span class="badge">Kopiec min · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Ciąg operacji</label><select id="scenario"><option value="example">Przykład: wstaw i usuń minimum</option><option value="build">Budowa kopca z tablicy</option><option value="sorted">Wstawianie rosnące (bez zamian)</option><option value="heapsort">Sortowanie przez kopcowanie</option></select></div>
+          <div class="field"><label for="heapType">Rodzaj kopca</label><select id="heapType"><option value="min">Kopiec min</option><option value="max">Kopiec max</option></select></div>
+          <div class="field"><label for="value">Wartość do wstawienia</label><input id="value" type="number" min="1" max="99" value="7"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">3 op./s</output></label><input id="speed" type="range" min="1" max="12" value="3"></div>
+        </div>
+        <div class="actions"><button type="button" id="insertBtn" class="btn">＋ Wstaw</button><button type="button" id="extractBtn" class="btn">− Usuń korzeń</button><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj kopiec</button></div>
+        <p class="control-hint">Start odtwarza zaplanowany ciąg operacji. Możesz też sam wstawiać wartości i usuwać korzeń. Jeden krok to jedno porównanie albo jedna zamiana rodzica z dzieckiem. Wartości to liczby całkowite 1–99.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Kopiec jako drzewo</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="img" aria-label="Kopiec binarny narysowany jako drzewo"></svg></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Przesuwany element</span><span><i class="lab-key ready" aria-hidden="true"></i>Porównywany sąsiad</span><span><i class="lab-key accepted" aria-hidden="true"></i>Element na miejscu</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start, wstaw wartość lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="arrayTitle"><h2 id="arrayTitle">Ten sam kopiec w tablicy</h2><p>Dla indeksu i rodzic ma indeks ⌊(i − 1) / 2⌋, a dzieci 2i + 1 oraz 2i + 2 (numeracja od zera).</p><ol id="heapArray" class="graph-tokens" aria-label="Zawartość tablicy kopca"></ol></section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Rozmiar kopca</span><output id="heapSize">0</output><small>liczba elementów</small></div>
+          <div class="stat"><span>Wysokość</span><output id="heapHeight">0</output><small>⌊log₂ n⌋</small></div>
+          <div class="stat"><span>Porównania</span><output id="compareCount">0</output><small>rodzic z dzieckiem</small></div>
+          <div class="stat"><span>Zamiany</span><output id="swapCount">0</output><small>przesunięcia w górę i w dół</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Kolejność wyjmowania</h2><p id="phaseText">Wyjęte korzenie pojawią się tutaj, w kolejności priorytetu.</p><ol id="chosen" class="graph-tokens" aria-label="Wyjęte elementy"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Reguły operacji</summary><p>Wstawianie: dopisz element na końcu tablicy i przesuwaj go w górę, dopóki jest mniejszy od rodzica. Usuwanie korzenia: zastąp korzeń ostatnim elementem, skróć kopiec i przesuwaj nowy korzeń w dół, zamieniając go z mniejszym dzieckiem, dopóki któreś dziecko jest od niego mniejsze.</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Kopiec binarny</h2></div><span class="tag">Struktura danych</span></div>
+        <dl class="complexity"><div><dt>Odczyt korzenia</dt><dd>O(1)</dd></div><div><dt>Wstawianie</dt><dd>O(log n)</dd></div><div><dt>Usuwanie korzenia</dt><dd>O(log n)</dd></div><div><dt>Budowa z tablicy</dt><dd>O(n)</dd></div><div><dt>Pamięć</dt><dd>O(n), bez wskaźników</dd></div></dl>
+        <p class="complexity-note">n to liczba elementów. Kopiec jest drzewem prawie pełnym, więc ma wysokość ⌊log₂ n⌋. Sortowanie przez kopcowanie to n usunięć korzenia: O(n log n).</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Warunek kopca: rodzic nie jest większy od żadnego dziecka (kopiec min).</li><li>Wstawiany element ląduje na końcu i „wypływa” w górę.</li><li>Po usunięciu korzenia jego miejsce zajmuje ostatni element i „tonie” w dół.</li><li>Drzewo mieści się w tablicy, bo indeksy rodzica i dzieci wynikają z arytmetyki.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Każda naprawa dotyczy jednej ścieżki od liścia do korzenia, a ta ma długość najwyżej log₂ n. Reszta kopca nie jest naruszona, więc warunek pozostaje spełniony.</p><h3>Czego nie umie?</h3><p>Szybko znajduje tylko skrajny element. Wyszukiwanie dowolnej wartości wymaga przejrzenia wielu elementów, O(n).</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>W kolejkach priorytetowych, algorytmie Dijkstry, planowaniu zadań, wyznaczaniu k największych elementów oraz w sortowaniu przez kopcowanie.</p></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
+// Wzorzec: sort.html (animowane zamiany) i kruskal.html (rysowanie drzewa/grafu w SVG).
+//
+// DO ZAIMPLEMENTOWANIA
+// 1. Stan: tablica kopca, typ (min/max), kolejka zaplanowanych operacji z #scenario, wyjęte elementy, liczniki, bieżący indeks naprawy.
+// 2. Generatory kroków: insert(x) -> dopisz na końcu -> sift-up (porównanie z rodzicem, zamiana, kolejny poziom);
+//    extract() -> zapamiętaj korzeń -> przenieś ostatni na wierzch -> sift-down (wybór mniejszego dziecka, porównanie, zamiana);
+//    build(arr) -> sift-down od ostatniego rodzica do korzenia; heapsort -> build + n x extract z pokazaniem posortowanego końca tablicy.
+// 3. Układ drzewa: pozycje (x, y) węzłów wyliczane z indeksu i poziomu; animuj zamianę dwóch węzłów jako ich ruch po krawędzi.
+//    Równolegle odświeżaj #heapArray (te same elementy, zsynchronizowane podświetlenie) i indeksy pod węzłami.
+// 4. Statystyki: #heapSize, #heapHeight, #compareCount, #swapCount; #chosen = wyjęte elementy; #resultText = podsumowanie i sprawdzenie warunku kopca.
+// 5. Walidacja #value (1–99, całkowita), limit rozmiaru kopca (np. 15 węzłów, żeby drzewo się mieściło), komunikaty w #operation.
+//
+// PRZEWIDZIANA INTERAKCJA
+// - #insertBtn / klawisz Enter w polu #value: wstawia wartość i animuje sift-up (blokuj przyciski do końca animacji lub kolejkuj).
+// - #extractBtn: usuwa korzeń i animuje sift-down; wyłączony dla pustego kopca.
+// - Klik w węzeł drzewa lub komórkę tablicy: zaznacz go i pokaż jego rodzica i dzieci oraz wzór indeksów (i → 2i+1, 2i+2) w #operation.
+// - Dwuklik w węzeł (lub Delete): usuń dowolny element — zamień z ostatnim i napraw w górę lub w dół (opcjonalnie).
+// - Przełącznik #heapType: przebuduj bieżące elementy do kopca max/min (animowana build).
+// - Najechanie na węzeł: tooltip z indeksem, rodzicem i dziećmi; elementy mają tabindex, Enter = zaznacz, strzałki = poruszanie po drzewie.
+// - Spacja = pauza, N = jeden krok, R = reset.
+(() => {
+  'use strict';
+  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+})();
+    </script>
+  </body>
+</html>

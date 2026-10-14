@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Wieże Hanoi krok po kroku: rekurencja, minimalna liczba ruchów 2ⁿ − 1 i drzewo wywołań.">
+    <title>Wieże Hanoi (rekurencja) · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Rekurencja · Wieże Hanoi</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Wieże Hanoi (rekurencja)</h1><p>Przenieś wieżę krążków z jednego pręta na drugi, nigdy nie kładąc większego krążka na mniejszym. Zadanie wygląda na trudne, dopóki nie zauważysz, że przeniesienie n krążków to dwa przeniesienia n − 1 i jeden ruch.</p></div>
+        <span class="badge">Rekurencja · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Tryb</label><select id="scenario"><option value="auto">Pokaz rozwiązania (algorytm)</option><option value="manual">Spróbuj sam</option></select></div>
+          <div class="field"><label for="size">Liczba krążków <output id="sizeLabel" for="size">3</output></label><input id="size" type="range" min="1" max="7" value="3"></div>
+          <div class="field"><label for="target">Pręt docelowy</label><select id="target"><option value="C">Pręt C</option><option value="B">Pręt B</option></select></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">2 op./s</output></label><input id="speed" type="range" min="1" max="12" value="2"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="undoBtn" class="btn">↶ Cofnij ruch</button></div>
+        <p class="control-hint">W pokazie jeden krok to jeden ruch krążka. W trybie „Spróbuj sam” przenosisz krążki myszą lub klawiaturą, a niedozwolone ruchy są odrzucane z wyjaśnieniem. Minimalna liczba ruchów dla n krążków to 2ⁿ − 1.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Trzy pręty i krążki</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 300" role="img" aria-label="Trzy pręty A, B i C z krążkami"></svg></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Przenoszony krążek</span><span><i class="lab-key ready" aria-hidden="true"></i>Dozwolony pręt docelowy</span><span><i class="lab-key rejected" aria-hidden="true"></i>Ruch niedozwolony</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy ruch.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Wykonane ruchy</span><output id="moveCount">0</output><small id="moveGoal">minimum: 7</small></div>
+          <div class="stat"><span>Głębokość rekurencji</span><output id="depth">0</output><small>bieżące zagnieżdżenie wywołań</small></div>
+          <div class="stat"><span>Przenoszony zakres</span><output id="subproblem">—</output><small>krążki objęte bieżącym wywołaniem</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>ruchy krążków</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="callsTitle"><h2 id="callsTitle">Stos wywołań</h2><p>Aktualne wywołania hanoi(k, z, na, przez) od najbardziej zewnętrznego do bieżącego.</p><ol id="callStack" class="graph-tokens" aria-label="Stos wywołań rekurencyjnych"></ol></section>
+        <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Lista ruchów</h2><p id="phaseText">Wykonane ruchy pojawią się tutaj w kolejności.</p><ol id="chosen" class="graph-tokens" aria-label="Wykonane ruchy"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Reguła rekurencji</summary><p>hanoi(n, z, na, przez): jeśli n = 0, nic nie rób. W przeciwnym razie wykonaj hanoi(n − 1, z, przez, na), przenieś krążek n z pręta „z” na „na”, a potem wykonaj hanoi(n − 1, przez, na, z). Liczba ruchów T(n) = 2T(n − 1) + 1 = 2ⁿ − 1.</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Wieże Hanoi</h2></div><span class="tag">Rekurencja</span></div>
+        <dl class="complexity"><div><dt>Liczba ruchów</dt><dd>2ⁿ − 1 (minimum)</dd></div><div><dt>Czas</dt><dd>O(2ⁿ)</dd></div><div><dt>Pamięć stosu</dt><dd>O(n)</dd></div><div><dt>Rekurencja</dt><dd>T(n) = 2T(n − 1) + 1</dd></div><div><dt>Pręty</dt><dd>3</dd></div></dl>
+        <p class="complexity-note">n to liczba krążków. Każdy dodatkowy krążek podwaja liczbę ruchów, więc 20 krążków to już ponad milion ruchów. Dlatego symulacja ogranicza n do 7.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Przenieś n − 1 górnych krążków na pręt pomocniczy.</li><li>Przenieś największy krążek na pręt docelowy.</li><li>Przenieś n − 1 krążków z pomocniczego na docelowy.</li><li>Przypadek bazowy: 0 krążków oznacza brak ruchów.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Największy krążek można ruszyć tylko wtedy, gdy wszystkie mniejsze leżą na trzecim pręcie. Zatem przeniesienie n krążków wymaga przeniesienia n − 1 krążków dwa razy, a liczby ruchów nie da się zmniejszyć.</p><h3>Wersja iteracyjna</h3><p>Dla parzystego n ruchy cyklicznie powtarzają wzór: najmniejszy krążek na kolejny pręt, potem jedyny dozwolony ruch innego krążka.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Jako klasyczne wprowadzenie do rekurencji i dziel i zwyciężaj, analizy równań rekurencyjnych oraz przykład problemu, którego koszt rośnie wykładniczo.</p></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
+// Wzorzec: knapsack.html (generator kroków, zegar) i sort.html (animacja elementów).
+//
+// DO ZAIMPLEMENTOWANIA
+// 1. Stan: trzy stosy krążków (A, B, C), liczba ruchów, lista ruchów, stos wywołań, tryb ('auto' | 'manual'), historia do cofania.
+// 2. Generator kroków (function*): rekurencyjne hanoi(n, z, na, przez) z yield przy każdym ruchu; rekurencja zwraca także
+//    informację o wejściu/wyjściu z wywołania, aby aktualizować #callStack, #depth i #subproblem.
+// 3. Rysowanie w #board: pręty z etykietami A/B/C, krążki jako prostokąty o szerokości zależnej od rozmiaru i różnych kolorach;
+//    animacja ruchu: w górę -> w bok -> w dół. Szanuj prefers-reduced-motion (ruch natychmiastowy).
+// 4. Statystyki i wynik: #moveCount, #moveGoal (2ⁿ − 1), #depth, #subproblem, #stepCount; #chosen = lista ruchów ("1: A → C");
+//    #resultText z porównaniem własnej liczby ruchów z minimum (tryb ręczny).
+// 5. Walidacja ruchów w trybie ręcznym: zabroń kłaść większy krążek na mniejszy, zabroń ruchu z pustego pręta; powód w #operation.
+//    Wykrycie wygranej (wszystkie krążki na pręcie docelowym), blokada tempa w trybie ręcznym (nieużywane).
+//
+// PRZEWIDZIANA INTERAKCJA (tryb "Spróbuj sam")
+// - Przeciąganie górnego krążka myszą/dotykiem na inny pręt (pointer events); podświetl dozwolone pręty (ready) i niedozwolone (rejected).
+// - Alternatywa bez przeciągania: klik w pręt źródłowy (zaznaczenie górnego krążka), potem klik w pręt docelowy.
+// - Klawiatura: klawisze 1/2/3 (lub A/B/C) wybierają pręt źródłowy, drugie naciśnięcie wybiera docelowy; Esc anuluje zaznaczenie.
+//   Pręty mają tabindex i role="button" z etykietą "Pręt A, krążki: 3, 1".
+// - #undoBtn cofa ostatni ruch (również w trybie auto po wstrzymaniu); Reset przywraca stan początkowy.
+// - Przycisk podpowiedzi (opcjonalnie): pokaż następny ruch zgodny z optymalnym algorytmem.
+// - Klik w element listy ruchów #chosen: przeskocz do stanu po tym ruchu (tylko po zakończeniu lub w pauzie).
+// - Zmiana #size lub #target = reset(). Spacja = pauza, N = jeden krok, U = cofnij.
+(() => {
+  'use strict';
+  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+})();
+    </script>
+  </body>
+</html>

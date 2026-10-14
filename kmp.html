@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Algorytm Knutha-Morrisa-Pratta (KMP) krok po kroku: wyszukiwanie wzorca w tekście z tablicą prefikso-sufiksów bez cofania się w tekście.">
+    <title>Wyszukiwanie wzorca (KMP) · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Napisy · Wyszukiwanie wzorca</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Wyszukiwanie wzorca (KMP)</h1><p>Naiwne szukanie słowa w tekście po każdej pomyłce zaczyna od nowa. Algorytm Knutha-Morrisa-Pratta zapamiętuje, ile już się zgadza, i nigdy nie cofa się w tekście.</p></div>
+        <span class="badge">KMP · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Zestaw</label><select id="scenario"><option value="example">Przykład: ABABCABAB</option><option value="repeat">Wiele powtórzeń (AAAA…)</option><option value="none">Brak dopasowania</option><option value="custom">Własny tekst i wzorzec</option></select></div>
+          <div class="field"><label for="text">Tekst</label><input id="text" type="text" maxlength="30" value="ABABDABACDABABCABAB" autocomplete="off"></div>
+          <div class="field"><label for="pattern">Wzorzec</label><input id="pattern" type="text" maxlength="10" value="ABABCABAB" autocomplete="off"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">4 op./s</output></label><input id="speed" type="range" min="1" max="20" value="4"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj tekst</button></div>
+        <p class="control-hint">Najpierw budowana jest tablica prefikso-sufiksów wzorca, potem trwa właściwe wyszukiwanie. Jeden krok to jedno porównanie znaków. Tekst ma do 30 znaków, wzorzec do 10.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tekst i przesuwany wzorzec</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 200" role="img" aria-label="Tekst z wzorcem przesuwanym pod spodem"></svg></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Porównywane znaki</span><span><i class="lab-key accepted" aria-hidden="true"></i>Zgodny prefiks</span><span><i class="lab-key rejected" aria-hidden="true"></i>Niezgodność</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="lpsTitle"><h2 id="lpsTitle">Tablica prefikso-sufiksów</h2><p>lps[i] to długość najdłuższego właściwego prefiksu wzorca[0..i], który jest też jego sufiksem. Mówi, o ile można się cofnąć we wzorcu po niezgodności.</p><table id="lpsTable" class="graph-table"><caption>Pozycja · znak wzorca · lps</caption><thead id="lpsHead"></thead><tbody id="lpsBody"></tbody></table></section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Porównania znaków</span><output id="compareCount">0</output><small>przy budowie lps i wyszukiwaniu</small></div>
+          <div class="stat"><span>Znalezione dopasowania</span><output id="matchCount">0</output><small>pozycje początku we wzorcu</small></div>
+          <div class="stat"><span>Przesunięcia wzorca</span><output id="shiftCount">0</output><small>cofnięcia wg tablicy lps</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>budowa i wyszukiwanie</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Znalezione pozycje</h2><p id="phaseText">Najpierw zbudujemy tablicę lps, potem przeszukamy tekst.</p><ol id="chosen" class="graph-tokens" aria-label="Pozycje dopasowań"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Reguła przesunięcia</summary><p>Gdy tekst[i] ≠ wzorzec[j] i j &gt; 0, ustaw j = lps[j − 1] i porównaj ponownie ten sam znak tekstu. Gdy j = 0, przejdź do następnego znaku tekstu. Gdy j dojdzie do długości wzorca, zgłoś dopasowanie i ustaw j = lps[j − 1].</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Knuth-Morris-Pratt</h2></div><span class="tag">Wyszukiwanie w napisach</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n + m)</dd></div><div><dt>Pamięć</dt><dd>O(m)</dd></div><div><dt>Naiwnie</dt><dd>O(n · m)</dd></div><div><dt>Cofanie w tekście</dt><dd>Nigdy</dd></div><div><dt>Preprocessing</dt><dd>O(m)</dd></div></dl>
+        <p class="complexity-note">n to długość tekstu, m — wzorca. Wskaźnik w tekście tylko rośnie, więc każdy znak tekstu jest odczytany na stałe tylko ograniczoną liczbę razy.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Dla wzorca oblicz tablicę lps: gdzie zaczyna się to samo, co już dopasowano.</li><li>Porównuj kolejne znaki tekstu ze wzorcem.</li><li>Po niezgodności nie wracaj w tekście; skróć dopasowany prefiks wzorca według lps.</li><li>Gdy dopasujesz cały wzorzec, zapisz pozycję i szukaj kolejnych wystąpień.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Dopasowany fragment tekstu jest znany, więc wiemy, jaki jego koniec jest też początkiem wzorca. Tablica lps wskazuje najdłuższy taki fragment, dzięki czemu nie przeoczymy żadnego dopasowania.</p><h3>Nakładanie się</h3><p>Wystąpienia mogą na siebie zachodzić, np. ABA w ABABA. KMP znajduje je wszystkie.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy wyszukiwaniu w edytorach i logach, w analizie sekwencji DNA oraz jako wprowadzenie do bardziej zaawansowanych algorytmów na napisach, jak Aho-Corasick.</p></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
+// Wzorzec: search.html i knapsack.html (generator kroków, fazy, tabela pomocnicza).
+//
+// DO ZAIMPLEMENTOWANIA
+// 1. Stan: tekst, wzorzec, lps[], wskaźniki i (tekst) oraz j (wzorzec), znalezione pozycje, faza ('lps' | 'search' | 'done'), liczniki.
+// 2. Generator kroków: faza 1 — budowa lps (jedno porównanie = jeden krok, #lpsBody wypełnia się stopniowo);
+//    faza 2 — porównania tekst[i] z wzorzec[j]; po zgodności i++, j++; po niezgodności j = lps[j−1] (wzorzec przesuwa się w prawo);
+//    po dopasowaniu całego wzorca zapisz pozycję i kontynuuj (nakładające się wystąpienia).
+// 3. Rysowanie w #board: rząd znaków tekstu z indeksami; pod nim wzorzec przesunięty o (i − j); zielone zgodne znaki (accepted),
+//    niebieska para porównywana (current), pomarańczowa niezgodność (rejected); wyróżnij dotychczas znalezione wystąpienia.
+// 4. Dane: scenariusze, losowanie, walidacja pól #text i #pattern (puste, wzorzec dłuższy niż tekst), wielkość liter istotna;
+//    ręczna edycja przełącza #scenario na "Własny tekst i wzorzec"; zmiana danych = reset().
+// 5. Statystyki i wynik: #compareCount, #matchCount, #shiftCount, #stepCount, #chosen (pozycje), #phaseText, #resultText.
+//    Opcjonalnie pokaż liczbę porównań naiwnego algorytmu dla tych samych danych.
+//
+// PRZEWIDZIANA INTERAKCJA
+// - Klik w znak tekstu: ustaw tam początek (edytuj ręcznie pozycję startową wyszukiwania) lub zaznacz fragment jako wzorzec (opcjonalnie).
+// - Klik w komórkę tablicy lps: podświetl w #board prefiks i sufiks, które ta wartość opisuje (np. "AB" = "AB").
+// - Klik w znalezione dopasowanie w #chosen: przewiń/zaznacz je w tekście.
+// - Najechanie na znak wzorca: tooltip z wartością lps i informacją, dokąd wskaźnik j cofnie się po niezgodności.
+// - Przeciąganie suwaka tempa lub klawisz N pozwala przejść pojedyncze porównania; Spacja = pauza.
+// - Pola tekstowe edytowalne tylko po Reset; podczas działania zablokowane (aria-disabled + komunikat w #operation).
+// - #board powinien się przewijać poziomo (.lab-viewport) dla dłuższych tekstów; aktywny znak jest automatycznie centrowany.
+(() => {
+  'use strict';
+  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+})();
+    </script>
+  </body>
+</html>

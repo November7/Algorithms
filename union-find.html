@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Union-Find (zbiory rozłączne) krok po kroku: operacje find i union, kompresja ścieżek i łączenie według rangi.">
+    <title>Union-Find (zbiory rozłączne) · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Struktury danych · Zbiory rozłączne</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Union-Find (zbiory rozłączne)</h1><p>Struktura, która błyskawicznie odpowiada, czy dwa elementy należą do tej samej grupy, i potrafi grupy łączyć. To właśnie ona działa w środku algorytmu Kruskala. Zobacz, jak drzewa się spłaszczają.</p></div>
+        <span class="badge">Find · Union · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Ciąg operacji</label><select id="scenario"><option value="example">Przykład: kilka połączeń</option><option value="chain">Długi łańcuch (najgorszy przypadek)</option><option value="balanced">Łączenie parami</option><option value="random">Losowy</option></select></div>
+          <div class="field"><label for="optimization">Optymalizacje</label><select id="optimization"><option value="both">Ranga + kompresja ścieżek</option><option value="rank">Tylko ranga</option><option value="compress">Tylko kompresja ścieżek</option><option value="none">Brak (wersja naiwna)</option></select></div>
+          <div class="field"><label for="size">Liczba elementów <output id="sizeLabel" for="size">10</output></label><input id="size" type="range" min="6" max="14" value="10"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">3 op./s</output></label><input id="speed" type="range" min="1" max="12" value="3"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj operacje</button></div>
+        <p class="control-hint">Jeden krok to jeden skok w górę drzewa podczas find albo jedno podpięcie korzenia podczas union. Porównaj ten sam ciąg operacji z włączonymi i wyłączonymi optymalizacjami.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel lab-table-panel" aria-labelledby="queueTitle"><h2 id="queueTitle">Kolejka operacji</h2><p>Operacje wykonywane po kolei. Bieżąca jest wyróżniona.</p><ol id="operations" class="graph-tokens" aria-labelledby="queueTitle"></ol></section>
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Las drzew zbiorów</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="img" aria-label="Las drzew reprezentujących zbiory rozłączne"></svg></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Element w operacji</span><span><i class="lab-key ready" aria-hidden="true"></i>Odwiedzana ścieżka</span><span><i class="lab-key accepted" aria-hidden="true"></i>Korzeń zbioru</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Liczba zbiorów</span><output id="setCount">0</output><small>rozłącznych grup</small></div>
+          <div class="stat"><span>Wysokość najwyższego drzewa</span><output id="maxHeight">0</output><small>im niższa, tym szybszy find</small></div>
+          <div class="stat"><span>Skoki w górę drzewa</span><output id="hopCount">0</output><small>łączny koszt operacji find</small></div>
+          <div class="stat"><span>Wykonane operacje</span><output id="stepCount">0</output><small>find i union</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="arrayTitle"><h2 id="arrayTitle">Tablica rodziców</h2><p>parent[i] wskazuje rodzica elementu i. Korzeń wskazuje na siebie.</p><table id="parentTable" class="graph-table"><caption>Element · rodzic · ranga</caption><thead id="parentHead"></thead><tbody id="parentBody"></tbody></table><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Reguły operacji</summary><p>find(x): idź do rodzica, aż trafisz na korzeń; przy kompresji ścieżek podepnij każdy odwiedzony element bezpośrednio pod korzeń. union(a, b): znajdź korzenie obu elementów i podepnij korzeń niższego drzewa (o mniejszej randze) pod korzeń wyższego.</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Union-Find</h2></div><span class="tag">Struktura danych</span></div>
+        <dl class="complexity"><div><dt>find / union</dt><dd>O(α(n)) zamortyzowane</dd></div><div><dt>Naiwnie</dt><dd>O(n) w najgorszym razie</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Optymalizacje</dt><dd>Ranga, kompresja ścieżek</dd></div><div><dt>Tworzenie</dt><dd>O(n)</dd></div></dl>
+        <p class="complexity-note">α(n) to odwrotność funkcji Ackermanna, która dla każdego realnego n jest nie większa niż 4, więc koszt jest praktycznie stały. Bez optymalizacji drzewo może zdegenerować się do łańcucha.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Na początku każdy element jest własnym zbiorem i własnym korzeniem.</li><li>find idzie do korzenia; elementy mają ten sam zbiór, gdy mają ten sam korzeń.</li><li>union łączy dwa drzewa, podpinając niższe pod wyższe.</li><li>Kompresja ścieżek spłaszcza drzewo przy okazji każdego find.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Łączenie według rangi nie pozwala drzewom szybko rosnąć wzwyż, a kompresja skraca ścieżki dla przyszłych zapytań. Razem dają koszt prawie stały na operację.</p><h3>Czego nie umie?</h3><p>Nie rozdziela zbiorów: raz połączone elementy zostają razem.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>W algorytmie Kruskala, przy wykrywaniu cykli w grafach nieskierowanych, w analizie spójnych składowych oraz w zadaniach typu „czy te dwa punkty są już połączone?”.</p></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
+// Wzorzec: kruskal.html (zbiory składowych) — generator kroków, rysowanie w SVG.
+//
+// DO ZAIMPLEMENTOWANIA
+// 1. Stan: parent[], rank[], lista operacji ({ type: 'union' | 'find', a, b }), indeks bieżącej operacji, liczniki skoków.
+// 2. Generator kroków: operacja z kolejki -> każdy skok w górę drzewa = krok -> (union) podpięcie korzenia = krok;
+//    kompresja ścieżek jako osobne kroki (ponowne podpięcie elementów pod korzeń) lub jeden krok z animacją; zależnie od #optimization.
+// 3. Układ lasu: wyznacz poziomy drzew (korzeń na górze), rozmieść drzewa obok siebie w #board; przy zmianie struktury animuj przejście
+//    pozycji; kolor korzeni (accepted), ścieżka find (ready), elementy operacji (current). Obok węzła wyświetlaj rangę.
+// 4. #operations: lista operacji jako tokeny (bieżąca wyróżniona, wykonane przygaszone); #parentBody: parent i rank dla każdego elementu.
+// 5. Statystyki: #setCount, #maxHeight, #hopCount, #stepCount; #resultText z podsumowaniem (porównaj koszt z wersją naiwną).
+//
+// PRZEWIDZIANA INTERAKCJA
+// - Klik w dwa elementy po kolei: dodaje do kolejki operację union(a, b) (pierwszy klik zaznacza, drugi zatwierdza; Esc anuluje).
+// - Klik w element z Shift (lub podwójny klik): dodaje do kolejki operację find(x).
+// - Tryb ręczny: operacje z kolejki wykonują się przyciskiem "Jeden krok"; dodana w trakcie operacja trafia na koniec kolejki.
+// - Przeciąganie elementu na inny element: skrót do union(a, b) (pointer events, z podświetleniem celu upuszczenia).
+// - Klik w token operacji w #operations: usunięcie nieuruchomionej operacji lub przejście do niej (przed startem).
+// - Przycisk wyboru #optimization: po zmianie przelicz ten sam ciąg operacji od początku; pokaż porównanie kosztów w #resultText.
+// - Klawiatura: Tab po elementach (tabindex, role="button"), Enter = zaznacz/zatwierdź, Spacja = pauza, N = jeden krok.
+(() => {
+  'use strict';
+  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+})();
+    </script>
+  </body>
+</html>

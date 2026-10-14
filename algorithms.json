@@ -52,5 +52,47 @@
     "description": "Tabela programowania dynamicznego i odtwarzanie optymalnego zestawu przedmiotów.",
     "url": "knapsack.html",
     "status": "published"
+  },
+  {
+    "title": "Odległość edycyjna (Levenshtein)",
+    "description": "Tabela programowania dynamicznego i odtwarzanie operacji zamieniających jedno słowo w drugie.",
+    "url": "edit-distance.html",
+    "status": "planned"
+  },
+  {
+    "title": "Algorytm Bellmana-Forda",
+    "description": "Najkrótsze ścieżki z ujemnymi wagami i wykrywanie ujemnego cyklu.",
+    "url": "bellman-ford.html",
+    "status": "planned"
+  },
+  {
+    "title": "Union-Find (zbiory rozłączne)",
+    "description": "Operacje find i union, łączenie według rangi i kompresja ścieżek.",
+    "url": "union-find.html",
+    "status": "planned"
+  },
+  {
+    "title": "Wyszukiwanie wzorca (KMP)",
+    "description": "Wyszukiwanie wzorca w tekście z tablicą prefikso-sufiksów, bez cofania się w tekście.",
+    "url": "kmp.html",
+    "status": "planned"
+  },
+  {
+    "title": "Kopiec binarny (kolejka priorytetowa)",
+    "description": "Wstawianie, usuwanie korzenia, przesuwanie w górę i w dół oraz sortowanie przez kopcowanie.",
+    "url": "heap.html",
+    "status": "planned"
+  },
+  {
+    "title": "Sito Eratostenesa",
+    "description": "Znajdowanie liczb pierwszych przez wykreślanie wielokrotności.",
+    "url": "sieve.html",
+    "status": "planned"
+  },
+  {
+    "title": "Wieże Hanoi (rekurencja)",
+    "description": "Rekurencyjne przenoszenie krążków, stos wywołań i minimalna liczba ruchów 2ⁿ − 1.",
+    "url": "hanoi.html",
+    "status": "planned"
   }
 ]
