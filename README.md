@@ -5,7 +5,7 @@
 
 # Polski
 
-Repozytorium zawiera zbiór interaktywnych symulacji znanych algorytmów. Przykłady są przygotowane jako strony HTML, CSS i JavaScript, które pozwalają obserwować działanie algorytmów krok po kroku. Znajdują się tu algorytmy sortowania, wyszukiwania, wyznaczania minimum i maksimum, przeszukiwania grafów (DFS i BFS) oraz znajdowania najniższego wspólnego przodka (LCA).
+Repozytorium zawiera zbiór interaktywnych symulacji znanych algorytmów. Przykłady są przygotowane jako strony HTML, CSS i JavaScript, które pozwalają obserwować działanie algorytmów krok po kroku. Znajdują się tu algorytmy sortowania, wyszukiwania, wyznaczania minimum i maksimum, przeszukiwania grafów (DFS i BFS), znajdowania najniższego wspólnego przodka (LCA), najkrótszych ścieżek (Dijkstra), minimalnego drzewa rozpinającego (Kruskal), sortowania topologicznego (Kahn) oraz rozwiązanie problemu plecakowego 0/1 metodą programowania dynamicznego.
 
 README oraz symulacje w tym repozytorium są tworzone przy użyciu sztucznej inteligencji.
 
@@ -13,7 +13,7 @@ Lista dostępnych symulacji znajduje się na [GitHub Pages](https://november7.gi
 
 # English
 
-This repository is a collection of interactive simulations of well-known algorithms. The examples are built as HTML, CSS, and JavaScript pages so you can observe how algorithms work, step by step. It includes sorting, searching, minimum and maximum selection, graph traversal (DFS and BFS), and lowest common ancestor (LCA) queries.
+This repository is a collection of interactive simulations of well-known algorithms. The examples are built as HTML, CSS, and JavaScript pages so you can observe how algorithms work, step by step. It includes sorting, searching, minimum and maximum selection, graph traversal (DFS and BFS), lowest common ancestor (LCA) queries, shortest paths (Dijkstra), minimum spanning trees (Kruskal), topological sorting (Kahn), and dynamic programming for the 0/1 knapsack problem.
 
 This README and the simulations in this repository are created using artificial intelligence.
 

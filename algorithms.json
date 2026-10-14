@@ -34,5 +34,23 @@
     "description": "Algorytm Dijkstry do wyznaczania najkrótszych ścieżek w grafie.",
     "url": "dijkstra.html",
     "status": "published"
+  },
+  {
+    "title": "Algorytm Kruskala",
+    "description": "Minimalne drzewo i las rozpinający: wybór krawędzi, składowe i odrzucanie cykli.",
+    "url": "kruskal.html",
+    "status": "published"
+  },
+  {
+    "title": "Sortowanie topologiczne Kahna",
+    "description": "Kolejność zadań z zależnościami, kolejka gotowych zadań i wykrywanie cyklu.",
+    "url": "topological.html",
+    "status": "published"
+  },
+  {
+    "title": "Problem plecakowy 0/1",
+    "description": "Tabela programowania dynamicznego i odtwarzanie optymalnego zestawu przedmiotów.",
+    "url": "knapsack.html",
+    "status": "published"
   }
 ]

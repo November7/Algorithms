@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sortowanie topologiczne algorytmem Kahna: kolejka zadań bez zależności, stopnie wejściowe i wykrywanie cyklu.">
+    <title>Sortowanie topologiczne · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Grafy skierowane · Kahn</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Sortowanie topologiczne</h1><p>Najpierw wymagania, potem zadanie. Śledź, jak algorytm Kahna usuwa spełnione zależności i tworzy porządek topologiczny — albo odkrywa, że blokuje go cykl.</p></div>
+        <span class="badge">Zależności · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields">
+          <div class="field"><label for="scenario">Rodzaj grafu</label><select id="scenario"><option value="dag">Bez cyklu (DAG)</option><option value="cycle">Z cyklem</option><option value="independent">Niezależne zadania</option></select></div>
+          <div class="field"><label for="size">Liczba zadań <output id="sizeLabel" for="size">8</output></label><input id="size" type="range" min="4" max="10" value="8"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">3 op./s</output></label><input id="speed" type="range" min="1" max="12" value="3"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj graf</button></div>
+        <p class="control-hint">Jeden krok przygotowuje kolejkę, pobiera jedno zadanie lub usuwa jedną zależność. Reset zachowuje graf. Strzałka A → B oznacza: A musi poprzedzać B.</p>
+        <p class="control-hint">Liczba „wejść” pod wierzchołkiem to liczba jego niespełnionych zależności. Nowe zadania trafiają na koniec kolejki; przy jednoczesnym starcie porządkujemy je według numerów.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf zależności</h2></div><span id="statusText" role="status">Gotowy</span></div>
+          <div class="lab-viewport" tabindex="0" role="region" aria-label="Przewijany widok grafu"><svg id="board" class="lab-board" viewBox="0 0 760 420" role="img" aria-label="Graf skierowany ze stopniami wejściowymi" aria-describedby="operation graphText"></svg></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>▶ Wybrane teraz</span><span><i class="lab-key ready" aria-hidden="true"></i>Q W kolejce</span><span><i class="lab-key accepted" aria-hidden="true"></i>✓ W wyniku</span><span><i class="lab-key rejected" aria-hidden="true"></i>! Zablokowane</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Ułożone zadania</span><output id="orderedCount">0</output><small id="vertexCount">z 8 zadań</small></div>
+          <div class="stat"><span>Usunięte zależności</span><output id="removedCount">0</output><small>przetworzone krawędzie</small></div>
+          <div class="stat"><span>Gotowe zadania</span><output id="readyCount">0</output><small>w kolejce FIFO</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>operacje algorytmu</small></div>
+        </section>
+        <section class="panel graph-trace" aria-label="Kolejka i wynik">
+          <div><h3 id="queueTitle">Kolejka gotowych zadań</h3><p>Pobieramy z lewej, nowe zadania dodajemy z prawej.</p><ol id="queue" class="graph-tokens" aria-labelledby="queueTitle"></ol></div>
+          <div><h3 id="orderTitle">Kolejność wynikowa</h3><p>Każde zadanie trafia tu dopiero po wszystkich swoich poprzednikach.</p><ol id="order" class="graph-tokens" aria-labelledby="orderTitle"></ol></div>
+          <p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="degreeTitle"><h2 id="degreeTitle">Niespełnione zależności</h2><p>Stopień wejściowy maleje po usunięciu krawędzi od wykonanego poprzednika.</p><div class="graph-table-wrap" tabindex="0" role="region" aria-label="Tabela zadań"><table class="graph-table"><caption>Stan zadań i liczba pozostałych wejść</caption><thead><tr><th scope="col">Zadanie</th><th scope="col">Pozostałe wejścia</th><th scope="col">Stan</th></tr></thead><tbody id="degreeTable"></tbody></table></div></section>
+        <details class="data-details"><summary>Lista zależności i wynik tekstowy</summary><p id="graphText"></p><p id="orderText"></p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Sortowanie topologiczne Kahna</h2></div><span class="tag">Kolejka FIFO</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(V + E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Reprezentacja</dt><dd>Listy sąsiedztwa</dd></div><div><dt>Pełny porządek</dt><dd>Tylko dla DAG</dd></div><div><dt>Wynik</dt><dd>Kolejność zadań</dd></div></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E — krawędzi. Każdy wierzchołek trafia do kolejki raz; każdą krawędź usuwamy raz. Kolejka ma indeks początku, więc pobieranie nie przesuwa tablicy. Koszty dotyczą algorytmu, bez rysowania i aktualizacji tabel.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Policz stopnie wejściowe i dodaj do kolejki wszystkie zadania o stopniu 0.</li><li>Pobierz pierwsze zadanie i dopisz je do wyniku.</li><li>Usuń jego krawędzie wychodzące. Gdy stopień sąsiada spadnie do 0, dodaj go do kolejki.</li><li>Powtarzaj do opróżnienia kolejki. Jeśli pozostały zadania, graf zawiera cykl.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Zadanie o zerowym stopniu wejściowym nie ma już niespełnionych wymagań. Można je bezpiecznie umieścić jako następne. W każdym niepustym DAG istnieje taki wierzchołek.</p><h3>Co oznacza blokada?</h3><p>Wierzchołki pozostałe po zatrzymaniu leżą w cyklu lub zależą od cyklu. Algorytm wykrywa jego istnienie, ale nie wskazuje dokładnie wszystkich wierzchołków należących do cykli.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy ustalaniu kolejności kompilacji modułów, wykonywania zadań i realizacji kursów z wymaganiami wstępnymi. Poprawny porządek nie musi być jedyny; algorytm nie wyznacza czasu trwania harmonogramu.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz niezależne zadania. Ile różnych poprawnych kolejności można utworzyć? Potem uruchom graf z cyklem i sprawdź, dlaczego pusta kolejka nie oznacza sukcesu.</p></div></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const state = { n: 0, edges: [], adjacency: [], indegree: [], queue: [], head: 0, order: [], placed: new Set(), removed: new Set(), blocked: new Set(), current: -1, active: -1, steps: 0, running: false, paused: false, done: false, iterator: null };
+  let frameId = null, lastTime = null, budget = 0;
+  const controls = ['scenario', 'size', 'randomBtn'];
+
+  function reset() {
+    stopClock();
+    state.adjacency = Array.from({ length: state.n }, () => []);
+    state.indegree = Array(state.n).fill(0);
+    for (const edge of state.edges) { state.adjacency[edge.a].push(edge); state.indegree[edge.b]++; }
+    state.queue = []; state.head = 0; state.order = [];
+    state.placed.clear(); state.removed.clear(); state.blocked.clear();
+    state.current = -1; state.active = -1; state.steps = 0;
+    state.running = false; state.paused = false; state.done = false; state.iterator = null;
+    $('operation').textContent = 'Wybierz Start lub wykonaj pierwszy krok.';
+    $('resultText').textContent = 'Wynik pojawi się po zakończeniu.';
+    render();
+  }
+
+  function generateData() {
+    state.n = Number($('size').value); state.edges = [];
+    const seen = new Set();
+    function add(a, b) {
+      const key = `${a}-${b}`;
+      if (seen.has(key)) return;
+      seen.add(key); state.edges.push({ a, b, id: state.edges.length });
+    }
+    if ($('scenario').value !== 'independent') {
+      // Edges go forward through a shuffled order, so numbering does not reveal the answer.
+      const permutation = Array.from({ length: state.n }, (_, i) => i);
+      for (let i = permutation.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [permutation[i], permutation[j]] = [permutation[j], permutation[i]];
+      }
+      for (let i = 0; i < state.n; i++) {
+        for (let j = i + 1; j < Math.min(state.n, i + 3); j++) {
+          if (Math.random() < 0.6) add(permutation[i], permutation[j]);
+        }
+      }
+      add(permutation[0], permutation[1]);
+      if ($('scenario').value === 'cycle') {
+        add(permutation[1], permutation[2]); add(permutation[2], permutation[0]);
+      }
+    }
+    $('sizeLabel').textContent = state.n;
+    $('graphText').textContent = state.edges.length ? state.edges.map(e => `${e.a + 1} → ${e.b + 1}`).join(' · ') : 'Brak krawędzi — wszystkie zadania są niezależne.';
+    reset();
+  }
+
+  function* runAlgorithm() {
+    for (let v = 0; v < state.n; v++) if (state.indegree[v] === 0) state.queue.push(v);
+    yield `Stopnie wejściowe policzone. Do kolejki trafiają zadania bez poprzedników: ${state.queue.map(v => v + 1).join(', ') || 'brak'}.`;
+    while (state.head < state.queue.length) {
+      const v = state.queue[state.head++];
+      state.current = v; state.active = -1; state.order.push(v); state.placed.add(v);
+      yield `▶ Pobieramy zadanie ${v + 1} i dopisujemy je do wyniku. Teraz usuwamy jego zależności wychodzące.`;
+      for (const edge of state.adjacency[v]) {
+        state.active = edge.id; state.removed.add(edge.id); state.indegree[edge.b]--;
+        const ready = state.indegree[edge.b] === 0;
+        if (ready) state.queue.push(edge.b);
+        yield `Usuwamy ${v + 1} → ${edge.b + 1}. Pozostałe wejścia zadania ${edge.b + 1}: ${state.indegree[edge.b]}.${ready ? ' Dodajemy je na koniec kolejki.' : ''}`;
+      }
+    }
+    state.current = -1; state.active = -1; state.done = true;
+    for (let v = 0; v < state.n; v++) if (!state.placed.has(v)) state.blocked.add(v);
+    const result = state.blocked.size
+      ? `Wykryto cykl — pełny porządek nie istnieje. Zablokowane zadania: ${[...state.blocked].map(v => v + 1).join(', ')}. Mogą należeć do cyklu lub od niego zależeć.`
+      : `Porządek topologiczny: ${state.order.map(v => v + 1).join(' → ')}. Każda zależność prowadzi od wcześniejszego zadania do późniejszego.`;
+    $('resultText').textContent = result;
+    yield result;
+  }
+
+  function svg(name, attributes, text) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', name);
+    for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function draw() {
+    const board = $('board'); board.replaceChildren();
+    const defs = svg('defs', {});
+    for (const [kind, color] of [['waiting', '#8497b1'], ['removed', '#437c88'], ['active', '#315fb1']]) {
+      const marker = svg('marker', { id: `arrow-${kind}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' });
+      marker.append(svg('path', { d: 'M 0 0 L 10 5 L 0 10 Z', fill: color })); defs.append(marker);
+    }
+    board.append(defs);
+    const points = Array.from({ length: state.n }, (_, i) => {
+      const angle = -Math.PI / 2 + 2 * Math.PI * i / state.n;
+      return { x: 380 + 290 * Math.cos(angle), y: 202 + 150 * Math.sin(angle) };
+    });
+    for (const edge of state.edges) {
+      const a = points[edge.a], b = points[edge.b];
+      const dx = b.x - a.x, dy = b.y - a.y, length = Math.hypot(dx, dy);
+      // Curvature separates opposing arrows and reduces overlap at the center.
+      const bend = 20, cx = (a.x + b.x) / 2 - dy / length * bend, cy = (a.y + b.y) / 2 + dx / length * bend;
+      const startLength = Math.hypot(cx - a.x, cy - a.y), endLength = Math.hypot(b.x - cx, b.y - cy);
+      const x1 = a.x + (cx - a.x) / startLength * 24, y1 = a.y + (cy - a.y) / startLength * 24;
+      const x2 = b.x - (b.x - cx) / endLength * 28, y2 = b.y - (b.y - cy) / endLength * 28;
+      const kind = state.active === edge.id ? 'active' : state.removed.has(edge.id) ? 'removed' : 'waiting';
+      board.append(svg('path', { d: `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`, class: `lab-edge directed ${kind}`, 'marker-end': `url(#arrow-${kind})` }));
+    }
+    const ready = new Set(state.queue.slice(state.head));
+    points.forEach((point, v) => {
+      const kind = v === state.current ? 'current' : state.placed.has(v) ? 'accepted' : state.blocked.has(v) ? 'rejected' : ready.has(v) ? 'ready' : '';
+      const mark = v === state.current ? '▶' : state.placed.has(v) ? '✓' : state.blocked.has(v) ? '!' : ready.has(v) ? 'Q' : '';
+      board.append(svg('circle', { cx: point.x, cy: point.y, r: 22, class: `lab-node ${kind}` }));
+      board.append(svg('text', { x: point.x, y: point.y + 5, class: `lab-number ${kind}` }, v + 1));
+      board.append(svg('text', { x: point.x, y: point.y + 39, class: 'lab-node-note' }, `${mark} wejść: ${state.indegree[v]}`));
+    });
+  }
+
+  function renderTokens(id, values) {
+    $(id).replaceChildren(...(values.length ? values : ['Pusta']).map(value => {
+      const item = document.createElement('li'); item.textContent = typeof value === 'number' ? value + 1 : value;
+      if (typeof value !== 'number') item.className = 'graph-empty';
+      return item;
+    }));
+  }
+
+  function render() {
+    draw();
+    const ready = new Set(state.queue.slice(state.head));
+    renderTokens('queue', [...ready]); renderTokens('order', state.order);
+    $('degreeTable').replaceChildren(...state.indegree.map((degree, v) => {
+      const row = document.createElement('tr');
+      row.className = v === state.current ? 'lab-current' : state.placed.has(v) ? 'lab-accepted' : state.blocked.has(v) ? 'lab-rejected' : '';
+      const label = v === state.current ? '▶ Usuwanie zależności' : state.placed.has(v) ? '✓ W wyniku' : state.blocked.has(v) ? '! Zablokowane' : ready.has(v) ? 'Q W kolejce' : 'Oczekuje';
+      for (const value of [v + 1, degree, label]) { const cell = document.createElement('td'); cell.textContent = value; row.append(cell); }
+      return row;
+    }));
+    $('orderedCount').textContent = state.order.length; $('removedCount').textContent = state.removed.size;
+    $('readyCount').textContent = ready.size; $('stepCount').textContent = state.steps;
+    $('vertexCount').textContent = `z ${state.n} zadań`;
+    $('orderText').textContent = `${state.done && !state.blocked.size ? 'Pełny porządek' : 'Dotychczasowy prefiks'}: ${state.order.map(v => v + 1).join(' → ') || 'pusty'}.`;
+    updateControls();
+  }
+
+  // Playback follows the same Start / Pause / Step / Reset contract as the other labs.
+  function stopClock() {
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null; lastTime = null; budget = 0;
+  }
+  function updateControls() {
+    $('statusText').textContent = state.done ? state.blocked.size ? 'Wykryto cykl' : 'Zakończono' : state.running ? state.paused ? 'Pauza' : 'W trakcie' : 'Gotowy';
+    $('startBtn').disabled = state.running && !state.paused;
+    $('startBtn').textContent = state.done ? '▶ Uruchom ponownie' : state.paused ? '▶ Wznów' : '▶ Start';
+    $('pauseBtn').disabled = !state.running; $('pauseBtn').textContent = state.paused ? 'Wznów' : 'Pauza';
+    $('stepBtn').disabled = state.running && !state.paused;
+    $('stopBtn').disabled = !state.running && state.steps === 0;
+    for (const id of controls) $(id).disabled = state.running;
+  }
+  function nextStep() {
+    if (state.done) return;
+    if (!state.iterator) state.iterator = runAlgorithm();
+    const result = state.iterator.next();
+    if (!result.done) { state.steps++; $('operation').textContent = result.value; }
+    if (result.done || state.done) { state.done = true; state.running = false; state.paused = false; state.iterator = null; stopClock(); }
+    render();
+  }
+  function animate(time) {
+    frameId = null;
+    if (!state.running || state.paused || document.hidden) { lastTime = null; return; }
+    if (lastTime === null) lastTime = time;
+    budget += Math.min(time - lastTime, 100) * Number($('speed').value) / 1000; lastTime = time;
+    while (budget >= 1 && state.running) { budget--; nextStep(); }
+    if (state.running && !state.paused) frameId = requestAnimationFrame(animate);
+  }
+  function start() {
+    if (state.running && !state.paused) return;
+    if (state.done) reset();
+    stopClock(); state.running = true; state.paused = false; updateControls(); frameId = requestAnimationFrame(animate);
+  }
+  $('startBtn').addEventListener('click', start);
+  $('pauseBtn').addEventListener('click', () => {
+    if (!state.running) return;
+    if (state.paused) { start(); return; }
+    stopClock(); state.paused = true; updateControls();
+  });
+  $('stepBtn').addEventListener('click', () => {
+    if (state.running && !state.paused) return;
+    if (state.done) reset();
+    stopClock(); state.running = true; state.paused = true; nextStep();
+  });
+  $('stopBtn').addEventListener('click', reset);
+  $('randomBtn').addEventListener('click', generateData);
+  $('scenario').addEventListener('change', generateData);
+  $('size').addEventListener('input', () => { $('sizeLabel').textContent = $('size').value; });
+  $('size').addEventListener('change', generateData);
+  $('speed').addEventListener('input', () => { $('speedLabel').textContent = `${$('speed').value} op./s`; });
+  document.addEventListener('visibilitychange', () => {
+    stopClock();
+    if (!document.hidden && state.running && !state.paused) frameId = requestAnimationFrame(animate);
+  });
+  generateData();
+})();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Algorytm Kruskala krok po kroku: minimalne drzewo rozpinające, składowe i odrzucanie cykli.">
+    <title>Algorytm Kruskala · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Grafy ważone · Kruskal</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Algorytm Kruskala</h1><p>Obserwuj, jak algorytm Kruskala buduje minimalne drzewo rozpinające. Sprawdzaj krawędzie od najlżejszej i łącz składowe, unikając cykli.</p></div>
+        <span class="badge">Algorytm zachłanny · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields">
+          <div class="field"><label for="scenario">Rodzaj grafu</label><select id="scenario"><option value="connected">Spójny</option><option value="disconnected">Dwie składowe</option><option value="equal">Równe wagi</option></select></div>
+          <div class="field"><label for="size">Liczba wierzchołków <output id="sizeLabel" for="size">7</output></label><input id="size" type="range" min="4" max="10" value="7"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">3 op./s</output></label><input id="speed" type="range" min="1" max="12" value="3"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj graf</button></div>
+        <p class="control-hint">Jeden krok sortuje krawędzie, wskazuje badaną krawędź lub rozstrzyga jej przyjęcie. Reset zachowuje graf; po zakończeniu możesz uruchomić ten sam przykład ponownie.</p>
+        <p class="control-hint">Wagi to koszty połączeń, niezależne od długości linii. Etykieta „grupa” pod wierzchołkiem wskazuje reprezentanta jego składowej w budowanym lesie.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf i rosnący las</h2></div><span id="statusText" role="status">Gotowy</span></div>
+          <div class="lab-viewport" tabindex="0" role="region" aria-label="Przewijany widok grafu"><svg id="board" class="lab-board" viewBox="0 0 760 420" role="img" aria-label="Graf ważony i wybrane krawędzie" aria-describedby="operation graphText"></svg></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>▶ Badana</span><span><i class="lab-key accepted" aria-hidden="true"></i>✓ Przyjęta</span><span><i class="lab-key rejected" aria-hidden="true"></i>× Odrzucona · cykl</span><span><i class="lab-key" aria-hidden="true"></i>Jeszcze niesprawdzona</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Wybrane krawędzie</span><output id="acceptedCount">0</output><small id="edgeGoal">w budowanym lesie</small></div>
+          <div class="stat"><span>Łączna waga</span><output id="totalWeight">0</output><small>suma przyjętych wag</small></div>
+          <div class="stat"><span>Składowe lasu</span><output id="componentCount">7</output><small>początkowo osobne wierzchołki</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>sortowanie, wskazania i decyzje</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="edgeTitle">
+          <h2 id="edgeTitle">Kolejność rozpatrywania krawędzi</h2><p>Po pierwszym kroku: rosnąco według wagi, przy remisie według numerów końców. Zielone wiersze tworzą wynik.</p>
+          <div class="graph-table-wrap" tabindex="0" role="region" aria-label="Tabela krawędzi"><table class="graph-table"><caption>Krawędzie i decyzje algorytmu</caption><thead><tr><th scope="col">Krawędź</th><th scope="col">Waga</th><th scope="col">Decyzja</th></tr></thead><tbody id="edgeTable"></tbody></table></div>
+          <p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p>
+        </section>
+        <details class="data-details"><summary>Dane grafu i składowe</summary><p id="graphText"></p><p id="groupsText"></p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Algorytm Kruskala</h2></div><span class="tag">Minimalne drzewo rozpinające</span></div>
+        <dl class="complexity"><div><dt>Strategia</dt><dd>Zachłanna</dd></div><div><dt>Czas</dt><dd>O(V + E log E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Graf</dt><dd>Nieskierowany</dd></div><div><dt>Struktura</dt><dd>Union–Find (DSU)</dd></div></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E — krawędzi. Sortowanie dominuje nad operacjami DSU z kompresją ścieżek i łączeniem według rozmiaru. Podane koszty dotyczą algorytmu, bez odświeżania wizualizacji. Sortowanie pokazujemy jako jeden krok zbiorczy.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Utwórz osobną składową dla każdego wierzchołka.</li><li>Posortuj krawędzie rosnąco według wagi.</li><li>Przyjmij krawędź, jeśli jej końce należą do różnych składowych. Połącz te składowe.</li><li>Odrzuć krawędź zamykającą cykl. Zakończ po wybraniu V − 1 krawędzi albo wyczerpaniu listy.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Najlżejsza krawędź łącząca dwie aktualne składowe jest bezpiecznym wyborem: można ją włączyć do pewnego minimalnego drzewa rozpinającego. Zakaz cykli utrzymuje wynik w postaci lasu.</p><h3>Remisy i niespójność</h3><p>Przy równych wagach może istnieć wiele równie dobrych drzew. W grafie niespójnym otrzymujemy minimalny las rozpinający — po jednym drzewie na składową.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy projektowaniu tanich sieci połączeń i grupowaniu danych. Minimalizujemy koszt całej sieci; ścieżki między konkretnymi parami nie muszą być najkrótsze. Algorytm dopuszcza także wagi zerowe i ujemne.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz „Dwie składowe”. Dlaczego algorytm nie wybiera V − 1 krawędzi? Potem sprawdź, jak rozstrzyga remisy w trybie równych wag.</p></div></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const state = { n: 0, edges: [], sorted: [], parent: [], sizes: [], accepted: new Set(), rejected: new Set(), active: -1, total: 0, components: 0, steps: 0, running: false, paused: false, done: false, iterator: null };
+  let frameId = null, lastTime = null, budget = 0;
+  const controls = ['scenario', 'size', 'randomBtn'];
+  const edgeName = edge => `${edge.a + 1}–${edge.b + 1}`;
+
+  function find(v) {
+    while (v !== state.parent[v]) {
+      state.parent[v] = state.parent[state.parent[v]];
+      v = state.parent[v];
+    }
+    return v;
+  }
+
+  function reset() {
+    stopClock();
+    state.parent = Array.from({ length: state.n }, (_, i) => i);
+    state.sizes = Array(state.n).fill(1);
+    state.sorted = state.edges.slice();
+    state.accepted.clear(); state.rejected.clear(); state.active = -1;
+    state.total = 0; state.components = state.n; state.steps = 0;
+    state.running = false; state.paused = false; state.done = false; state.iterator = null;
+    $('operation').textContent = 'Wybierz Start lub wykonaj pierwszy krok.';
+    $('resultText').textContent = 'Wynik pojawi się po zakończeniu.';
+    render();
+  }
+
+  function generateData() {
+    state.n = Number($('size').value);
+    state.edges = [];
+    const split = Math.ceil(state.n / 2), seen = new Set();
+    function add(a, b) {
+      if (a > b) [a, b] = [b, a];
+      const key = `${a}-${b}`;
+      if (a === b || seen.has(key)) return;
+      seen.add(key);
+      state.edges.push({ a, b, weight: $('scenario').value === 'equal' ? 4 : 1 + Math.floor(Math.random() * 15), id: state.edges.length });
+    }
+    const groups = $('scenario').value === 'disconnected' ? [[0, split], [split, state.n]] : [[0, state.n]];
+    for (const [lo, hi] of groups) {
+      for (let v = lo + 1; v < hi; v++) add(v - 1, v);
+      add(lo, hi - 1);
+      for (let v = lo; v < hi - 2; v++) if (Math.random() < 0.65) add(v, v + 2);
+    }
+    $('sizeLabel').textContent = state.n;
+    $('graphText').textContent = state.edges.map(e => `${edgeName(e)}: waga ${e.weight}`).join(' · ');
+    reset();
+  }
+
+  function* runAlgorithm() {
+    state.sorted.sort((a, b) => a.weight - b.weight || a.a - b.a || a.b - b.b);
+    yield 'Posortowano krawędzie rosnąco według wagi. Teraz sprawdzamy je po kolei.';
+    for (const edge of state.sorted) {
+      if (state.components === 1) break;
+      state.active = edge.id;
+      yield `Sprawdzamy krawędź ${edgeName(edge)} o wadze ${edge.weight}. Czy jej końce są już połączone?`;
+      let a = find(edge.a), b = find(edge.b);
+      if (a === b) {
+        state.rejected.add(edge.id);
+        yield `× Odrzucamy ${edgeName(edge)}: oba końce są w grupie ${a + 1}, więc powstałby cykl.`;
+      } else {
+        if (state.sizes[a] < state.sizes[b]) [a, b] = [b, a];
+        state.parent[b] = a; state.sizes[a] += state.sizes[b];
+        state.components--; state.accepted.add(edge.id); state.total += edge.weight;
+        yield `✓ Przyjmujemy ${edgeName(edge)} i łączymy grupy. Łączna waga: ${state.total}.`;
+      }
+    }
+    state.active = -1;
+    state.done = true;
+    const result = state.components === 1
+      ? `Minimalne drzewo rozpinające: ${state.accepted.size} krawędzi, łączna waga ${state.total}.`
+      : `Graf jest niespójny. Minimalny las rozpinający: liczba składowych ${state.components}, krawędzi ${state.accepted.size}, łączna waga ${state.total}.`;
+    $('resultText').textContent = result;
+    yield result;
+  }
+
+  function svg(name, attributes, text) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', name);
+    for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function draw() {
+    const board = $('board'); board.replaceChildren();
+    const points = Array.from({ length: state.n }, (_, i) => {
+      const angle = -Math.PI / 2 + 2 * Math.PI * i / state.n;
+      return { x: 380 + 290 * Math.cos(angle), y: 202 + 150 * Math.sin(angle) };
+    });
+    // Draw all lines before labels so a crossing never paints over a weight.
+    const labels = [];
+    const occupied = points.map(point => ({ x: point.x - 27, y: point.y - 26, width: 54, height: 70 }));
+    const overlaps = (a, b) => a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+    for (const edge of state.edges) {
+      const a = points[edge.a], b = points[edge.b];
+      const accepted = state.accepted.has(edge.id), rejected = state.rejected.has(edge.id);
+      const kind = accepted ? 'accepted' : rejected ? 'rejected' : state.active === edge.id ? 'current' : '';
+      board.append(svg('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: `lab-edge ${kind}` }));
+      // In particular, both diagonals of a four-vertex graph share a midpoint.
+      // Slide weight labels along their own edge until they clear nodes and earlier labels.
+      const candidates = [0.5, 0.38, 0.62, 0.28, 0.72].map(t => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }));
+      const position = candidates.find(point => !occupied.some(rect => overlaps({ x: point.x - 25, y: point.y - 16, width: 50, height: 32 }, rect))) || candidates[0];
+      const { x, y } = position;
+      occupied.push({ x: x - 25, y: y - 16, width: 50, height: 32 });
+      labels.push(svg('rect', { x: x - 22, y: y - 13, width: 44, height: 26, rx: 7, class: `lab-weight-bg ${kind}` }));
+      labels.push(svg('text', { x, y: y + 4, class: 'lab-weight' }, `${accepted ? '✓ ' : rejected ? '× ' : state.active === edge.id ? '▶ ' : ''}${edge.weight}`));
+    }
+    board.append(...labels);
+    points.forEach((point, i) => {
+      board.append(svg('circle', { cx: point.x, cy: point.y, r: 20, class: 'lab-node' }));
+      board.append(svg('text', { x: point.x, y: point.y + 5, class: 'lab-number' }, i + 1));
+      board.append(svg('text', { x: point.x, y: point.y + 38, class: 'lab-node-note' }, `grupa ${find(i) + 1}`));
+    });
+  }
+
+  function render() {
+    draw();
+    $('edgeTable').replaceChildren(...state.sorted.map(edge => {
+      const row = document.createElement('tr');
+      const accepted = state.accepted.has(edge.id), rejected = state.rejected.has(edge.id);
+      row.className = accepted ? 'lab-accepted' : rejected ? 'lab-rejected' : state.active === edge.id ? 'lab-current' : '';
+      const label = accepted ? '✓ Przyjęta' : rejected ? '× Odrzucona — cykl' : state.active === edge.id ? '▶ Badana' : 'Oczekuje';
+      for (const value of [edgeName(edge), edge.weight, label]) {
+        const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
+      }
+      return row;
+    }));
+    const groups = new Map();
+    for (let v = 0; v < state.n; v++) {
+      const root = find(v);
+      if (!groups.has(root)) groups.set(root, []);
+      groups.get(root).push(v + 1);
+    }
+    $('groupsText').textContent = [...groups].map(([root, members]) => `Grupa ${root + 1}: ${members.join(', ')}`).join(' · ');
+    $('acceptedCount').textContent = state.accepted.size;
+    $('totalWeight').textContent = state.total;
+    $('componentCount').textContent = state.components;
+    $('stepCount').textContent = state.steps;
+    updateControls();
+  }
+
+  function stopClock() {
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null; lastTime = null; budget = 0;
+  }
+
+  function updateControls() {
+    $('statusText').textContent = state.done ? 'Zakończono' : state.running ? state.paused ? 'Pauza' : 'W trakcie' : 'Gotowy';
+    $('startBtn').disabled = state.running && !state.paused;
+    $('startBtn').textContent = state.done ? '▶ Uruchom ponownie' : state.paused ? '▶ Wznów' : '▶ Start';
+    $('pauseBtn').disabled = !state.running;
+    $('pauseBtn').textContent = state.paused ? 'Wznów' : 'Pauza';
+    $('stepBtn').disabled = state.running && !state.paused;
+    $('stopBtn').disabled = !state.running && state.steps === 0;
+    for (const id of controls) $(id).disabled = state.running;
+  }
+
+  function nextStep() {
+    if (state.done) return;
+    if (!state.iterator) state.iterator = runAlgorithm();
+    const result = state.iterator.next();
+    if (!result.done) { state.steps++; $('operation').textContent = result.value; }
+    if (result.done || state.done) {
+      state.done = true; state.running = false; state.paused = false; state.iterator = null; stopClock();
+    }
+    render();
+  }
+
+  function animate(time) {
+    frameId = null;
+    if (!state.running || state.paused || document.hidden) { lastTime = null; return; }
+    if (lastTime === null) lastTime = time;
+    budget += Math.min(time - lastTime, 100) * Number($('speed').value) / 1000;
+    lastTime = time;
+    while (budget >= 1 && state.running) { budget--; nextStep(); }
+    if (state.running && !state.paused) frameId = requestAnimationFrame(animate);
+  }
+
+  function start() {
+    if (state.running && !state.paused) return;
+    if (state.done) reset();
+    stopClock(); state.running = true; state.paused = false; updateControls();
+    frameId = requestAnimationFrame(animate);
+  }
+
+  $('startBtn').addEventListener('click', start);
+  $('pauseBtn').addEventListener('click', () => {
+    if (!state.running) return;
+    if (state.paused) { start(); return; }
+    stopClock(); state.paused = true; updateControls();
+  });
+  $('stepBtn').addEventListener('click', () => {
+    if (state.running && !state.paused) return;
+    if (state.done) reset();
+    stopClock(); state.running = true; state.paused = true; nextStep();
+  });
+  $('stopBtn').addEventListener('click', reset);
+  $('randomBtn').addEventListener('click', generateData);
+  $('scenario').addEventListener('change', generateData);
+  $('size').addEventListener('input', () => { $('sizeLabel').textContent = $('size').value; });
+  $('size').addEventListener('change', generateData);
+  $('speed').addEventListener('input', () => { $('speedLabel').textContent = `${$('speed').value} op./s`; });
+  document.addEventListener('visibilitychange', () => {
+    stopClock();
+    if (!document.hidden && state.running && !state.paused) frameId = requestAnimationFrame(animate);
+  });
+  generateData();
+})();
+    </script>
+  </body>
+</html>

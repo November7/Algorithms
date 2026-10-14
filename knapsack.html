@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Problem plecakowy 0/1 krok po kroku: tabela programowania dynamicznego i odtwarzanie optymalnego zestawu przedmiotów.">
+    <title>Problem plecakowy 0/1 · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab">
+    <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Programowanie dynamiczne · Plecak 0/1</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Problem plecakowy 0/1</h1><p>Każdy przedmiot możesz zabrać tylko raz. Obserwuj, jak małe podproblemy budują optymalne rozwiązanie, a potem odtwórz zawartość plecaka bez przekraczania jego pojemności.</p></div>
+        <span class="badge">Plecak 0/1 · krok po kroku</span>
+      </section>
+      <section class="panel controls" aria-label="Ustawienia i sterowanie">
+        <div class="lab-fields four">
+          <div class="field"><label for="scenario">Zestaw przedmiotów</label><select id="scenario"><option value="example">Przykład: pięć przedmiotów</option><option value="greedy">Pułapka wyboru zachłannego</option><option value="heavy">Wszystko za ciężkie</option><option value="random">Losowy</option></select></div>
+          <div class="field"><label for="size">Liczba przedmiotów <output id="sizeLabel" for="size">5</output></label><input id="size" type="range" min="3" max="8" value="5"></div>
+          <div class="field"><label for="capacity">Pojemność <output id="capacityLabel" for="capacity">10</output></label><input id="capacity" type="range" min="0" max="20" value="10"></div>
+          <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">6 op./s</output></label><input id="speed" type="range" min="1" max="30" value="6"></div>
+        </div>
+        <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj przedmioty</button></div>
+        <p class="control-hint">Jeden krok wyjaśnia stan początkowy, oblicza jedną komórkę lub odtwarza decyzję o jednym przedmiocie. Reset zachowuje dane. Zmiana liczby przedmiotów losuje nowy zestaw; pojemność możesz zmieniać dla tych samych przedmiotów.</p>
+        <p class="control-hint">Wybór przykładu ustawia jego początkową pojemność. Wagi i wartości są dodatnimi liczbami całkowitymi. Strzałki w komórkach wskazują decyzję: ↑ pomiń, ↖ weź.</p>
+      </section>
+      <div class="main-column lab-results">
+        <section class="panel lab-table-panel" aria-labelledby="itemsTitle"><h2 id="itemsTitle">Przedmioty do wyboru</h2><p>Wybór końcowy pojawia się podczas odtwarzania rozwiązania, po wypełnieniu tabeli.</p><ol id="items" class="lab-items" aria-labelledby="itemsTitle"></ol></section>
+        <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela najlepszych wartości</h2></div><span id="statusText" role="status">Gotowy</span></div>
+          <p class="lab-table-hint" id="tableHint">DP[i, c] to największa wartość z pierwszych i przedmiotów przy pojemności c. Kreska oznacza komórkę jeszcze nieobliczoną.</p>
+          <div class="lab-dp-viewport" tabindex="0" role="region" aria-label="Przewijana tabela programowania dynamicznego" aria-describedby="tableHint"><table id="dpTable" class="graph-table lab-dp"><caption>Wiersze: dostępne przedmioty · kolumny: pojemność plecaka</caption><thead id="dpHead"></thead><tbody id="dpBody"></tbody></table></div>
+          <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Obliczana / odtwarzana</span><span><i class="lab-key ready" aria-hidden="true"></i>Odczytywane podproblemy</span><span><i class="lab-key accepted" aria-hidden="true"></i>Ścieżka odtworzenia</span></div>
+          <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
+        </section>
+        <section class="stats" aria-label="Statystyki algorytmu">
+          <div class="stat"><span>Obliczone komórki</span><output id="cellCount">0</output><small id="cellGoal">bez wiersza i kolumny bazowej</small></div>
+          <div class="stat"><span>Wartość optymalna</span><output id="bestValue">—</output><small>dla całego zestawu i pojemności</small></div>
+          <div class="stat"><span>Waga wybranych</span><output id="selectedWeight">0</output><small id="weightLimit">pojemność: 10</small></div>
+          <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>obliczenia i odtwarzanie</small></div>
+        </section>
+        <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Zawartość plecaka</h2><p id="phaseText">Najpierw wypełnimy tabelę, potem odtworzymy wybór.</p><ol id="chosen" class="graph-tokens" aria-label="Wybrane przedmioty"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
+        <details class="data-details"><summary>Dane wejściowe i reguła przejścia</summary><p id="dataText"></p><p>DP[0, c] = DP[i, 0] = 0. Jeśli przedmiot i mieści się: DP[i, c] = max(DP[i − 1, c], wartość[i] + DP[i − 1, c − waga[i]]). W przeciwnym razie: DP[i, c] = DP[i − 1, c].</p></details>
+      </div>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Problem plecakowy 0/1</h2></div><span class="tag">Programowanie dynamiczne</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n · (W + 1))</dd></div><div><dt>Pamięć</dt><dd>O(n · (W + 1))</dd></div><div><dt>Wybór przedmiotu</dt><dd>0 albo 1 raz</dd></div><div><dt>Wagi</dt><dd>Dodatnie całkowite</dd></div><div><dt>Odtwarzanie</dt><dd>O(n)</dd></div></dl>
+        <p class="complexity-note">n to liczba przedmiotów, W — pojemność. Zwykle zapisujemy O(nW); tutaj W + 1 uwzględnia też zerową pojemność. Czas jest pseudowielomianowy: zależy od wartości W, a nie liczby bitów jej zapisu. Koszty nie obejmują odświeżania widoku. Pełna tabela ułatwia odtworzenie wyboru; samą wartość można obliczyć z pamięcią O(W + 1).</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><ol><li>Dla braku przedmiotów lub pojemności 0 wpisz wartość 0.</li><li>Dla kolejnego przedmiotu i każdej pojemności porównaj pominięcie z zabraniem, jeśli się mieści.</li><li>Oba warianty odczytuj z poprzedniego wiersza, aby nie użyć przedmiotu drugi raz.</li><li>Od ostatniej komórki cofaj się po wierszach. Zmiana wartości oznacza zabranie przedmiotu i zmniejszenie wolnej pojemności.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Optymalne rozwiązanie albo zawiera ostatni rozważany przedmiot, albo go pomija. W obu przypadkach reszta musi być optymalnym rozwiązaniem mniejszego podproblemu. Tabela przechowuje te wyniki, zamiast liczyć je wielokrotnie.</p><h3>Remisy</h3><p>Gdy obie decyzje dają taką samą wartość, pomijamy bieżący przedmiot. Wynik jest optymalny, ale może nie być jedyny. Nie obiecujemy najmniejszej wagi spośród wszystkich optymalnych zestawów.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy wyborze projektów, ładunku i zasobów w ograniczonym budżecie. Dla bardzo dużego W tabela staje się kosztowna. W wariancie 0/1 nie można dzielić przedmiotów; wybieranie według wartości na jednostkę wagi nie gwarantuje optimum.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz pułapkę zachłanną: przedmiot 1 ma wagę 3 i wartość 5, a dwa pozostałe wagę 2 i wartość 3. Przy pojemności 4 dlaczego lepiej wziąć dwa mniejsze?</p></div></div>
+        </div>
+      </section>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const state = { items: [], capacity: 10, dp: [], choices: [], active: null, dependencies: new Set(), path: new Set(), selected: [], considered: new Set(), cells: 0, phase: 'ready', steps: 0, running: false, paused: false, done: false, iterator: null };
+  let frameId = null, lastTime = null, budget = 0;
+  const controls = ['scenario', 'size', 'capacity', 'randomBtn'];
+  const key = (i, c) => `${i}-${c}`;
+
+  function reset() {
+    stopClock();
+    state.capacity = Number($('capacity').value);
+    state.dp = Array.from({ length: state.items.length + 1 }, (_, i) => Array.from({ length: state.capacity + 1 }, (_, c) => i === 0 || c === 0 ? 0 : null));
+    state.choices = Array.from({ length: state.items.length + 1 }, () => Array(state.capacity + 1).fill(false));
+    state.active = null; state.dependencies.clear(); state.path.clear(); state.selected = []; state.considered.clear();
+    state.cells = 0; state.steps = 0; state.phase = 'ready';
+    state.running = false; state.paused = false; state.done = false; state.iterator = null;
+    $('operation').textContent = 'Wybierz Start lub wykonaj pierwszy krok.';
+    $('resultText').textContent = 'Wynik pojawi się po zakończeniu.';
+    $('capacityLabel').textContent = state.capacity;
+    $('dataText').textContent = `Pojemność: ${state.capacity}. ` + state.items.map((item, i) => `Przedmiot ${i + 1}: waga ${item.weight}, wartość ${item.value}`).join(' · ');
+    render();
+  }
+
+  function generateData() {
+    const scenario = $('scenario').value;
+    if (scenario === 'example') {
+      state.items = [{ weight: 6, value: 12 }, { weight: 4, value: 7 }, { weight: 3, value: 6 }, { weight: 2, value: 4 }, { weight: 5, value: 9 }];
+      $('capacity').value = '10';
+    } else if (scenario === 'greedy') {
+      state.items = [{ weight: 3, value: 5 }, { weight: 2, value: 3 }, { weight: 2, value: 3 }];
+      $('capacity').value = '4';
+    } else if (scenario === 'heavy') {
+      state.items = [{ weight: 5, value: 8 }, { weight: 6, value: 13 }, { weight: 7, value: 15 }, { weight: 8, value: 20 }];
+      $('capacity').value = '3';
+    } else {
+      state.items = Array.from({ length: Number($('size').value) }, () => ({ weight: 1 + Math.floor(Math.random() * 9), value: 1 + Math.floor(Math.random() * 20) }));
+    }
+    $('size').value = String(state.items.length); $('sizeLabel').textContent = state.items.length;
+    reset();
+  }
+
+  function* runAlgorithm() {
+    state.phase = 'fill';
+    yield 'Wiersz 0 i kolumna 0 mają wartość 0: bez przedmiotów lub pojemności nic nie zabierzemy.';
+    for (let i = 1; i <= state.items.length; i++) {
+      const item = state.items[i - 1];
+      for (let c = 1; c <= state.capacity; c++) {
+        state.active = { i, c }; state.dependencies = new Set([key(i - 1, c)]);
+        const skip = state.dp[i - 1][c];
+        let take = -Infinity;
+        if (item.weight <= c) {
+          take = item.value + state.dp[i - 1][c - item.weight];
+          state.dependencies.add(key(i - 1, c - item.weight));
+        }
+        state.dp[i][c] = Math.max(skip, take); state.choices[i][c] = take > skip; state.cells++;
+        yield take === -Infinity
+          ? `DP[${i}, ${c}]: przedmiot ${i} jest za ciężki (${item.weight} > ${c}). ↑ Pomijamy: przepisujemy ${skip}.`
+          : `DP[${i}, ${c}]: pomiń = ${skip}; weź = ${item.value} + ${state.dp[i - 1][c - item.weight]} = ${take}. ${take > skip ? '↖ Bierzemy' : take === skip ? '↑ Remis — pomijamy' : '↑ Pomijamy'}: zapisujemy ${state.dp[i][c]}.`;
+      }
+    }
+    state.phase = 'trace'; state.dependencies.clear();
+    let c = state.capacity;
+    for (let i = state.items.length; i > 0; i--) {
+      state.active = { i, c }; state.path.add(key(i, c)); state.considered.add(i - 1);
+      if (state.choices[i][c]) {
+        state.selected.push(i - 1); c -= state.items[i - 1].weight;
+        yield `Odtwarzanie: ✓ zabieramy przedmiot ${i}. Przechodzimy do DP[${i - 1}, ${c}].`;
+      } else {
+        yield `Odtwarzanie: pomijamy przedmiot ${i}. Przechodzimy do DP[${i - 1}, ${c}] bez zmiany pojemności.`;
+      }
+    }
+    state.path.add(key(0, c)); state.active = null; state.phase = 'done'; state.done = true;
+    const weight = state.selected.reduce((sum, i) => sum + state.items[i].weight, 0);
+    const names = state.selected.slice().sort((a, b) => a - b).map(i => i + 1).join(', ');
+    const result = `Optymalna wartość: ${state.dp[state.items.length][state.capacity]}. Wybrane przedmioty: ${names || 'brak'}. Łączna waga: ${weight} z ${state.capacity}.`;
+    $('resultText').textContent = result;
+    yield result;
+  }
+
+  function render() {
+    const selected = new Set(state.selected);
+    $('items').replaceChildren(...state.items.map((item, i) => {
+      const card = document.createElement('li');
+      card.className = selected.has(i) ? 'lab-accepted' : state.active?.i === i + 1 ? 'lab-current' : '';
+      const title = document.createElement('strong'); title.textContent = `Przedmiot ${i + 1}`;
+      const values = document.createElement('span'); values.textContent = `Waga: ${item.weight} · Wartość: ${item.value}`;
+      const status = document.createElement('small'); status.textContent = selected.has(i) ? '✓ W plecaku' : state.considered.has(i) ? 'Pominięty' : state.active?.i === i + 1 ? '▶ Rozważany' : 'Do rozważenia';
+      card.append(title, values, status); return card;
+    }));
+    const head = document.createElement('tr');
+    for (let c = -1; c <= state.capacity; c++) {
+      const cell = document.createElement('th'); cell.setAttribute('scope', 'col'); cell.textContent = c === -1 ? 'Przedmioty / c' : c; head.append(cell);
+    }
+    $('dpHead').replaceChildren(head);
+    $('dpBody').replaceChildren(...state.dp.map((values, i) => {
+      const row = document.createElement('tr'), label = document.createElement('th');
+      label.setAttribute('scope', 'row'); label.textContent = i === 0 ? '0 · brak' : `1…${i}`; row.append(label);
+      values.forEach((value, c) => {
+        const cell = document.createElement('td'), position = key(i, c);
+        const active = state.active?.i === i && state.active.c === c;
+        cell.className = active ? 'lab-current' : state.path.has(position) ? 'lab-accepted' : state.dependencies.has(position) ? 'lab-dependency' : '';
+        const arrow = value !== null && i > 0 && c > 0 ? state.choices[i][c] ? ' ↖' : ' ↑' : '';
+        cell.textContent = value === null ? '—' : `${value}${arrow}`;
+        cell.setAttribute('aria-label', `DP[${i}, ${c}]: ${value === null ? 'nieobliczona' : value}${arrow ? state.choices[i][c] ? ', weź przedmiot' : ', pomiń przedmiot' : ''}${active ? ', bieżąca' : ''}`);
+        row.append(cell);
+      });
+      return row;
+    }));
+    $('cellCount').textContent = state.cells; $('cellGoal').textContent = `z ${state.items.length * state.capacity} komórek poza bazą`;
+    $('bestValue').textContent = state.dp[state.items.length][state.capacity] ?? '—';
+    $('selectedWeight').textContent = state.selected.reduce((sum, i) => sum + state.items[i].weight, 0);
+    $('weightLimit').textContent = `pojemność: ${state.capacity}`; $('stepCount').textContent = state.steps;
+    $('phaseText').textContent = state.phase === 'trace' ? 'Odtwarzanie od ostatniego wiersza — wybrane przedmioty przybywają krok po kroku.' : state.done ? 'Odtwarzanie zakończone. Oto jeden z optymalnych zestawów.' : 'Najpierw wypełnimy tabelę, potem odtworzymy wybór.';
+    const chosen = state.selected.slice().sort((a, b) => a - b);
+    $('chosen').replaceChildren(...(chosen.length ? chosen : [-1]).map(i => {
+      const token = document.createElement('li'); token.textContent = i < 0 ? state.done ? 'Pusty plecak' : 'Jeszcze nie wybrano' : `Przedmiot ${i + 1}`;
+      if (i < 0) token.className = 'graph-empty'; return token;
+    }));
+    updateControls();
+  }
+
+  function stopClock() {
+    if (frameId !== null) cancelAnimationFrame(frameId);
+    frameId = null; lastTime = null; budget = 0;
+  }
+  function updateControls() {
+    $('statusText').textContent = state.done ? 'Zakończono' : state.running ? state.paused ? 'Pauza' : state.phase === 'trace' ? 'Odtwarzanie' : 'W trakcie' : 'Gotowy';
+    $('startBtn').disabled = state.running && !state.paused;
+    $('startBtn').textContent = state.done ? '▶ Uruchom ponownie' : state.paused ? '▶ Wznów' : '▶ Start';
+    $('pauseBtn').disabled = !state.running; $('pauseBtn').textContent = state.paused ? 'Wznów' : 'Pauza';
+    $('stepBtn').disabled = state.running && !state.paused;
+    $('stopBtn').disabled = !state.running && state.steps === 0;
+    for (const id of controls) $(id).disabled = state.running;
+  }
+  function nextStep() {
+    if (state.done) return;
+    if (!state.iterator) state.iterator = runAlgorithm();
+    const result = state.iterator.next();
+    if (!result.done) { state.steps++; $('operation').textContent = result.value; }
+    if (result.done || state.done) { state.done = true; state.running = false; state.paused = false; state.iterator = null; stopClock(); }
+    render();
+  }
+  function animate(time) {
+    frameId = null;
+    if (!state.running || state.paused || document.hidden) { lastTime = null; return; }
+    if (lastTime === null) lastTime = time;
+    budget += Math.min(time - lastTime, 100) * Number($('speed').value) / 1000; lastTime = time;
+    while (budget >= 1 && state.running) { budget--; nextStep(); }
+    if (state.running && !state.paused) frameId = requestAnimationFrame(animate);
+  }
+  function start() {
+    if (state.running && !state.paused) return;
+    if (state.done) reset();
+    stopClock(); state.running = true; state.paused = false; updateControls(); frameId = requestAnimationFrame(animate);
+  }
+  $('startBtn').addEventListener('click', start);
+  $('pauseBtn').addEventListener('click', () => {
+    if (!state.running) return;
+    if (state.paused) { start(); return; }
+    stopClock(); state.paused = true; updateControls();
+  });
+  $('stepBtn').addEventListener('click', () => {
+    if (state.running && !state.paused) return;
+    if (state.done) reset();
+    stopClock(); state.running = true; state.paused = true; nextStep();
+  });
+  $('stopBtn').addEventListener('click', reset);
+  $('randomBtn').addEventListener('click', () => { $('scenario').value = 'random'; generateData(); });
+  $('scenario').addEventListener('change', generateData);
+  $('size').addEventListener('input', () => { $('sizeLabel').textContent = $('size').value; });
+  $('size').addEventListener('change', () => { $('scenario').value = 'random'; generateData(); });
+  $('capacity').addEventListener('input', () => { $('capacityLabel').textContent = $('capacity').value; });
+  $('capacity').addEventListener('change', reset);
+  $('speed').addEventListener('input', () => { $('speedLabel').textContent = `${$('speed').value} op./s`; });
+  document.addEventListener('visibilitychange', () => {
+    stopClock();
+    if (!document.hidden && state.running && !state.paused) frameId = requestAnimationFrame(animate);
+  });
+  generateData();
+})();
+    </script>
+  </body>
+</html>
