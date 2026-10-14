@@ -7,7 +7,7 @@
     <title>Union-Find (zbiory rozłączne) · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="step-lab">
+  <body class="step-lab interactive-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -31,8 +31,8 @@
       <div class="main-column lab-results">
         <section class="panel lab-table-panel" aria-labelledby="queueTitle"><h2 id="queueTitle">Kolejka operacji</h2><p>Operacje wykonywane po kolei. Bieżąca jest wyróżniona.</p><ol id="operations" class="graph-tokens" aria-labelledby="queueTitle"></ol></section>
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Las drzew zbiorów</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
-          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="img" aria-label="Las drzew reprezentujących zbiory rozłączne"></svg></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Las drzew zbiorów</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="group" aria-label="Las drzew reprezentujących zbiory rozłączne"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Element w operacji</span><span><i class="lab-key ready" aria-hidden="true"></i>Odwiedzana ścieżka</span><span><i class="lab-key accepted" aria-hidden="true"></i>Korzeń zbioru</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
         </section>
@@ -58,29 +58,231 @@
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
-// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
-// Wzorzec: kruskal.html (zbiory składowych) — generator kroków, rysowanie w SVG.
-//
-// DO ZAIMPLEMENTOWANIA
-// 1. Stan: parent[], rank[], lista operacji ({ type: 'union' | 'find', a, b }), indeks bieżącej operacji, liczniki skoków.
-// 2. Generator kroków: operacja z kolejki -> każdy skok w górę drzewa = krok -> (union) podpięcie korzenia = krok;
-//    kompresja ścieżek jako osobne kroki (ponowne podpięcie elementów pod korzeń) lub jeden krok z animacją; zależnie od #optimization.
-// 3. Układ lasu: wyznacz poziomy drzew (korzeń na górze), rozmieść drzewa obok siebie w #board; przy zmianie struktury animuj przejście
-//    pozycji; kolor korzeni (accepted), ścieżka find (ready), elementy operacji (current). Obok węzła wyświetlaj rangę.
-// 4. #operations: lista operacji jako tokeny (bieżąca wyróżniona, wykonane przygaszone); #parentBody: parent i rank dla każdego elementu.
-// 5. Statystyki: #setCount, #maxHeight, #hopCount, #stepCount; #resultText z podsumowaniem (porównaj koszt z wersją naiwną).
-//
-// PRZEWIDZIANA INTERAKCJA
-// - Klik w dwa elementy po kolei: dodaje do kolejki operację union(a, b) (pierwszy klik zaznacza, drugi zatwierdza; Esc anuluje).
-// - Klik w element z Shift (lub podwójny klik): dodaje do kolejki operację find(x).
-// - Tryb ręczny: operacje z kolejki wykonują się przyciskiem "Jeden krok"; dodana w trakcie operacja trafia na koniec kolejki.
-// - Przeciąganie elementu na inny element: skrót do union(a, b) (pointer events, z podświetleniem celu upuszczenia).
-// - Klik w token operacji w #operations: usunięcie nieuruchomionej operacji lub przejście do niej (przed startem).
-// - Przycisk wyboru #optimization: po zmianie przelicz ten sam ciąg operacji od początku; pokaż porównanie kosztów w #resultText.
-// - Klawiatura: Tab po elementach (tabindex, role="button"), Enter = zaznacz/zatwierdź, Spacja = pauza, N = jeden krok.
+/* Shared controls and accessible drawing helpers for the step-by-step labs. */
+'use strict';
+window.Lab = (() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { if ($(id)) $(id).textContent = value; };
+  function element(tag, attrs = {}, content) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function svg(tag, attrs = {}, content) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function action(node, callback, label, key) {
+    node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+    node.setAttribute('aria-label', label); node.setAttribute('data-focus', key);
+    node.addEventListener('click', callback);
+    node.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); callback(event); }
+    });
+    return node;
+  }
+  function paint(node, draw) {
+    const focus = node.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus') : null;
+    node.replaceChildren(); draw(node);
+    if (focus !== null) [...node.querySelectorAll('[data-focus]')].find(el => el.getAttribute('data-focus') === focus)?.focus({ preventScroll: true });
+  }
+  function tokens(id, items, callback) {
+    paint($(id), root => items.forEach((item, i) => {
+      const li = element('li', { class: item.className || '' });
+      if (callback) {
+        const button = element('button', { type: 'button', 'data-focus': String(i) }, item.label ?? item);
+        button.addEventListener('click', event => callback(i, event)); li.append(button);
+      } else li.textContent = item.label ?? item;
+      root.append(li);
+    }));
+  }
+  function node(root, x, y, label, style = '', note = '', callback, key = label, radius = 19) {
+    const group = svg('g', { transform: `translate(${x} ${y})` });
+    group.append(svg('circle', { r: radius, class: `lab-node ${style}${radius < 19 ? ' compact' : ''}` }), svg('text', { y: 5, class: `lab-number ${style}` }, label));
+    if (note !== '') group.append(svg('text', { y: radius + 17, class: 'lab-node-note' }, note));
+    if (callback) action(group, callback, `${label}, ${note}`, String(key));
+    root.append(group); return group;
+  }
+  function point(board, event) {
+    return new DOMPoint(event.clientX, event.clientY).matrixTransform(board.getScreenCTM().inverse());
+  }
+  function controller({ run, render, reset, validate = () => true, locked = [], manual = () => false, update = () => {} }) {
+    let iterator = null, timer = null;
+    const api = { running: false, done: false, steps: 0, started: false,
+      sync() {
+        $('startBtn').disabled = api.running || api.done || manual();
+        $('pauseBtn').disabled = !api.started || api.done || manual();
+        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        $('stepBtn').disabled = api.running || api.done || manual();
+        $('stopBtn').disabled = false;
+        locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
+        $('speed').disabled = manual();
+        text('statusText', manual() ? (api.done ? 'Ukończono' : 'Tryb ręczny') : api.done ? 'Zakończono' : api.running ? 'W trakcie' : api.started ? 'Pauza' : 'Gotowe');
+        update(api);
+      },
+      refresh() { render(); api.sync(); },
+      pause() { clearTimeout(timer); timer = null; api.running = false; api.sync(); },
+      reset() {
+        api.pause(); iterator = null; api.done = false; api.started = false; api.steps = 0;
+        text('operation', 'Wybierz Start lub wykonaj pierwszy krok.'); text('resultText', 'Wynik pojawi się po zakończeniu.');
+        reset(); api.refresh();
+      },
+      next() {
+        if (api.done || manual() || !validate()) return;
+        api.started = true; iterator ||= run();
+        const result = iterator.next();
+        if (result.done) { api.done = true; api.pause(); if (result.value) text('operation', result.value); }
+        else { api.steps++; text('operation', result.value); }
+        api.refresh();
+      },
+      start() {
+        if (api.running || api.done || manual() || !validate()) return;
+        api.running = true; api.next();
+        const tick = () => {
+          if (!api.running) return;
+          api.next();
+          if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+        };
+        if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+      },
+      replace(generator) { api.pause(); iterator = generator; api.done = false; api.started = false; api.sync(); },
+      // Replaying a deterministic generator restores Hanoi's recursion and undo history.
+      rewind(count) { api.reset(); for (let i = 0; i < count; i++) api.next(); }
+    };
+    $('startBtn').addEventListener('click', api.start);
+    $('pauseBtn').addEventListener('click', () => api.running ? api.pause() : api.start());
+    $('stepBtn').addEventListener('click', () => { api.pause(); api.next(); });
+    $('stopBtn').addEventListener('click', api.reset);
+    $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
+    document.addEventListener('keydown', event => {
+      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.key.toLowerCase() === 'n' && !api.running) api.next();
+      if (event.key.toLowerCase() === 'r') api.reset();
+    });
+    return api;
+  }
+  return { $, text, element, svg, action, paint, tokens, node, point, controller };
+})();
+    </script>
+    <script>
 (() => {
   'use strict';
-  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+  const { $, text, element, svg, paint, tokens, controller } = Lab;
+  let n, parent, rank, queue = [], opIndex, hops, completed, current, trail, selected, drag, oldPositions = [];
+  const label = op => op.type === 'find' ? `find(${op.a})` : `union(${op.a}, ${op.b})`;
+  function generate() {
+    n = Number($('size').value); queue = []; const add = (a, b) => queue.push({ type: 'union', a, b });
+    switch ($('scenario').value) {
+      case 'chain': for (let i = 1; i < n; i++) add(i, i - 1); break;
+      case 'balanced': for (let width = 1; width < n; width *= 2) for (let i = 0; i + width < n; i += width * 2) add(i, i + width); break;
+      case 'random': for (let i = 0; i < n + 3; i++) add(Math.floor(Math.random() * n), Math.floor(Math.random() * n)); break;
+      default: [[0, 1], [2, 3], [0, 2], [4, 5], [0, 4], [1, 3]].forEach(pair => add(...pair));
+    }
+    for (let i = 0; i < n; i++) queue.push({ type: 'find', a: i });
+    ctl.reset();
+  }
+  function reset() {
+    n = Number($('size').value); parent = Array.from({ length: n }, (_, i) => i); rank = Array(n).fill(0);
+    opIndex = -1; hops = 0; completed = 0; current = -1; trail = []; selected = null; drag = null; oldPositions = []; text('sizeLabel', n);
+  }
+  function* find(x) {
+    const path = []; current = x; trail = [];
+    while (parent[x] !== x) { path.push(x); trail.push(x); const from = x; x = parent[x]; current = x; hops++; yield `find: ${from} → parent[${from}] = ${x}.`; }
+    current = x; yield `Korzeń zbioru to ${x}.`;
+    if (['both', 'compress'].includes($('optimization').value)) for (const v of path) if (parent[v] !== x) {
+      parent[v] = x; current = v; yield `Kompresja: parent[${v}] = ${x}. Skracamy ścieżkę do korzenia.`;
+    }
+    return x;
+  }
+  function naiveCost() {
+    const p = Array.from({ length: n }, (_, i) => i); let cost = 0;
+    const root = x => { while (p[x] !== x) { x = p[x]; cost++; } return x; };
+    queue.forEach(op => { const a = root(op.a); if (op.type === 'union') { const b = root(op.b); if (a !== b) p[b] = a; } }); return cost;
+  }
+  function* run() {
+    for (opIndex = completed; opIndex < queue.length; opIndex++) {
+      const op = queue[opIndex]; let a = yield* find(op.a);
+      if (op.type === 'union') {
+        let b = yield* find(op.b);
+        if (a === b) { yield `${label(op)}: oba elementy mają korzeń ${a}; nie łączymy ponownie.`; }
+        else {
+          const useRank = ['both', 'rank'].includes($('optimization').value);
+          if (useRank && rank[a] < rank[b]) [a, b] = [b, a];
+          parent[b] = a; if (useRank && rank[a] === rank[b]) rank[a]++;
+          current = b; trail = [a]; yield `${label(op)}: podepnij korzeń ${b} pod ${a}${useRank ? ' według rangi' : ' (naiwnie: drugi pod pierwszy)'}.`;
+        }
+      }
+      completed++;
+    }
+    current = -1; trail = []; text('resultText', `Zbiory: ${parent.filter((p, i) => p === i).length}. Skoki find: ${hops}; dla tego samego ciągu bez optymalizacji: ${naiveCost()}. Ranga jest oszacowaniem wysokości, nie zmniejsza się po kompresji.`);
+    return 'Kolejka wykonana. Wybierz dwa elementy, aby dodać union; Shift + klik dodaje find.';
+  }
+  function enqueue(op) {
+    queue.push(op); selected = null;
+    if (ctl.done) { ctl.replace(run()); text('resultText', 'Dodano operację. Uruchom Start lub Jeden krok.'); }
+    ctl.refresh(); text('operation', `Dodano ${label(op)} na koniec kolejki.`);
+  }
+  function choose(i, event) {
+    if (event.shiftKey) { enqueue({ type: 'find', a: i }); return; }
+    if (selected === null) { selected = i; text('operation', `Wybrano ${i}. Wybierz drugi element do union lub naciśnij Esc.`); render(); }
+    else enqueue({ type: 'union', a: selected, b: i });
+  }
+  function render() {
+    const roots = parent.map((p, i) => p === i ? i : -1).filter(i => i >= 0), children = parent.map(() => []), positions = [];
+    parent.forEach((p, i) => { if (p !== i) children[p].push(i); });
+    let slot = 0, maxDepth = 0;
+    function place(i, depth) {
+      maxDepth = Math.max(depth, maxDepth); const xs = children[i].map(c => place(c, depth + 1));
+      const x = xs.length ? (xs[0] + xs.at(-1)) / 2 : 40 + slot++ * 70;
+      positions[i] = { x, y: 40 + depth * 68 }; return x;
+    }
+    roots.forEach(root => { place(root, 0); slot += 0.35; });
+    const width = Math.max(640, slot * 70 + 20), height = Math.max(150, maxDepth * 68 + 100);
+    $('board').setAttribute('viewBox', `0 0 ${width} ${height}`); $('board').style.minWidth = `${width}px`; $('board').style.height = `${height}px`;
+    paint($('board'), root => {
+      parent.forEach((p, i) => { if (p !== i) root.append(svg('line', { x1: positions[i].x, y1: positions[i].y, x2: positions[p].x, y2: positions[p].y, class: `lab-edge ${trail.includes(i) ? 'active' : ''}` })); });
+      positions.forEach((p, i) => {
+        const group = Lab.node(root, p.x, p.y, i, current === i || selected === i ? 'current' : trail.includes(i) ? 'ready' : parent[i] === i ? 'accepted' : '', `ranga ${rank[i]}`, event => choose(i, event), i);
+        group.setAttribute('data-vertex', i);
+        const old = oldPositions[i];
+        if (old && (old.x !== p.x || old.y !== p.y) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          group.animate([{ transform: `translate(${old.x}px, ${old.y}px)` }, { transform: `translate(${p.x}px, ${p.y}px)` }], { duration: Math.min(350, 800 / Number($('speed').value)), easing: 'ease-out' });
+        }
+      });
+    });
+    oldPositions = positions;
+    tokens('operations', queue.map((op, i) => ({ label: label(op), className: i < completed ? 'lab-completed' : i === opIndex ? 'lab-current' : '' })), i => {
+      if (i < completed || (ctl.started && !ctl.done && i <= opIndex)) { text('operation', 'Tej operacji już nie można usunąć. Reset pozwala zacząć od nowa.'); return; }
+      queue.splice(i, 1); ctl.refresh(); text('operation', 'Usunięto oczekującą operację.');
+    });
+    paint($('parentHead'), root => { const tr = element('tr'); ['Element', 'Rodzic', 'Ranga'].forEach(v => tr.append(element('th', { scope: 'col' }, v))); root.append(tr); });
+    paint($('parentBody'), root => parent.forEach((p, i) => { const tr = element('tr', { class: current === i ? 'lab-current' : '' }); [i, p, rank[i]].forEach(v => tr.append(element('td', {}, v))); root.append(tr); }));
+    text('setCount', roots.length); text('maxHeight', maxDepth); text('hopCount', hops); text('stepCount', completed);
+  }
+  const ctl = controller({ run, render, reset, locked: ['scenario', 'size', 'optimization', 'randomBtn'] });
+  $('scenario').addEventListener('change', generate); $('size').addEventListener('input', generate); $('optimization').addEventListener('change', ctl.reset);
+  $('randomBtn').addEventListener('click', () => { $('scenario').value = 'random'; generate(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') { selected = null; render(); } });
+  let suppressClick = false;
+  $('board').addEventListener('click', event => { if (suppressClick) { event.preventDefault(); event.stopPropagation(); } }, true);
+  $('board').addEventListener('pointerdown', event => { const node = event.target.closest('[data-vertex]'); if (node && event.button === 0) { drag = { i: Number(node.getAttribute('data-vertex')), x: event.clientX, y: event.clientY }; $('board').setPointerCapture(event.pointerId); } });
+  $('board').addEventListener('pointerup', event => {
+    if (!drag) return; const from = drag; drag = null;
+    if ($('board').hasPointerCapture(event.pointerId)) $('board').releasePointerCapture(event.pointerId);
+    if (Math.hypot(from.x - event.clientX, from.y - event.clientY) < 8) choose(from.i, event);
+    else {
+      const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-vertex]');
+      if (target) enqueue({ type: 'union', a: from.i, b: Number(target.getAttribute('data-vertex')) });
+    }
+    suppressClick = true; setTimeout(() => { suppressClick = false; }, 0);
+  });
+  $('board').addEventListener('pointercancel', () => { drag = null; });
+  generate();
 })();
     </script>
   </body>

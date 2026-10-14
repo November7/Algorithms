@@ -7,7 +7,7 @@
     <title>Algorytm Bellmana-Forda · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="step-lab">
+  <body class="step-lab interactive-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -30,8 +30,8 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf skierowany z wagami</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
-          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 400" role="img" aria-label="Graf skierowany z wagami krawędzi"></svg></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf skierowany z wagami</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" style="max-width:640px" viewBox="0 0 640 400" role="group" aria-label="Graf skierowany z wagami krawędzi"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Sprawdzana krawędź</span><span><i class="lab-key accepted" aria-hidden="true"></i>Udana relaksacja</span><span><i class="lab-key rejected" aria-hidden="true"></i>Bez poprawy / ujemny cykl</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
         </section>
@@ -39,7 +39,7 @@
           <div class="stat"><span>Runda</span><output id="roundCount">0</output><small id="roundGoal">z najwyżej V − 1 + 1 kontrolna</small></div>
           <div class="stat"><span>Sprawdzone krawędzie</span><output id="edgeCount">0</output><small>łącznie we wszystkich rundach</small></div>
           <div class="stat"><span>Udane relaksacje</span><output id="relaxCount">0</output><small>poprawy odległości</small></div>
-          <div class="stat"><span>Ujemny cykl</span><output id="cycleFlag">—</output><small>wynik rundy kontrolnej</small></div>
+          <div class="stat"><span>Ujemny cykl</span><output id="cycleFlag">-</output><small>wynik rundy kontrolnej</small></div>
         </section>
         <section class="panel lab-table-panel" aria-labelledby="distTitle"><h2 id="distTitle">Odległości od startu</h2><p>Dla każdego wierzchołka: aktualna odległość i poprzednik na najlepszej znanej drodze.</p><table id="distTable" class="graph-table"><caption>Wierzchołki · odległość · poprzednik</caption><thead id="distHead"></thead><tbody id="distBody"></tbody></table><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
         <details class="data-details"><summary>Dane wejściowe i reguła relaksacji</summary><p id="dataText"></p><p>Początkowo d[start] = 0, a pozostałe d[v] = ∞. Dla krawędzi (u, v) o wadze w: jeśli d[u] + w &lt; d[v], ustaw d[v] = d[u] + w i poprzednik[v] = u. Po V − 1 rundach odległości są ostateczne; poprawa w kolejnej rundzie oznacza ujemny cykl osiągalny ze startu.</p></details>
@@ -47,7 +47,7 @@
       <section class="panel lesson" aria-labelledby="lessonTitle">
         <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Bellman-Ford</h2></div><span class="tag">Najkrótsze ścieżki</span></div>
         <dl class="complexity"><div><dt>Czas</dt><dd>O(V · E)</dd></div><div><dt>Pamięć</dt><dd>O(V)</dd></div><div><dt>Ujemne wagi</dt><dd>Obsługuje</dd></div><div><dt>Ujemny cykl</dt><dd>Wykrywa</dd></div><div><dt>Rund</dt><dd>V − 1 (+1 kontrolna)</dd></div></dl>
-        <p class="complexity-note">V to liczba wierzchołków, E — krawędzi. Wolniejszy od Dijkstry, ale bardziej ogólny. Wczesne zakończenie jest możliwe, gdy w całej rundzie nic się nie poprawiło.</p>
+        <p class="complexity-note">V to liczba wierzchołków, E - krawędzi. Wolniejszy od Dijkstry, ale bardziej ogólny. Wczesne zakończenie jest możliwe, gdy w całej rundzie nic się nie poprawiło.</p>
         <div class="lesson-columns">
           <div><h3>Jak to działa?</h3><ol><li>Ustaw odległość startu na 0, pozostałych na nieskończoność.</li><li>Przejrzyj wszystkie krawędzie i popraw odległość tam, gdzie droga przez krawędź jest krótsza.</li><li>Powtórz przeglądanie V − 1 razy.</li><li>Zrób jedną rundę kontrolną: jeśli coś się jeszcze poprawia, istnieje ujemny cykl.</li></ol></div>
           <div><h3>Dlaczego to działa?</h3><p>Najkrótsza droga bez cyklu ma najwyżej V − 1 krawędzi. Po k rundach odległości są poprawne dla wszystkich dróg o najwyżej k krawędziach, więc V − 1 rund wystarcza.</p><h3>Ujemny cykl</h3><p>Gdy cykl ma ujemną sumę wag, każde okrążenie skraca drogę. „Najkrótsza” droga nie istnieje, a algorytm to zgłasza.</p></div>
@@ -57,31 +57,260 @@
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
-// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
-// Wzorzec: kruskal.html i dijkstra.html (rysowanie grafu w SVG, klasy .lab-node/.lab-edge/.lab-weight-bg/.lab-node-note).
-//
-// DO ZAIMPLEMENTOWANIA
-// 1. Dane: graf skierowany z wagami (także ujemnymi) dla scenariuszy z #scenario; układ wierzchołków na okręgu/siatce;
-//    scenariusze: ujemna krawędź, pułapka dla Dijkstry (zachłanność zawodzi), ujemny cykl, losowy (bez ujemnych cykli, chyba że wybrano "cycle").
-// 2. Stan: d[], poprzednik[], numer rundy, indeks krawędzi, flaga zmiany w rundzie, wykryty cykl, faza ('rounds' | 'check' | 'done').
-// 3. Generator kroków: jedna krawędź = jeden krok (opis w #operation: "d[u] + w < d[v]? tak/nie"); po rundzie bez zmian
-//    zakończ wcześniej; po V−1 rundach wykonaj rundę kontrolną i oznacz krawędzie ujemnego cyklu.
-// 4. Renderowanie: krawędzie skierowane (strzałki), etykiety wag w .lab-weight-bg, odległości w .lab-node-note pod węzłami,
-//    #distBody (odległość, poprzednik, runda ostatniej poprawy), drzewo najkrótszych dróg po zakończeniu (accepted).
-// 5. Statystyki i stan: #roundCount, #edgeCount, #relaxCount, #cycleFlag, #statusText, #resultText (także komunikat o ujemnym cyklu).
-//
-// PRZEWIDZIANA INTERAKCJA
-// - Klik w wierzchołek: ustawia go jako startowy (zsynchronizuj z #startVertex) i robi reset().
-// - Przeciąganie wierzchołków myszą/dotykiem (pointer events): zmienia układ grafu, krawędzie i etykiety podążają za nim.
-// - Klik w etykietę wagi: edycja wagi (np. okienko lub input w miejscu, zakres −9..9, Enter zatwierdza, Esc anuluje) i reset().
-// - Klik w puste miejsce planszy z wierzchołkiem źródłowym, potem docelowym: dodanie krawędzi (opcjonalnie, z domyślną wagą);
-//   klik w krawędź z Shift/Delete: usunięcie krawędzi.
-// - Klik w wiersz tabeli #distBody po zakończeniu: podświetl najkrótszą drogę do tego wierzchołka (po poprzednikach).
-// - Klawiatura: Tab po wierzchołkach (tabindex, role="button"), Enter = ustaw jako start; Spacja = pauza, N = jeden krok.
-// - Przycisk "Pokaż dane" (details) powinien zawierać listę krawędzi w kolejności przeglądania.
+/* Shared controls and accessible drawing helpers for the step-by-step labs. */
+'use strict';
+window.Lab = (() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { if ($(id)) $(id).textContent = value; };
+  function element(tag, attrs = {}, content) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function svg(tag, attrs = {}, content) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function action(node, callback, label, key) {
+    node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+    node.setAttribute('aria-label', label); node.setAttribute('data-focus', key);
+    node.addEventListener('click', callback);
+    node.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); callback(event); }
+    });
+    return node;
+  }
+  function paint(node, draw) {
+    const focus = node.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus') : null;
+    node.replaceChildren(); draw(node);
+    if (focus !== null) [...node.querySelectorAll('[data-focus]')].find(el => el.getAttribute('data-focus') === focus)?.focus({ preventScroll: true });
+  }
+  function tokens(id, items, callback) {
+    paint($(id), root => items.forEach((item, i) => {
+      const li = element('li', { class: item.className || '' });
+      if (callback) {
+        const button = element('button', { type: 'button', 'data-focus': String(i) }, item.label ?? item);
+        button.addEventListener('click', event => callback(i, event)); li.append(button);
+      } else li.textContent = item.label ?? item;
+      root.append(li);
+    }));
+  }
+  function node(root, x, y, label, style = '', note = '', callback, key = label, radius = 19) {
+    const group = svg('g', { transform: `translate(${x} ${y})` });
+    group.append(svg('circle', { r: radius, class: `lab-node ${style}${radius < 19 ? ' compact' : ''}` }), svg('text', { y: 5, class: `lab-number ${style}` }, label));
+    if (note !== '') group.append(svg('text', { y: radius + 17, class: 'lab-node-note' }, note));
+    if (callback) action(group, callback, `${label}, ${note}`, String(key));
+    root.append(group); return group;
+  }
+  function point(board, event) {
+    return new DOMPoint(event.clientX, event.clientY).matrixTransform(board.getScreenCTM().inverse());
+  }
+  function controller({ run, render, reset, validate = () => true, locked = [], manual = () => false, update = () => {} }) {
+    let iterator = null, timer = null;
+    const api = { running: false, done: false, steps: 0, started: false,
+      sync() {
+        $('startBtn').disabled = api.running || api.done || manual();
+        $('pauseBtn').disabled = !api.started || api.done || manual();
+        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        $('stepBtn').disabled = api.running || api.done || manual();
+        $('stopBtn').disabled = false;
+        locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
+        $('speed').disabled = manual();
+        text('statusText', manual() ? (api.done ? 'Ukończono' : 'Tryb ręczny') : api.done ? 'Zakończono' : api.running ? 'W trakcie' : api.started ? 'Pauza' : 'Gotowe');
+        update(api);
+      },
+      refresh() { render(); api.sync(); },
+      pause() { clearTimeout(timer); timer = null; api.running = false; api.sync(); },
+      reset() {
+        api.pause(); iterator = null; api.done = false; api.started = false; api.steps = 0;
+        text('operation', 'Wybierz Start lub wykonaj pierwszy krok.'); text('resultText', 'Wynik pojawi się po zakończeniu.');
+        reset(); api.refresh();
+      },
+      next() {
+        if (api.done || manual() || !validate()) return;
+        api.started = true; iterator ||= run();
+        const result = iterator.next();
+        if (result.done) { api.done = true; api.pause(); if (result.value) text('operation', result.value); }
+        else { api.steps++; text('operation', result.value); }
+        api.refresh();
+      },
+      start() {
+        if (api.running || api.done || manual() || !validate()) return;
+        api.running = true; api.next();
+        const tick = () => {
+          if (!api.running) return;
+          api.next();
+          if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+        };
+        if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+      },
+      replace(generator) { api.pause(); iterator = generator; api.done = false; api.started = false; api.sync(); },
+      // Replaying a deterministic generator restores Hanoi's recursion and undo history.
+      rewind(count) { api.reset(); for (let i = 0; i < count; i++) api.next(); }
+    };
+    $('startBtn').addEventListener('click', api.start);
+    $('pauseBtn').addEventListener('click', () => api.running ? api.pause() : api.start());
+    $('stepBtn').addEventListener('click', () => { api.pause(); api.next(); });
+    $('stopBtn').addEventListener('click', api.reset);
+    $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
+    document.addEventListener('keydown', event => {
+      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.key.toLowerCase() === 'n' && !api.running) api.next();
+      if (event.key.toLowerCase() === 'r') api.reset();
+    });
+    return api;
+  }
+  return { $, text, element, svg, action, paint, tokens, node, point, controller };
+})();
+    </script>
+    <script>
 (() => {
   'use strict';
-  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+  const { $, text, element, svg, paint, controller } = Lab;
+  let n, edges, positions, distance, previous, improved, round, checks, relaxations, active, accepted, cycleEdges, affected, phase, route, dragging;
+  const name = i => String.fromCharCode(65 + i), fmt = v => v === Infinity ? '∞' : v === -Infinity ? '−∞' : String(v);
+  function generate() {
+    n = Number($('size').value); const kind = $('scenario').value;
+    let triples;
+    if (kind === 'random') {
+      // Edges follow vertex order: a DAG can contain negative weights, never a cycle.
+      triples = []; for (let a = 0; a < n; a++) for (let b = a + 1; b < n; b++) if (b === a + 1 || Math.random() < 0.25) triples.push([a, b, Math.floor(Math.random() * 13) - 4]);
+    } else {
+      triples = kind === 'dijkstra' ? [[0, 1, 2], [0, 2, 5], [2, 1, -6], [1, 3, 2]] : kind === 'cycle' ? [[0, 1, 3], [1, 2, -4], [2, 1, 1], [2, 3, 2]] : [[0, 1, 4], [0, 2, 5], [1, 2, -2], [1, 3, 6], [2, 3, 3]];
+      for (let i = 4; i < n; i++) triples.push([i - 1, i, i % 2 ? -1 : 2]);
+    }
+    edges = triples.map(([a, b, weight]) => ({ a, b, weight }));
+    positions = Array.from({ length: n }, (_, i) => ({ x: 320 + 240 * Math.cos(-Math.PI / 2 + i * 2 * Math.PI / n), y: 195 + 145 * Math.sin(-Math.PI / 2 + i * 2 * Math.PI / n) }));
+    $('startVertex').replaceChildren(...positions.map((_, i) => element('option', { value: i }, name(i)))); $('startVertex').value = '0'; ctl.reset();
+  }
+  function reset() {
+    distance = Array(n).fill(Infinity); distance[Number($('startVertex').value)] = 0; previous = Array(n).fill(-1); improved = Array(n).fill(0);
+    round = 0; checks = 0; relaxations = 0; active = -1; accepted = false; cycleEdges = new Set(); affected = new Set(); route = new Set(); phase = 'rounds'; dragging = null;
+    editor.hidden = true; text('sizeLabel', n); text('roundGoal', `najwyżej ${n - 1} rund + kontrola`);
+    text('dataText', edges.map((e, i) => `${i + 1}. ${name(e.a)} → ${name(e.b)}: ${e.weight}`).join(' · '));
+  }
+  function* run() {
+    let stable = false;
+    for (round = 1; round < n; round++) {
+      let changed = false;
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i], before = distance[e.b], candidate = distance[e.a] + e.weight;
+        active = i; checks++; accepted = distance[e.a] !== Infinity && candidate < before;
+        if (accepted) { distance[e.b] = candidate; previous[e.b] = i; improved[e.b] = round; relaxations++; changed = true; }
+        yield `Runda ${round}: ${name(e.a)} → ${name(e.b)}. ${fmt(distance[e.a])} + (${e.weight}) < ${fmt(before)}? ${accepted ? `Tak: d[${name(e.b)}] = ${candidate}.` : distance[e.a] === Infinity ? 'Start tej krawędzi jest nieosiągalny.' : 'Nie - bez poprawy.'}`;
+      }
+      if (!changed) { stable = true; break; }
+    }
+    if (!stable) {
+      phase = 'check'; round = n; const changedVertices = [];
+      // A full extra relaxation round gives predecessor witnesses for reachable cycles.
+      for (let i = 0; i < edges.length; i++) {
+        const e = edges[i]; active = i; checks++;
+        accepted = distance[e.a] !== Infinity && distance[e.a] + e.weight < distance[e.b];
+        if (accepted) { distance[e.b] = distance[e.a] + e.weight; previous[e.b] = i; changedVertices.push(e.b); }
+        yield `Kontrola: ${name(e.a)} → ${name(e.b)}. ${accepted ? 'Możliwa dalsza poprawa - istnieje osiągalny ujemny cykl.' : 'Brak dalszej poprawy.'}`;
+      }
+      for (const vertex of changedVertices) {
+        let v = vertex;
+        for (let i = 0; i < n; i++) { if (previous[v] < 0) break; v = edges[previous[v]].a; }
+        const start = v, witness = [];
+        do { const id = previous[v]; if (id < 0) break; witness.push(id); v = edges[id].a; } while (v !== start && witness.length <= n);
+        if (v === start && witness.reduce((sum, id) => sum + edges[id].weight, 0) < 0) witness.forEach(id => cycleEdges.add(id));
+        affected.add(vertex);
+      }
+      let changed = true;
+      while (changed) { changed = false; edges.forEach(e => { if (affected.has(e.a) && !affected.has(e.b)) { affected.add(e.b); changed = true; } }); }
+      affected.forEach(v => { distance[v] = -Infinity; });
+    }
+    phase = 'done'; active = -1;
+    text('resultText', affected.size ? `Osiągalny ujemny cykl. Odległość −∞ dla: ${[...affected].sort().map(name).join(', ')}. Do tych wierzchołków nie istnieje najkrótsza ścieżka; pozostałe odległości są poprawne.` : `Wyznaczono najkrótsze ścieżki od ${name(Number($('startVertex').value))}. ${stable ? 'Zakończono wcześniej: cała runda bez poprawy.' : 'Runda kontrolna nie wykazała osiągalnego ujemnego cyklu.'} ∞ oznacza brak drogi.`);
+    return affected.size ? 'Zaznaczono krawędzie ujemnego cyklu i wierzchołki o odległości −∞.' : 'Wybierz wiersz tabeli, aby zobaczyć najkrótszą ścieżkę.';
+  }
+  function showPath(vertex) {
+    if (phase !== 'done') return;
+    route = new Set(); const path = [vertex]; let v = vertex;
+    if (!Number.isFinite(distance[v])) { text('operation', distance[v] === Infinity ? `Wierzchołek ${name(v)} jest nieosiągalny.` : `Brak najkrótszej drogi do ${name(v)}: koszty można zmniejszać bez ograniczeń.`); render(); return; }
+    while (previous[v] >= 0 && path.length <= n) { const id = previous[v]; route.add(id); v = edges[id].a; path.unshift(v); }
+    text('operation', `Ścieżka: ${path.map(name).join(' → ')}. Koszt: ${distance[vertex]}.`); render();
+  }
+  const editor = element('form', { class: 'lab-edge-editor', hidden: '' });
+  const weightLabel = element('label', { for: 'edgeWeight' }, 'Nowa waga (−9…9)');
+  const weightInput = element('input', { id: 'edgeWeight', type: 'number', min: '-9', max: '9', step: '1', required: '' });
+  const save = element('button', { type: 'submit', class: 'btn' }, 'Zapisz wagę'), cancel = element('button', { type: 'button', class: 'btn' }, 'Anuluj');
+  editor.append(weightLabel, weightInput, save, cancel); document.querySelector('.controls').append(editor); let editing = -1;
+  function editWeight(i, event) {
+    if (ctl.running) return;
+    if (event.shiftKey) { edges.splice(i, 1); ctl.reset(); return; }
+    editing = i; weightLabel.textContent = `Waga ${name(edges[i].a)} → ${name(edges[i].b)} (−9…9)`; weightInput.value = edges[i].weight; editor.hidden = false; weightInput.focus();
+  }
+  editor.addEventListener('submit', event => {
+    event.preventDefault(); const weight = Number(weightInput.value);
+    if (weightInput.value.trim() === '' || !Number.isInteger(weight) || weight < -9 || weight > 9) { text('operation', 'Waga musi być liczbą całkowitą od −9 do 9.'); return; }
+    edges[editing].weight = weight; ctl.reset();
+  });
+  cancel.addEventListener('click', () => { editor.hidden = true; }); editor.addEventListener('keydown', event => { if (event.key === 'Escape') editor.hidden = true; });
+  function render() {
+    paint($('board'), root => {
+      const defs = svg('defs');
+      for (const [key, color] of [['normal', '#8297b3'], ['current', '#315fb1'], ['accepted', '#437c88'], ['rejected', '#b66b47']]) {
+        const marker = svg('marker', { id: `arrow-${key}`, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 10, markerHeight: 10, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' }); marker.append(svg('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: color })); defs.append(marker);
+      } root.append(defs);
+      const labels = [];
+      edges.forEach((e, i) => {
+        const a = positions[e.a], b = positions[e.b], dx = b.x - a.x, dy = b.y - a.y, length = Math.hypot(dx, dy) || 1;
+        const reverse = edges.some(other => other.a === e.b && other.b === e.a), bend = reverse ? 30 : 0;
+        const cx = (a.x + b.x) / 2 - dy / length * bend, cy = (a.y + b.y) / 2 + dx / length * bend;
+        const dl = Math.hypot(cx - a.x, cy - a.y) || 1, dr = Math.hypot(b.x - cx, b.y - cy) || 1;
+        const cls = cycleEdges.has(i) ? 'rejected' : active === i ? accepted ? 'accepted' : 'current' : route.has(i) || (phase === 'done' && previous[e.b] === i && !affected.has(e.b)) ? 'accepted' : '';
+        root.append(svg('path', { d: `M ${a.x + (cx - a.x) / dl * 20} ${a.y + (cy - a.y) / dl * 20} Q ${cx} ${cy} ${b.x - (b.x - cx) / dr * 22} ${b.y - (b.y - cy) / dr * 22}`, class: `lab-edge ${cls}`, 'marker-end': `url(#arrow-${cls || 'normal'})` }));
+        let x = (a.x + 2 * cx + b.x) / 4, y = (a.y + 2 * cy + b.y) / 4;
+        for (let tries = 0; tries < 12 && labels.some(p => Math.abs(p.x - x) < 44 && Math.abs(p.y - y) < 26); tries++) { x -= dy / length * 24; y += dx / length * 24; }
+        labels.push({ x, y });
+        const group = svg('g'); group.append(svg('rect', { x: x - 19, y: y - 13, width: 38, height: 26, rx: 6, class: `lab-weight-bg ${cls}` }), svg('text', { x, y: y + 5, class: 'lab-weight' }, e.weight));
+        Lab.action(group, event => editWeight(i, event), `Krawędź ${name(e.a)} do ${name(e.b)}, waga ${e.weight}. Enter: edytuj, Shift i klik: usuń.`, `edge-${i}`);
+        group.addEventListener('keydown', event => { if (event.key === 'Delete' && !ctl.running) { edges.splice(i, 1); ctl.reset(); } }); root.append(group);
+      });
+      positions.forEach((p, i) => {
+        const group = Lab.node(root, p.x, p.y, name(i), affected.has(i) ? 'rejected' : i === Number($('startVertex').value) ? 'current' : '', `d = ${fmt(distance[i])}`, () => { if (!ctl.running) { $('startVertex').value = i; ctl.reset(); } }, `vertex-${i}`, 19);
+        group.setAttribute('data-vertex', i);
+      });
+    });
+    paint($('distHead'), root => { const tr = element('tr'); ['Wierzchołek', 'Odległość', 'Poprzednik', 'Runda poprawy'].forEach(v => tr.append(element('th', { scope: 'col' }, v))); root.append(tr); });
+    paint($('distBody'), root => distance.forEach((d, i) => {
+      const tr = element('tr', { class: affected.has(i) ? 'lab-rejected' : active >= 0 && edges[active].b === i ? 'lab-current' : '' });
+      [name(i), fmt(d), previous[i] < 0 || affected.has(i) ? '-' : name(edges[previous[i]].a), improved[i] || '-'].forEach(v => tr.append(element('td', {}, v)));
+      Lab.action(tr, () => showPath(i), `Ścieżka do ${name(i)}, odległość ${fmt(d)}`, i); root.append(tr);
+    }));
+    text('roundCount', round); text('edgeCount', checks); text('relaxCount', relaxations); text('cycleFlag', phase === 'done' ? affected.size ? 'TAK' : 'NIE' : '-');
+  }
+  const ctl = controller({ run, render, reset, locked: ['scenario', 'size', 'startVertex', 'randomBtn'], update: () => { if (ctl.running) editor.hidden = true; } });
+  $('scenario').addEventListener('change', generate); $('size').addEventListener('input', generate); $('startVertex').addEventListener('change', ctl.reset);
+  $('randomBtn').addEventListener('click', () => { $('scenario').value = 'random'; generate(); });
+  let suppressClick = false;
+  $('board').addEventListener('click', event => { if (suppressClick) { event.preventDefault(); event.stopPropagation(); } }, true);
+  $('board').addEventListener('pointerdown', event => {
+    const vertex = event.target.closest('[data-vertex]'); if (!vertex || event.button !== 0) return;
+    dragging = { i: Number(vertex.getAttribute('data-vertex')), x: event.clientX, y: event.clientY, moved: false }; $('board').setPointerCapture(event.pointerId);
+  });
+  $('board').addEventListener('pointermove', event => {
+    if (!dragging) return;
+    if (Math.hypot(event.clientX - dragging.x, event.clientY - dragging.y) > 5) dragging.moved = true;
+    if (dragging.moved) { const p = Lab.point($('board'), event); positions[dragging.i] = { x: Math.max(35, Math.min(605, p.x)), y: Math.max(30, Math.min(345, p.y)) }; render(); }
+  });
+  $('board').addEventListener('pointerup', event => {
+    if (!dragging) return;
+    const { i, moved } = dragging; dragging = null;
+    if ($('board').hasPointerCapture(event.pointerId)) $('board').releasePointerCapture(event.pointerId);
+    if (!moved && !ctl.running) { $('startVertex').value = i; ctl.reset(); }
+    suppressClick = true; setTimeout(() => { suppressClick = false; }, 0);
+  });
+  $('board').addEventListener('pointercancel', () => { dragging = null; });
+  generate();
 })();
     </script>
   </body>

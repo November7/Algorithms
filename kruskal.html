@@ -50,11 +50,11 @@
       </div>
       <section class="panel lesson" aria-labelledby="lessonTitle">
         <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Algorytm Kruskala</h2></div><span class="tag">Minimalne drzewo rozpinające</span></div>
-        <dl class="complexity"><div><dt>Strategia</dt><dd>Zachłanna</dd></div><div><dt>Czas</dt><dd>O(V + E log E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Graf</dt><dd>Nieskierowany</dd></div><div><dt>Struktura</dt><dd>Union–Find (DSU)</dd></div></dl>
-        <p class="complexity-note">V to liczba wierzchołków, E — krawędzi. Sortowanie dominuje nad operacjami DSU z kompresją ścieżek i łączeniem według rozmiaru. Podane koszty dotyczą algorytmu, bez odświeżania wizualizacji. Sortowanie pokazujemy jako jeden krok zbiorczy.</p>
+        <dl class="complexity"><div><dt>Strategia</dt><dd>Zachłanna</dd></div><div><dt>Czas</dt><dd>O(V + E log E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Graf</dt><dd>Nieskierowany</dd></div><div><dt>Struktura</dt><dd>Union-Find (DSU)</dd></div></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E - krawędzi. Sortowanie dominuje nad operacjami DSU z kompresją ścieżek i łączeniem według rozmiaru. Podane koszty dotyczą algorytmu, bez odświeżania wizualizacji. Sortowanie pokazujemy jako jeden krok zbiorczy.</p>
         <div class="lesson-columns">
           <div><h3>Jak to działa?</h3><ol><li>Utwórz osobną składową dla każdego wierzchołka.</li><li>Posortuj krawędzie rosnąco według wagi.</li><li>Przyjmij krawędź, jeśli jej końce należą do różnych składowych. Połącz te składowe.</li><li>Odrzuć krawędź zamykającą cykl. Zakończ po wybraniu V − 1 krawędzi albo wyczerpaniu listy.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Najlżejsza krawędź łącząca dwie aktualne składowe jest bezpiecznym wyborem: można ją włączyć do pewnego minimalnego drzewa rozpinającego. Zakaz cykli utrzymuje wynik w postaci lasu.</p><h3>Remisy i niespójność</h3><p>Przy równych wagach może istnieć wiele równie dobrych drzew. W grafie niespójnym otrzymujemy minimalny las rozpinający — po jednym drzewie na składową.</p></div>
+          <div><h3>Dlaczego to działa?</h3><p>Najlżejsza krawędź łącząca dwie aktualne składowe jest bezpiecznym wyborem: można ją włączyć do pewnego minimalnego drzewa rozpinającego. Zakaz cykli utrzymuje wynik w postaci lasu.</p><h3>Remisy i niespójność</h3><p>Przy równych wagach może istnieć wiele równie dobrych drzew. W grafie niespójnym otrzymujemy minimalny las rozpinający - po jednym drzewie na składową.</p></div>
           <div><h3>Kiedy się przydaje?</h3><p>Przy projektowaniu tanich sieci połączeń i grupowaniu danych. Minimalizujemy koszt całej sieci; ścieżki między konkretnymi parami nie muszą być najkrótsze. Algorytm dopuszcza także wagi zerowe i ujemne.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz „Dwie składowe”. Dlaczego algorytm nie wybiera V − 1 krawędzi? Potem sprawdź, jak rozstrzyga remisy w trybie równych wag.</p></div></div>
         </div>
       </section>
@@ -67,7 +67,7 @@
   const state = { n: 0, edges: [], sorted: [], parent: [], sizes: [], accepted: new Set(), rejected: new Set(), active: -1, total: 0, components: 0, steps: 0, running: false, paused: false, done: false, iterator: null };
   let frameId = null, lastTime = null, budget = 0;
   const controls = ['scenario', 'size', 'randomBtn'];
-  const edgeName = edge => `${edge.a + 1}–${edge.b + 1}`;
+  const edgeName = edge => `${edge.a + 1}-${edge.b + 1}`;
 
   function find(v) {
     while (v !== state.parent[v]) {
@@ -184,7 +184,7 @@
       const row = document.createElement('tr');
       const accepted = state.accepted.has(edge.id), rejected = state.rejected.has(edge.id);
       row.className = accepted ? 'lab-accepted' : rejected ? 'lab-rejected' : state.active === edge.id ? 'lab-current' : '';
-      const label = accepted ? '✓ Przyjęta' : rejected ? '× Odrzucona — cykl' : state.active === edge.id ? '▶ Badana' : 'Oczekuje';
+      const label = accepted ? '✓ Przyjęta' : rejected ? '× Odrzucona - cykl' : state.active === edge.id ? '▶ Badana' : 'Oczekuje';
       for (const value of [edgeName(edge), edge.weight, label]) {
         const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
       }

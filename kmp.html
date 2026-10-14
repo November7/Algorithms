@@ -7,7 +7,7 @@
     <title>Wyszukiwanie wzorca (KMP) · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="step-lab">
+  <body class="step-lab interactive-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -30,15 +30,15 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tekst i przesuwany wzorzec</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
-          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 200" role="img" aria-label="Tekst z wzorcem przesuwanym pod spodem"></svg></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tekst i przesuwany wzorzec</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 200" role="group" aria-label="Tekst z wzorcem przesuwanym pod spodem"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Porównywane znaki</span><span><i class="lab-key accepted" aria-hidden="true"></i>Zgodny prefiks</span><span><i class="lab-key rejected" aria-hidden="true"></i>Niezgodność</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
         </section>
         <section class="panel lab-table-panel" aria-labelledby="lpsTitle"><h2 id="lpsTitle">Tablica prefikso-sufiksów</h2><p>lps[i] to długość najdłuższego właściwego prefiksu wzorca[0..i], który jest też jego sufiksem. Mówi, o ile można się cofnąć we wzorcu po niezgodności.</p><table id="lpsTable" class="graph-table"><caption>Pozycja · znak wzorca · lps</caption><thead id="lpsHead"></thead><tbody id="lpsBody"></tbody></table></section>
         <section class="stats" aria-label="Statystyki algorytmu">
           <div class="stat"><span>Porównania znaków</span><output id="compareCount">0</output><small>przy budowie lps i wyszukiwaniu</small></div>
-          <div class="stat"><span>Znalezione dopasowania</span><output id="matchCount">0</output><small>pozycje początku we wzorcu</small></div>
+          <div class="stat"><span>Znalezione dopasowania</span><output id="matchCount">0</output><small>pozycje początku w tekście (od 0)</small></div>
           <div class="stat"><span>Przesunięcia wzorca</span><output id="shiftCount">0</output><small>cofnięcia wg tablicy lps</small></div>
           <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>budowa i wyszukiwanie</small></div>
         </section>
@@ -48,7 +48,7 @@
       <section class="panel lesson" aria-labelledby="lessonTitle">
         <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Knuth-Morris-Pratt</h2></div><span class="tag">Wyszukiwanie w napisach</span></div>
         <dl class="complexity"><div><dt>Czas</dt><dd>O(n + m)</dd></div><div><dt>Pamięć</dt><dd>O(m)</dd></div><div><dt>Naiwnie</dt><dd>O(n · m)</dd></div><div><dt>Cofanie w tekście</dt><dd>Nigdy</dd></div><div><dt>Preprocessing</dt><dd>O(m)</dd></div></dl>
-        <p class="complexity-note">n to długość tekstu, m — wzorca. Wskaźnik w tekście tylko rośnie, więc każdy znak tekstu jest odczytany na stałe tylko ograniczoną liczbę razy.</p>
+        <p class="complexity-note">n to długość tekstu, m - wzorca. Wskaźnik w tekście tylko rośnie, więc każdy znak tekstu jest odczytany na stałe tylko ograniczoną liczbę razy.</p>
         <div class="lesson-columns">
           <div><h3>Jak to działa?</h3><ol><li>Dla wzorca oblicz tablicę lps: gdzie zaczyna się to samo, co już dopasowano.</li><li>Porównuj kolejne znaki tekstu ze wzorcem.</li><li>Po niezgodności nie wracaj w tekście; skróć dopasowany prefiks wzorca według lps.</li><li>Gdy dopasujesz cały wzorzec, zapisz pozycję i szukaj kolejnych wystąpień.</li></ol></div>
           <div><h3>Dlaczego to działa?</h3><p>Dopasowany fragment tekstu jest znany, więc wiemy, jaki jego koniec jest też początkiem wzorca. Tablica lps wskazuje najdłuższy taki fragment, dzięki czemu nie przeoczymy żadnego dopasowania.</p><h3>Nakładanie się</h3><p>Wystąpienia mogą na siebie zachodzić, np. ABA w ABABA. KMP znajduje je wszystkie.</p></div>
@@ -58,32 +58,204 @@
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
-// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
-// Wzorzec: search.html i knapsack.html (generator kroków, fazy, tabela pomocnicza).
-//
-// DO ZAIMPLEMENTOWANIA
-// 1. Stan: tekst, wzorzec, lps[], wskaźniki i (tekst) oraz j (wzorzec), znalezione pozycje, faza ('lps' | 'search' | 'done'), liczniki.
-// 2. Generator kroków: faza 1 — budowa lps (jedno porównanie = jeden krok, #lpsBody wypełnia się stopniowo);
-//    faza 2 — porównania tekst[i] z wzorzec[j]; po zgodności i++, j++; po niezgodności j = lps[j−1] (wzorzec przesuwa się w prawo);
-//    po dopasowaniu całego wzorca zapisz pozycję i kontynuuj (nakładające się wystąpienia).
-// 3. Rysowanie w #board: rząd znaków tekstu z indeksami; pod nim wzorzec przesunięty o (i − j); zielone zgodne znaki (accepted),
-//    niebieska para porównywana (current), pomarańczowa niezgodność (rejected); wyróżnij dotychczas znalezione wystąpienia.
-// 4. Dane: scenariusze, losowanie, walidacja pól #text i #pattern (puste, wzorzec dłuższy niż tekst), wielkość liter istotna;
-//    ręczna edycja przełącza #scenario na "Własny tekst i wzorzec"; zmiana danych = reset().
-// 5. Statystyki i wynik: #compareCount, #matchCount, #shiftCount, #stepCount, #chosen (pozycje), #phaseText, #resultText.
-//    Opcjonalnie pokaż liczbę porównań naiwnego algorytmu dla tych samych danych.
-//
-// PRZEWIDZIANA INTERAKCJA
-// - Klik w znak tekstu: ustaw tam początek (edytuj ręcznie pozycję startową wyszukiwania) lub zaznacz fragment jako wzorzec (opcjonalnie).
-// - Klik w komórkę tablicy lps: podświetl w #board prefiks i sufiks, które ta wartość opisuje (np. "AB" = "AB").
-// - Klik w znalezione dopasowanie w #chosen: przewiń/zaznacz je w tekście.
-// - Najechanie na znak wzorca: tooltip z wartością lps i informacją, dokąd wskaźnik j cofnie się po niezgodności.
-// - Przeciąganie suwaka tempa lub klawisz N pozwala przejść pojedyncze porównania; Spacja = pauza.
-// - Pola tekstowe edytowalne tylko po Reset; podczas działania zablokowane (aria-disabled + komunikat w #operation).
-// - #board powinien się przewijać poziomo (.lab-viewport) dla dłuższych tekstów; aktywny znak jest automatycznie centrowany.
+/* Shared controls and accessible drawing helpers for the step-by-step labs. */
+'use strict';
+window.Lab = (() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { if ($(id)) $(id).textContent = value; };
+  function element(tag, attrs = {}, content) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function svg(tag, attrs = {}, content) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function action(node, callback, label, key) {
+    node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+    node.setAttribute('aria-label', label); node.setAttribute('data-focus', key);
+    node.addEventListener('click', callback);
+    node.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); callback(event); }
+    });
+    return node;
+  }
+  function paint(node, draw) {
+    const focus = node.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus') : null;
+    node.replaceChildren(); draw(node);
+    if (focus !== null) [...node.querySelectorAll('[data-focus]')].find(el => el.getAttribute('data-focus') === focus)?.focus({ preventScroll: true });
+  }
+  function tokens(id, items, callback) {
+    paint($(id), root => items.forEach((item, i) => {
+      const li = element('li', { class: item.className || '' });
+      if (callback) {
+        const button = element('button', { type: 'button', 'data-focus': String(i) }, item.label ?? item);
+        button.addEventListener('click', event => callback(i, event)); li.append(button);
+      } else li.textContent = item.label ?? item;
+      root.append(li);
+    }));
+  }
+  function node(root, x, y, label, style = '', note = '', callback, key = label, radius = 19) {
+    const group = svg('g', { transform: `translate(${x} ${y})` });
+    group.append(svg('circle', { r: radius, class: `lab-node ${style}${radius < 19 ? ' compact' : ''}` }), svg('text', { y: 5, class: `lab-number ${style}` }, label));
+    if (note !== '') group.append(svg('text', { y: radius + 17, class: 'lab-node-note' }, note));
+    if (callback) action(group, callback, `${label}, ${note}`, String(key));
+    root.append(group); return group;
+  }
+  function point(board, event) {
+    return new DOMPoint(event.clientX, event.clientY).matrixTransform(board.getScreenCTM().inverse());
+  }
+  function controller({ run, render, reset, validate = () => true, locked = [], manual = () => false, update = () => {} }) {
+    let iterator = null, timer = null;
+    const api = { running: false, done: false, steps: 0, started: false,
+      sync() {
+        $('startBtn').disabled = api.running || api.done || manual();
+        $('pauseBtn').disabled = !api.started || api.done || manual();
+        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        $('stepBtn').disabled = api.running || api.done || manual();
+        $('stopBtn').disabled = false;
+        locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
+        $('speed').disabled = manual();
+        text('statusText', manual() ? (api.done ? 'Ukończono' : 'Tryb ręczny') : api.done ? 'Zakończono' : api.running ? 'W trakcie' : api.started ? 'Pauza' : 'Gotowe');
+        update(api);
+      },
+      refresh() { render(); api.sync(); },
+      pause() { clearTimeout(timer); timer = null; api.running = false; api.sync(); },
+      reset() {
+        api.pause(); iterator = null; api.done = false; api.started = false; api.steps = 0;
+        text('operation', 'Wybierz Start lub wykonaj pierwszy krok.'); text('resultText', 'Wynik pojawi się po zakończeniu.');
+        reset(); api.refresh();
+      },
+      next() {
+        if (api.done || manual() || !validate()) return;
+        api.started = true; iterator ||= run();
+        const result = iterator.next();
+        if (result.done) { api.done = true; api.pause(); if (result.value) text('operation', result.value); }
+        else { api.steps++; text('operation', result.value); }
+        api.refresh();
+      },
+      start() {
+        if (api.running || api.done || manual() || !validate()) return;
+        api.running = true; api.next();
+        const tick = () => {
+          if (!api.running) return;
+          api.next();
+          if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+        };
+        if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+      },
+      replace(generator) { api.pause(); iterator = generator; api.done = false; api.started = false; api.sync(); },
+      // Replaying a deterministic generator restores Hanoi's recursion and undo history.
+      rewind(count) { api.reset(); for (let i = 0; i < count; i++) api.next(); }
+    };
+    $('startBtn').addEventListener('click', api.start);
+    $('pauseBtn').addEventListener('click', () => api.running ? api.pause() : api.start());
+    $('stepBtn').addEventListener('click', () => { api.pause(); api.next(); });
+    $('stopBtn').addEventListener('click', api.reset);
+    $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
+    document.addEventListener('keydown', event => {
+      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.key.toLowerCase() === 'n' && !api.running) api.next();
+      if (event.key.toLowerCase() === 'r') api.reset();
+    });
+    return api;
+  }
+  return { $, text, element, svg, action, paint, tokens, node, point, controller };
+})();
+    </script>
+    <script>
 (() => {
   'use strict';
-  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+  const { $, text, svg, element, paint, tokens, controller } = Lab;
+  let source, pattern, lps, matches, phase, comparisons, shifts, pair, offset, prefix, inspected, selected;
+  function reset() {
+    source = Array.from($('text').value); pattern = Array.from($('pattern').value);
+    lps = Array(pattern.length).fill(null); if (lps.length) lps[0] = 0;
+    matches = []; phase = 'lps'; comparisons = 0; shifts = 0; pair = null; offset = 0; prefix = 0; inspected = null; selected = null;
+  }
+  function* run() {
+    let i = 1, j = 0;
+    while (i < pattern.length) {
+      const equal = pattern[i] === pattern[j]; pair = [i, j, equal]; comparisons++;
+      let message = `lps: wzorzec[${i}] = „${pattern[i]}”, wzorzec[${j}] = „${pattern[j]}”. `;
+      if (equal) { lps[i] = ++j; message += `Zgodność: lps[${i}] = ${j}.`; i++; }
+      else if (j) { const old = j; j = lps[j - 1]; message += `Niezgodność: skracamy prefiks z ${old} do ${j}.`; }
+      else { lps[i] = 0; message += `Brak wspólnego prefiksu: lps[${i}] = 0.`; i++; }
+      yield message;
+    }
+    phase = 'search'; i = 0; j = 0;
+    while (i < source.length) {
+      offset = i - j; prefix = j; const equal = source[i] === pattern[j]; pair = [i, j, equal]; comparisons++;
+      let message = `Tekst[${i}] = „${source[i]}”, wzorzec[${j}] = „${pattern[j]}”: ${equal ? 'zgodność' : 'niezgodność'}.`;
+      if (equal) {
+        i++; j++; prefix = j;
+        if (j === pattern.length) { matches.push(i - j); message += ` Dopasowanie na pozycji ${i - j}. Kontynuujemy od j = lps[${j - 1}] = ${lps[j - 1]}.`; j = lps[j - 1]; shifts++; }
+      } else if (j) { const old = j; j = lps[j - 1]; shifts++; message += ` Następne porównanie: ten sam i = ${i}, j = lps[${old - 1}] = ${j}.`; }
+      else { i++; message += ' Przechodzimy do kolejnego znaku tekstu.'; }
+      yield message;
+    }
+    phase = 'done'; pair = null;
+    text('resultText', matches.length ? `Znaleziono ${matches.length} dopasowań na pozycjach: ${matches.join(', ')} (indeksy od 0).` : 'Brak dopasowań wzorca w tekście.');
+    return 'Wyszukiwanie zakończone. Wybierz dopasowanie lub wartość lps.';
+  }
+  function inspect(index) {
+    if (ctl.running || lps[index] === null) return;
+    inspected = index; const length = lps[index];
+    text('operation', `lps[${index}] = ${length}: prefiks „${pattern.slice(0, length).join('')}” = sufiks „${pattern.slice(index + 1 - length, index + 1).join('')}”. ${length ? 'Oba fragmenty są wyróżnione.' : 'Nie ma niepustego właściwego prefiksu będącego sufiksem.'}`); render();
+  }
+  function render() {
+    const building = phase === 'lps' || inspected !== null, top = building ? pattern : source;
+    const width = Math.max(640, (Math.max(top.length, building ? pattern.length : offset + pattern.length) + 2) * 34);
+    $('board').setAttribute('viewBox', `0 0 ${width} 200`); $('board').style.minWidth = `${width}px`;
+    paint($('board'), root => {
+      root.append(svg('text', { x: 18, y: 20, class: 'lab-label' }, building ? 'Wzorzec - budowa / analiza lps' : 'Tekst - indeksy od 0'));
+      function row(chars, y, shift, isPattern) {
+        chars.forEach((char, k) => {
+          let cls = '';
+          if (building && inspected !== null) {
+            const length = lps[inspected]; if (k < length || (k > inspected - length && k <= inspected)) cls = 'accepted';
+          } else if (pair && (k === (isPattern ? pair[1] : pair[0]))) cls = pair[2] ? 'current' : 'rejected';
+          else if (!building && (isPattern ? k < prefix : matches.some(pos => k >= pos && k < pos + pattern.length))) cls = 'accepted';
+          if (!building && !isPattern && selected !== null && k >= selected && k < selected + pattern.length) cls = 'ready';
+          const x = 20 + (k + shift) * 34, group = svg('g');
+          group.append(svg('rect', { x, y, width: 30, height: 32, rx: 4, class: `lab-node ${cls}` }), svg('text', { x: x + 15, y: y + 21, class: `lab-number ${cls}` }, char === ' ' ? '␣' : char), svg('text', { x: x + 15, y: y + 48, class: 'lab-node-note' }, k));
+          if (isPattern) { group.append(svg('title', {}, `Indeks ${k}; lps = ${lps[k] ?? 'nieobliczone'}. Po niezgodności tutaj wróć do j = ${k ? lps[k - 1] ?? '?' : 0}.`)); Lab.action(group, () => inspect(k), `Znak ${char}, indeks ${k}, lps ${lps[k] ?? 'nieobliczone'}`, `p-${k}`); }
+          root.append(group);
+        });
+      }
+      row(top, 35, 0, false); row(pattern, 118, building ? 0 : offset, true);
+    });
+    paint($('lpsHead'), root => { const tr = element('tr'); ['Pozycja', 'Znak', 'lps'].forEach(v => tr.append(element('th', { scope: 'col' }, v))); root.append(tr); });
+    paint($('lpsBody'), root => pattern.forEach((char, k) => {
+      const tr = element('tr', { class: phase === 'lps' && pair?.[0] === k ? 'lab-current' : '' });
+      [k, char, lps[k] ?? '·'].forEach(v => tr.append(element('td', {}, v))); Lab.action(tr, () => inspect(k), `lps[${k}] = ${lps[k] ?? 'nieobliczone'}`, k); root.append(tr);
+    }));
+    tokens('chosen', matches.map(pos => `Pozycja ${pos}`), index => {
+      if (ctl.running) return; inspected = null; selected = matches[index]; offset = selected; prefix = pattern.length; pair = null; render();
+      $('board').parentElement.scrollLeft = Math.max(0, selected * 34 - 80); text('operation', `Dopasowanie: tekst[${selected}…${selected + pattern.length - 1}] = „${pattern.join('')}”.`);
+    });
+    if (ctl.running && pair) { inspected = null; $('board').parentElement.scrollLeft = Math.max(0, pair[0] * 34 - $('board').parentElement.clientWidth / 2); }
+    text('compareCount', comparisons); text('matchCount', matches.length); text('shiftCount', shifts); text('stepCount', ctl.steps);
+    text('phaseText', phase === 'lps' ? 'Budowa tablicy lps wzorca.' : phase === 'search' ? 'Wyszukiwanie; pozycja w tekście nigdy się nie cofa.' : 'Wszystkie wystąpienia, również nakładające się. Indeksy od 0.');
+  }
+  const ctl = controller({ run, render, reset, locked: ['scenario', 'text', 'pattern', 'randomBtn'], validate: () => {
+    if (!pattern.length) { text('operation', 'Wpisz niepusty wzorzec. Pusty tekst jest dozwolony i daje brak dopasowań.'); return false; }
+    if (source.length > 30 || pattern.length > 10) { text('operation', 'Tekst może mieć do 30 znaków, a wzorzec do 10.'); return false; }
+    inspected = null; return true;
+  } });
+  $('scenario').addEventListener('change', () => {
+    const pair = { example: ['ABABDABACDABABCABAB', 'ABABCABAB'], repeat: ['AAAAAAAAAA', 'AAAA'], none: ['ALGORYTMY', 'KOT'] }[$('scenario').value];
+    if (pair) { $('text').value = pair[0]; $('pattern').value = pair[1]; } ctl.reset();
+  });
+  ['text', 'pattern'].forEach(id => $(id).addEventListener('input', () => { $('scenario').value = 'custom'; ctl.reset(); }));
+  $('randomBtn').addEventListener('click', () => { $('text').value = Array.from({ length: 24 }, () => 'ABC'[Math.floor(Math.random() * 3)]).join(''); $('pattern').value = $('text').value.slice(8, 12); $('scenario').value = 'custom'; ctl.reset(); });
+  ctl.reset();
 })();
     </script>
   </body>

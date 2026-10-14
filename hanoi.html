@@ -7,7 +7,7 @@
     <title>Wieże Hanoi (rekurencja) · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="step-lab">
+  <body class="step-lab interactive-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -30,15 +30,15 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Trzy pręty i krążki</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
-          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 300" role="img" aria-label="Trzy pręty A, B i C z krążkami"></svg></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Trzy pręty i krążki</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 300" role="group" aria-label="Trzy pręty A, B i C z krążkami"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Przenoszony krążek</span><span><i class="lab-key ready" aria-hidden="true"></i>Dozwolony pręt docelowy</span><span><i class="lab-key rejected" aria-hidden="true"></i>Ruch niedozwolony</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy ruch.</p>
         </section>
         <section class="stats" aria-label="Statystyki algorytmu">
           <div class="stat"><span>Wykonane ruchy</span><output id="moveCount">0</output><small id="moveGoal">minimum: 7</small></div>
           <div class="stat"><span>Głębokość rekurencji</span><output id="depth">0</output><small>bieżące zagnieżdżenie wywołań</small></div>
-          <div class="stat"><span>Przenoszony zakres</span><output id="subproblem">—</output><small>krążki objęte bieżącym wywołaniem</small></div>
+          <div class="stat"><span>Przenoszony zakres</span><output id="subproblem">-</output><small>krążki objęte bieżącym wywołaniem</small></div>
           <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>ruchy krążków</small></div>
         </section>
         <section class="panel lab-table-panel" aria-labelledby="callsTitle"><h2 id="callsTitle">Stos wywołań</h2><p>Aktualne wywołania hanoi(k, z, na, przez) od najbardziej zewnętrznego do bieżącego.</p><ol id="callStack" class="graph-tokens" aria-label="Stos wywołań rekurencyjnych"></ol></section>
@@ -51,39 +51,237 @@
         <p class="complexity-note">n to liczba krążków. Każdy dodatkowy krążek podwaja liczbę ruchów, więc 20 krążków to już ponad milion ruchów. Dlatego symulacja ogranicza n do 7.</p>
         <div class="lesson-columns">
           <div><h3>Jak to działa?</h3><ol><li>Przenieś n − 1 górnych krążków na pręt pomocniczy.</li><li>Przenieś największy krążek na pręt docelowy.</li><li>Przenieś n − 1 krążków z pomocniczego na docelowy.</li><li>Przypadek bazowy: 0 krążków oznacza brak ruchów.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Największy krążek można ruszyć tylko wtedy, gdy wszystkie mniejsze leżą na trzecim pręcie. Zatem przeniesienie n krążków wymaga przeniesienia n − 1 krążków dwa razy, a liczby ruchów nie da się zmniejszyć.</p><h3>Wersja iteracyjna</h3><p>Dla parzystego n ruchy cyklicznie powtarzają wzór: najmniejszy krążek na kolejny pręt, potem jedyny dozwolony ruch innego krążka.</p></div>
+          <div><h3>Dlaczego to działa?</h3><p>Największy krążek można ruszyć tylko wtedy, gdy wszystkie mniejsze leżą na trzecim pręcie. Zatem przeniesienie n krążków wymaga przeniesienia n − 1 krążków dwa razy, a liczby ruchów nie da się zmniejszyć.</p><h3>Wersja iteracyjna</h3><p>Ruchy naprzemiennie przenoszą najmniejszy krążek w ustalonym kierunku oraz wykonują jedyny dozwolony ruch między pozostałymi prętami. Kierunek ruchu najmniejszego krążka zależy od parzystości n i wybranego celu.</p></div>
           <div><h3>Kiedy się przydaje?</h3><p>Jako klasyczne wprowadzenie do rekurencji i dziel i zwyciężaj, analizy równań rekurencyjnych oraz przykład problemu, którego koszt rośnie wykładniczo.</p></div>
         </div>
       </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
-// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
-// Wzorzec: knapsack.html (generator kroków, zegar) i sort.html (animacja elementów).
-//
-// DO ZAIMPLEMENTOWANIA
-// 1. Stan: trzy stosy krążków (A, B, C), liczba ruchów, lista ruchów, stos wywołań, tryb ('auto' | 'manual'), historia do cofania.
-// 2. Generator kroków (function*): rekurencyjne hanoi(n, z, na, przez) z yield przy każdym ruchu; rekurencja zwraca także
-//    informację o wejściu/wyjściu z wywołania, aby aktualizować #callStack, #depth i #subproblem.
-// 3. Rysowanie w #board: pręty z etykietami A/B/C, krążki jako prostokąty o szerokości zależnej od rozmiaru i różnych kolorach;
-//    animacja ruchu: w górę -> w bok -> w dół. Szanuj prefers-reduced-motion (ruch natychmiastowy).
-// 4. Statystyki i wynik: #moveCount, #moveGoal (2ⁿ − 1), #depth, #subproblem, #stepCount; #chosen = lista ruchów ("1: A → C");
-//    #resultText z porównaniem własnej liczby ruchów z minimum (tryb ręczny).
-// 5. Walidacja ruchów w trybie ręcznym: zabroń kłaść większy krążek na mniejszy, zabroń ruchu z pustego pręta; powód w #operation.
-//    Wykrycie wygranej (wszystkie krążki na pręcie docelowym), blokada tempa w trybie ręcznym (nieużywane).
-//
-// PRZEWIDZIANA INTERAKCJA (tryb "Spróbuj sam")
-// - Przeciąganie górnego krążka myszą/dotykiem na inny pręt (pointer events); podświetl dozwolone pręty (ready) i niedozwolone (rejected).
-// - Alternatywa bez przeciągania: klik w pręt źródłowy (zaznaczenie górnego krążka), potem klik w pręt docelowy.
-// - Klawiatura: klawisze 1/2/3 (lub A/B/C) wybierają pręt źródłowy, drugie naciśnięcie wybiera docelowy; Esc anuluje zaznaczenie.
-//   Pręty mają tabindex i role="button" z etykietą "Pręt A, krążki: 3, 1".
-// - #undoBtn cofa ostatni ruch (również w trybie auto po wstrzymaniu); Reset przywraca stan początkowy.
-// - Przycisk podpowiedzi (opcjonalnie): pokaż następny ruch zgodny z optymalnym algorytmem.
-// - Klik w element listy ruchów #chosen: przeskocz do stanu po tym ruchu (tylko po zakończeniu lub w pauzie).
-// - Zmiana #size lub #target = reset(). Spacja = pauza, N = jeden krok, U = cofnij.
+/* Shared controls and accessible drawing helpers for the step-by-step labs. */
+'use strict';
+window.Lab = (() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { if ($(id)) $(id).textContent = value; };
+  function element(tag, attrs = {}, content) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function svg(tag, attrs = {}, content) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function action(node, callback, label, key) {
+    node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+    node.setAttribute('aria-label', label); node.setAttribute('data-focus', key);
+    node.addEventListener('click', callback);
+    node.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); callback(event); }
+    });
+    return node;
+  }
+  function paint(node, draw) {
+    const focus = node.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus') : null;
+    node.replaceChildren(); draw(node);
+    if (focus !== null) [...node.querySelectorAll('[data-focus]')].find(el => el.getAttribute('data-focus') === focus)?.focus({ preventScroll: true });
+  }
+  function tokens(id, items, callback) {
+    paint($(id), root => items.forEach((item, i) => {
+      const li = element('li', { class: item.className || '' });
+      if (callback) {
+        const button = element('button', { type: 'button', 'data-focus': String(i) }, item.label ?? item);
+        button.addEventListener('click', event => callback(i, event)); li.append(button);
+      } else li.textContent = item.label ?? item;
+      root.append(li);
+    }));
+  }
+  function node(root, x, y, label, style = '', note = '', callback, key = label, radius = 19) {
+    const group = svg('g', { transform: `translate(${x} ${y})` });
+    group.append(svg('circle', { r: radius, class: `lab-node ${style}${radius < 19 ? ' compact' : ''}` }), svg('text', { y: 5, class: `lab-number ${style}` }, label));
+    if (note !== '') group.append(svg('text', { y: radius + 17, class: 'lab-node-note' }, note));
+    if (callback) action(group, callback, `${label}, ${note}`, String(key));
+    root.append(group); return group;
+  }
+  function point(board, event) {
+    return new DOMPoint(event.clientX, event.clientY).matrixTransform(board.getScreenCTM().inverse());
+  }
+  function controller({ run, render, reset, validate = () => true, locked = [], manual = () => false, update = () => {} }) {
+    let iterator = null, timer = null;
+    const api = { running: false, done: false, steps: 0, started: false,
+      sync() {
+        $('startBtn').disabled = api.running || api.done || manual();
+        $('pauseBtn').disabled = !api.started || api.done || manual();
+        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        $('stepBtn').disabled = api.running || api.done || manual();
+        $('stopBtn').disabled = false;
+        locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
+        $('speed').disabled = manual();
+        text('statusText', manual() ? (api.done ? 'Ukończono' : 'Tryb ręczny') : api.done ? 'Zakończono' : api.running ? 'W trakcie' : api.started ? 'Pauza' : 'Gotowe');
+        update(api);
+      },
+      refresh() { render(); api.sync(); },
+      pause() { clearTimeout(timer); timer = null; api.running = false; api.sync(); },
+      reset() {
+        api.pause(); iterator = null; api.done = false; api.started = false; api.steps = 0;
+        text('operation', 'Wybierz Start lub wykonaj pierwszy krok.'); text('resultText', 'Wynik pojawi się po zakończeniu.');
+        reset(); api.refresh();
+      },
+      next() {
+        if (api.done || manual() || !validate()) return;
+        api.started = true; iterator ||= run();
+        const result = iterator.next();
+        if (result.done) { api.done = true; api.pause(); if (result.value) text('operation', result.value); }
+        else { api.steps++; text('operation', result.value); }
+        api.refresh();
+      },
+      start() {
+        if (api.running || api.done || manual() || !validate()) return;
+        api.running = true; api.next();
+        const tick = () => {
+          if (!api.running) return;
+          api.next();
+          if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+        };
+        if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+      },
+      replace(generator) { api.pause(); iterator = generator; api.done = false; api.started = false; api.sync(); },
+      // Replaying a deterministic generator restores Hanoi's recursion and undo history.
+      rewind(count) { api.reset(); for (let i = 0; i < count; i++) api.next(); }
+    };
+    $('startBtn').addEventListener('click', api.start);
+    $('pauseBtn').addEventListener('click', () => api.running ? api.pause() : api.start());
+    $('stepBtn').addEventListener('click', () => { api.pause(); api.next(); });
+    $('stopBtn').addEventListener('click', api.reset);
+    $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
+    document.addEventListener('keydown', event => {
+      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.key.toLowerCase() === 'n' && !api.running) api.next();
+      if (event.key.toLowerCase() === 'r') api.reset();
+    });
+    return api;
+  }
+  return { $, text, element, svg, action, paint, tokens, node, point, controller };
+})();
+    </script>
+    <script>
 (() => {
   'use strict';
-  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+  const { $, text, svg, paint, tokens, controller } = Lab;
+  const rods = ['A', 'B', 'C'], colors = ['#315fb1', '#437c88', '#9462a4', '#b66b47', '#537f44', '#9b6a26', '#5967a5'];
+  let towers, moves, stack, selected, n, target, lastMove, rejected, drag, animatedMove;
+  const manual = () => $('scenario').value === 'manual';
+  function reset() {
+    n = Number($('size').value); target = $('target').value;
+    towers = { A: Array.from({ length: n }, (_, i) => n - i), B: [], C: [] };
+    moves = []; stack = []; selected = null; lastMove = null; rejected = null; drag = null; animatedMove = null;
+    text('sizeLabel', n); text('moveGoal', `minimum: ${2 ** n - 1}`);
+    text('operation', manual() ? 'Wybierz pręt źródłowy i docelowy. Klawisze A/B/C lub 1/2/3; Esc anuluje wybór.' : 'Wybierz Start lub wykonaj pierwszy krok.');
+  }
+  function solved() { return towers[target].length === n; }
+  function apply(from, to) {
+    const disk = towers[from].pop(); towers[to].push(disk); lastMove = { disk, from, to }; moves.push(lastMove);
+    if (solved()) text('resultText', `Wieża jest na pręcie ${target}. Ruchy: ${moves.length}; minimum: ${2 ** n - 1}. ${moves.length === 2 ** n - 1 ? 'Rozwiązanie optymalne!' : `Nadmiarowe ruchy: ${moves.length - (2 ** n - 1)}.`}`);
+  }
+  function* hanoi(k, from, to, via) {
+    if (!k) return;
+    stack.push({ k, from, to, via });
+    yield* hanoi(k - 1, from, via, to);
+    apply(from, to); yield `Przenieś krążek ${k}: ${from} → ${to}. Wywołanie hanoi(${k}, ${from}, ${to}, ${via}).`;
+    yield* hanoi(k - 1, via, to, from); stack.pop();
+  }
+  function* run() { yield* hanoi(n, 'A', target, target === 'C' ? 'B' : 'C'); lastMove = null; return `Przeniesiono ${n} krążków w minimalnych ${moves.length} ruchach.`; }
+  const allowed = (from, to) => towers[from].length && (!towers[to].length || towers[from].at(-1) < towers[to].at(-1));
+  function choose(rod) {
+    if (!manual() || ctl.running || solved()) return;
+    rejected = null;
+    if (selected === null) {
+      if (!towers[rod].length) { rejected = rod; text('operation', `Pręt ${rod} jest pusty - nie ma krążka do przeniesienia.`); }
+      else { selected = rod; text('operation', `Wybrano krążek ${towers[rod].at(-1)} na pręcie ${rod}. Wybierz cel.`); }
+    } else if (selected === rod) { selected = null; text('operation', 'Anulowano wybór krążka.'); }
+    else if (!allowed(selected, rod)) { rejected = rod; text('operation', 'Niedozwolony ruch: większego krążka nie można położyć na mniejszym. Wybierz inny pręt.'); }
+    else {
+      const from = selected; apply(from, rod); selected = null; ctl.started = true; ctl.done = solved();
+      text('operation', `Krążek ${lastMove.disk}: ${from} → ${rod}.${solved() ? ' Udało się!' : ''}`);
+    }
+    ctl.refresh();
+  }
+  function undo() {
+    if (ctl.running || !moves.length) return;
+    if (!manual()) { ctl.rewind(moves.length - 1); return; }
+    const move = moves.pop(); towers[move.from].push(towers[move.to].pop()); lastMove = moves.at(-1) || null;
+    selected = null; rejected = null; ctl.done = false; text('resultText', 'Wynik pojawi się po zakończeniu.'); text('operation', 'Cofnięto ostatni ruch.'); ctl.refresh();
+  }
+  function render() {
+    paint($('board'), root => rods.forEach((rod, index) => {
+      const x = 110 + index * 210;
+      const style = rejected === rod ? 'rejected' : selected === rod ? 'current' : selected && allowed(selected, rod) ? 'ready' : solved() && rod === target ? 'accepted' : '';
+      const group = svg('g', { 'data-rod': rod });
+      group.append(svg('rect', { x: x - 97, y: 18, width: 194, height: 268, rx: 12, class: `lab-rod-zone ${style}` }), svg('line', { x1: x, y1: 64, x2: x, y2: 252, stroke: '#9bacc2', 'stroke-width': 7 }), svg('line', { x1: x - 90, y1: 253, x2: x + 90, y2: 253, stroke: '#9bacc2', 'stroke-width': 7 }), svg('text', { x, y: 278, class: 'lab-number' }, `${rod}${rod === target ? ' · cel' : ''}`));
+      towers[rod].forEach((disk, level) => {
+        const width = 38 + disk * 19, y = 228 - level * 24;
+        const diskGroup = svg('g', { class: 'lab-disk' });
+        diskGroup.append(svg('rect', { x: x - width / 2, y, width, height: 21, rx: 2, fill: colors[disk - 1], stroke: lastMove?.disk === disk ? '#182a45' : 'white', 'stroke-width': 1 }), svg('text', { x, y: y + 15, class: 'lab-number accepted' }, disk));
+        group.append(diskGroup);
+        if (lastMove && lastMove !== animatedMove && lastMove.disk === disk && lastMove.to === rod && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const fromX = 110 + rods.indexOf(lastMove.from) * 210, fromY = 228 - towers[lastMove.from].length * 24;
+          diskGroup.animate([
+            { transform: `translate(${fromX - x}px, ${fromY - y}px)` },
+            { transform: `translate(${fromX - x}px, ${32 - y}px)`, offset: .3 },
+            { transform: `translate(0px, ${32 - y}px)`, offset: .7 },
+            { transform: 'translate(0px, 0px)' }
+          ], { duration: Math.min(500, 850 / Number($('speed').value)), easing: 'ease-in-out' });
+        }
+      });
+      if (manual()) Lab.action(group, () => choose(rod), `Pręt ${rod}, krążki od dołu: ${towers[rod].join(', ') || 'brak'}`, rod);
+      root.append(group);
+    }));
+    animatedMove = lastMove;
+    tokens('callStack', stack.map(c => `hanoi(${c.k}, ${c.from}, ${c.to}, ${c.via})`));
+    tokens('chosen', moves.map((m, i) => `${i + 1}. krążek ${m.disk}: ${m.from} → ${m.to}`), index => {
+      if (ctl.running) return;
+      if (!manual()) ctl.rewind(index + 1);
+      else { while (moves.length > index + 1) undo(); }
+    });
+    text('moveCount', moves.length); text('stepCount', moves.length); text('depth', manual() ? '-' : stack.length); text('subproblem', stack.length ? `1…${stack.at(-1).k}` : '-');
+    text('phaseText', manual() ? 'Własne ruchy. Możesz cofać i wracać do wcześniejszych ruchów.' : 'Ruchy rozwiązania rekurencyjnego. Kliknij wcześniejszy ruch w pauzie, aby do niego wrócić.');
+  }
+  const ctl = controller({ run, render, reset, manual, locked: ['scenario', 'size', 'target'], update: () => { $('undoBtn').disabled = ctl.running || !moves?.length; } });
+  ['scenario', 'target'].forEach(id => $(id).addEventListener('change', ctl.reset));
+  $('size').addEventListener('input', ctl.reset); $('undoBtn').addEventListener('click', undo);
+  document.addEventListener('keydown', event => {
+    if (event.target.closest('input, select, textarea') || event.ctrlKey || event.altKey || event.metaKey) return;
+    const key = event.key.toUpperCase(), rod = ({ '1': 'A', '2': 'B', '3': 'C', A: 'A', B: 'B', C: 'C' })[key];
+    if (rod && manual()) { event.preventDefault(); choose(rod); }
+    if (key === 'U') undo();
+    if (key === 'ESCAPE') { selected = null; rejected = null; ctl.refresh(); }
+  });
+  $('board').addEventListener('pointerdown', event => {
+    if (!manual() || solved() || event.button !== 0) return;
+    const rod = event.target.closest('[data-rod]')?.getAttribute('data-rod');
+    if (!rod) return;
+    drag = { rod, x: event.clientX, y: event.clientY, moved: false }; $('board').setPointerCapture(event.pointerId);
+  });
+  $('board').addEventListener('pointermove', event => {
+    if (!drag) return;
+    if (towers[drag.rod].length && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) > 8 && !drag.moved) { drag.moved = true; selected = drag.rod; ctl.refresh(); }
+  });
+  $('board').addEventListener('pointerup', event => {
+    if (!drag) return; const { moved, rod } = drag; drag = null;
+    if ($('board').hasPointerCapture(event.pointerId)) $('board').releasePointerCapture(event.pointerId);
+    if (moved) { const p = Lab.point($('board'), event); const index = Math.round((p.x - 110) / 210); if (p.y >= 0 && p.y <= 300 && rods[index]) choose(rods[index]); }
+    else choose(rod);
+    suppressClick = true; setTimeout(() => { suppressClick = false; }, 0);
+  });
+  let suppressClick = false;
+  $('board').addEventListener('click', event => { if (suppressClick) { event.preventDefault(); event.stopPropagation(); } }, true);
+  $('board').addEventListener('pointercancel', () => { drag = null; selected = null; ctl.refresh(); });
+  ctl.reset();
 })();
     </script>
   </body>

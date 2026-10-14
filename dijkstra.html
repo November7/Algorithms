@@ -65,7 +65,7 @@
             <div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf i badane krawędzie</h2></div>
             <span id="statusText" role="status">Gotowy</span>
           </div>
-          <div class="dijkstra-viewport" tabindex="0" role="region" aria-label="Graf ważony — przewijany widok">
+          <div class="dijkstra-viewport" tabindex="0" role="region" aria-label="Graf ważony - przewijany widok">
             <div class="canvas-wrap dijkstra-canvas">
               <canvas id="board" role="img" aria-label="Ważony graf. Kliknij wierzchołki kolejno, aby wybrać start i cel. Przeciągnij węzeł, aby zmienić położenie i wagi krawędzi." aria-describedby="chartDescription operation selectionHint">Graf z wagami krawędzi.</canvas>
             </div>
@@ -114,7 +114,7 @@
           <div><dt>Pamięć</dt><dd>O(V + E)</dd></div>
           <div><dt>Wagi</dt><dd>Nieujemne</dd></div>
         </dl>
-        <p class="complexity-note">Ta wersja liniowo wyszukuje najbliższy nieustalony wierzchołek, dlatego jej czas wynosi O(V² + E). Kopiec priorytetowy pozwala uzyskać O((V + E) log V). V oznacza liczbę wierzchołków, a E — liczbę krawędzi.</p>
+        <p class="complexity-note">Ta wersja liniowo wyszukuje najbliższy nieustalony wierzchołek, dlatego jej czas wynosi O(V² + E). Kopiec priorytetowy pozwala uzyskać O((V + E) log V). V oznacza liczbę wierzchołków, a E - liczbę krawędzi.</p>
         <div class="lesson-columns">
           <div>
             <h3>Jak to działa?</h3>
@@ -131,7 +131,7 @@
           </div>
           <div>
             <h3>Ograniczenia i zastosowania</h3>
-            <p>Ujemne wagi łamią założenie algorytmu — do takich grafów służy m.in. algorytm Bellmana-Forda. Dijkstra jest używana w nawigacji, routingu sieciowym i wyznaczaniu kosztu dojścia w grafach.</p>
+            <p>Ujemne wagi łamią założenie algorytmu - do takich grafów służy m.in. algorytm Bellmana-Forda. Dijkstra jest używana w nawigacji, routingu sieciowym i wyznaczaniu kosztu dojścia w grafach.</p>
             <div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Ustaw różne wierzchołki startowy i docelowy. Zatrzymuj animację przed końcem i obserwuj, jak odległość tymczasowa zmienia się po znalezieniu krótszej drogi.</p></div>
           </div>
         </div>
@@ -278,7 +278,7 @@
       state.current = next;
       state.activeEdge = null;
       state.settled[next] = true;
-      yield `${name(next)} ma najmniejszą tymczasową odległość (${formatDistance(state.distance[next])}) — ustalamy jej wartość.`;
+      yield `${name(next)} ma najmniejszą tymczasową odległość (${formatDistance(state.distance[next])}) - ustalamy jej wartość.`;
       for (const edge of state.adjacency[next]) {
         state.activeEdge = edgeKey(next, edge.to);
         state.checks++;
@@ -286,14 +286,14 @@
         if (!state.settled[edge.to] && candidate < state.distance[edge.to]) {
           state.distance[edge.to] = candidate;
           state.previous[edge.to] = next;
-          yield `Relaksacja: ${name(next)} → ${name(edge.to)} daje odległość ${formatDistance(candidate)} (waga ${formatDistance(edge.weight)}) — poprawiamy wynik.`;
+          yield `Relaksacja: ${name(next)} → ${name(edge.to)} daje odległość ${formatDistance(candidate)} (waga ${formatDistance(edge.weight)}) - poprawiamy wynik.`;
         } else {
-          yield `Sprawdzamy krawędź ${next + 1}–${edge.to + 1} (waga ${formatDistance(edge.weight)}); odległość ${formatDistance(state.distance[edge.to])} pozostaje bez zmian.`;
+          yield `Sprawdzamy krawędź ${next + 1}-${edge.to + 1} (waga ${formatDistance(edge.weight)}); odległość ${formatDistance(state.distance[edge.to])} pozostaje bez zmian.`;
         }
       }
     }
     state.current = -1; state.activeEdge = null; state.done = true;
-    yield 'Gotowe — ustalono odległości do wszystkich osiągalnych wierzchołków.';
+    yield 'Gotowe - ustalono odległości do wszystkich osiągalnych wierzchołków.';
   }
 
   function pathTo(target) {
@@ -314,7 +314,7 @@
       const values = [
         name(vertex),
         formatDistance(distance),
-        state.previous[vertex] < 0 ? '—' : String(state.previous[vertex] + 1),
+        state.previous[vertex] < 0 ? '-' : String(state.previous[vertex] + 1),
         state.settled[vertex] ? 'Ustalona' : distance === Infinity ? (state.done ? 'Nieosiągalna' : 'Nieodkryta') : 'Tymczasowa'
       ];
       for (const value of values) {

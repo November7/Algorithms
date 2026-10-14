@@ -7,7 +7,7 @@
     <title>Sito Eratostenesa · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="step-lab">
+  <body class="step-lab interactive-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -26,17 +26,17 @@
           <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">8 op./s</output></label><input id="speed" type="range" min="1" max="30" value="8"></div>
         </div>
         <div class="actions"><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button></div>
-        <p class="control-hint">Jeden krok skreśla jedną liczbę albo wybiera następną liczbę pierwszą. Algorytm kończy się, gdy p² przekroczy n. Zakres 2–n; liczba 1 nie jest pierwsza.</p>
+        <p class="control-hint">Jeden krok skreśla jedną liczbę albo wybiera następną liczbę pierwszą. Algorytm kończy się, gdy p² przekroczy n. Zakres 2-n; liczba 1 nie jest pierwsza.</p>
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Siatka liczb od 2 do n</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Siatka liczb od 2 do n</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
           <div class="lab-viewport"><div id="grid" class="lab-sieve-grid" role="grid" aria-label="Siatka liczb do wykreślenia"></div></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Bieżąca liczba pierwsza p</span><span><i class="lab-key rejected" aria-hidden="true"></i>Skreślona wielokrotność</span><span><i class="lab-key accepted" aria-hidden="true"></i>Liczba pierwsza</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
         </section>
         <section class="stats" aria-label="Statystyki algorytmu">
-          <div class="stat"><span>Bieżące p</span><output id="currentPrime">—</output><small>liczba, której wielokrotności skreślamy</small></div>
+          <div class="stat"><span>Bieżące p</span><output id="currentPrime">-</output><small>liczba, której wielokrotności skreślamy</small></div>
           <div class="stat"><span>Znalezione liczby pierwsze</span><output id="primeCount">0</output><small>potwierdzone</small></div>
           <div class="stat"><span>Skreślenia</span><output id="crossCount">0</output><small>łącznie, także powtórne</small></div>
           <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>wybory p i skreślenia</small></div>
@@ -46,10 +46,10 @@
       </div>
       <section class="panel lesson" aria-labelledby="lessonTitle">
         <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Sito Eratostenesa</h2></div><span class="tag">Teoria liczb</span></div>
-        <dl class="complexity"><div><dt>Czas</dt><dd>O(n log log n)</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Naiwnie</dt><dd>O(n√n)</dd></div><div><dt>Granica pętli</dt><dd>p² ≤ n</dd></div><div><dt>Wynik</dt><dd>Wszystkie liczby pierwsze ≤ n</dd></div></dl>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n log log n)</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Osobne testy dzielników</dt><dd>O(n√n)</dd></div><div><dt>Granica pętli</dt><dd>p² ≤ n</dd></div><div><dt>Wynik</dt><dd>Wszystkie liczby pierwsze ≤ n</dd></div></dl>
         <p class="complexity-note">n to górna granica zakresu. Sito jest najlepsze, gdy potrzebujemy wszystkich liczb pierwszych w zakresie, a nie testu jednej liczby.</p>
         <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Wypisz liczby od 2 do n i żadnej nie skreślaj.</li><li>Weź najmniejszą nieskreśloną liczbę p — jest pierwsza.</li><li>Skreśl jej wielokrotności, zaczynając od p².</li><li>Powtarzaj, aż p² będzie większe niż n.</li></ol></div>
+          <div><h3>Jak to działa?</h3><ol><li>Wypisz liczby od 2 do n i żadnej nie skreślaj.</li><li>Weź najmniejszą nieskreśloną liczbę p - jest pierwsza.</li><li>Skreśl jej wielokrotności, zaczynając od p².</li><li>Powtarzaj, aż p² będzie większe niż n.</li></ol></div>
           <div><h3>Dlaczego to działa?</h3><p>Każda liczba złożona m ma dzielnik pierwszy nie większy niż √m, więc zostanie skreślona przez jedną z liczb pierwszych, które sprawdzimy. Liczba, której nikt nie skreślił, nie ma takiego dzielnika.</p><h3>Dlaczego p²?</h3><p>Mniejsze wielokrotności p mają mniejszy czynnik pierwszy i zostały już skreślone wcześniej.</p></div>
           <div><h3>Kiedy się przydaje?</h3><p>Przy rozkładzie na czynniki pierwsze, w kryptografii (wstępne generowanie liczb pierwszych), w zadaniach z teorii liczb oraz jako klasyczny przykład algorytmu o niemal liniowym czasie.</p></div>
         </div>
@@ -57,29 +57,176 @@
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
-// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
-// Wzorzec: sort.html (siatka/słupki) i knapsack.html (generator kroków, zegar).
-//
-// DO ZAIMPLEMENTOWANIA
-// 1. Stan: tablica stanów liczb 2..n ('unknown' | 'prime' | 'crossed' | 'current'), bieżące p, bieżąca wielokrotność, liczniki, faza.
-// 2. Generator kroków: wybór p (opis: "najmniejsza nieskreślona to p, więc jest pierwsza") -> kolejne wielokrotności od p² (lub 2p)
-//    jako osobne kroki (liczba już skreślona wcześniej też jest krokiem, ale oznaczona jako "powtórne skreślenie") ->
-//    po p² > n: wszystkie nieskreślone oznacz jako pierwsze (może być jeden zbiorczy krok z opisem).
-// 3. Siatka #grid: stworzyć style .lab-sieve-grid (CSS grid, ok. 10 kolumn) i komórki z numerem; kolory zgodne z legendą;
-//    skreślenie jako przekreślony tekst + przygaszone tło, aby nie polegać wyłącznie na kolorze (dostępność).
-// 4. Statystyki i wynik: #currentPrime, #primeCount, #crossCount, #stepCount, #chosen (lista liczb pierwszych), #phaseText, #resultText
-//    (np. "Do 50 jest 15 liczb pierwszych"). Porównaj w #resultText liczbę skreśleń dla obu wariantów #optimization.
-// 5. Dane: #limit i #scenario synchronizowane (suwak przełącza na "Własna granica"); każda zmiana = reset().
-//
-// PRZEWIDZIANA INTERAKCJA
-// - Klik w liczbę przed startem lub w pauzie: wybór własnego p do ręcznego skreślenia (tryb "Spróbuj sam"; błędny wybór -> komunikat dlaczego).
-// - Klik w liczbę po zakończeniu: pokaż w #operation, kto ją skreślił (najmniejszy dzielnik pierwszy) albo że jest pierwsza.
-// - Najechanie / fokus na liczbie: tooltip z rozkładem (np. 42 = 2 · 3 · 7) i informacją, w którym kroku ją skreślono.
-// - Kliknięcie liczby pierwszej w #chosen: podświetl wszystkie jej skreślone wielokrotności w siatce.
-// - Klawiatura: strzałki poruszają fokus po siatce (role="grid", tabindex dla jednej komórki naraz), Enter = akcja jak klik; Spacja = pauza, N = krok.
+/* Shared controls and accessible drawing helpers for the step-by-step labs. */
+'use strict';
+window.Lab = (() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { if ($(id)) $(id).textContent = value; };
+  function element(tag, attrs = {}, content) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function svg(tag, attrs = {}, content) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function action(node, callback, label, key) {
+    node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+    node.setAttribute('aria-label', label); node.setAttribute('data-focus', key);
+    node.addEventListener('click', callback);
+    node.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); callback(event); }
+    });
+    return node;
+  }
+  function paint(node, draw) {
+    const focus = node.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus') : null;
+    node.replaceChildren(); draw(node);
+    if (focus !== null) [...node.querySelectorAll('[data-focus]')].find(el => el.getAttribute('data-focus') === focus)?.focus({ preventScroll: true });
+  }
+  function tokens(id, items, callback) {
+    paint($(id), root => items.forEach((item, i) => {
+      const li = element('li', { class: item.className || '' });
+      if (callback) {
+        const button = element('button', { type: 'button', 'data-focus': String(i) }, item.label ?? item);
+        button.addEventListener('click', event => callback(i, event)); li.append(button);
+      } else li.textContent = item.label ?? item;
+      root.append(li);
+    }));
+  }
+  function node(root, x, y, label, style = '', note = '', callback, key = label, radius = 19) {
+    const group = svg('g', { transform: `translate(${x} ${y})` });
+    group.append(svg('circle', { r: radius, class: `lab-node ${style}${radius < 19 ? ' compact' : ''}` }), svg('text', { y: 5, class: `lab-number ${style}` }, label));
+    if (note !== '') group.append(svg('text', { y: radius + 17, class: 'lab-node-note' }, note));
+    if (callback) action(group, callback, `${label}, ${note}`, String(key));
+    root.append(group); return group;
+  }
+  function point(board, event) {
+    return new DOMPoint(event.clientX, event.clientY).matrixTransform(board.getScreenCTM().inverse());
+  }
+  function controller({ run, render, reset, validate = () => true, locked = [], manual = () => false, update = () => {} }) {
+    let iterator = null, timer = null;
+    const api = { running: false, done: false, steps: 0, started: false,
+      sync() {
+        $('startBtn').disabled = api.running || api.done || manual();
+        $('pauseBtn').disabled = !api.started || api.done || manual();
+        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        $('stepBtn').disabled = api.running || api.done || manual();
+        $('stopBtn').disabled = false;
+        locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
+        $('speed').disabled = manual();
+        text('statusText', manual() ? (api.done ? 'Ukończono' : 'Tryb ręczny') : api.done ? 'Zakończono' : api.running ? 'W trakcie' : api.started ? 'Pauza' : 'Gotowe');
+        update(api);
+      },
+      refresh() { render(); api.sync(); },
+      pause() { clearTimeout(timer); timer = null; api.running = false; api.sync(); },
+      reset() {
+        api.pause(); iterator = null; api.done = false; api.started = false; api.steps = 0;
+        text('operation', 'Wybierz Start lub wykonaj pierwszy krok.'); text('resultText', 'Wynik pojawi się po zakończeniu.');
+        reset(); api.refresh();
+      },
+      next() {
+        if (api.done || manual() || !validate()) return;
+        api.started = true; iterator ||= run();
+        const result = iterator.next();
+        if (result.done) { api.done = true; api.pause(); if (result.value) text('operation', result.value); }
+        else { api.steps++; text('operation', result.value); }
+        api.refresh();
+      },
+      start() {
+        if (api.running || api.done || manual() || !validate()) return;
+        api.running = true; api.next();
+        const tick = () => {
+          if (!api.running) return;
+          api.next();
+          if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+        };
+        if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+      },
+      replace(generator) { api.pause(); iterator = generator; api.done = false; api.started = false; api.sync(); },
+      // Replaying a deterministic generator restores Hanoi's recursion and undo history.
+      rewind(count) { api.reset(); for (let i = 0; i < count; i++) api.next(); }
+    };
+    $('startBtn').addEventListener('click', api.start);
+    $('pauseBtn').addEventListener('click', () => api.running ? api.pause() : api.start());
+    $('stepBtn').addEventListener('click', () => { api.pause(); api.next(); });
+    $('stopBtn').addEventListener('click', api.reset);
+    $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
+    document.addEventListener('keydown', event => {
+      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.key.toLowerCase() === 'n' && !api.running) api.next();
+      if (event.key.toLowerCase() === 'r') api.reset();
+    });
+    return api;
+  }
+  return { $, text, element, svg, action, paint, tokens, node, point, controller };
+})();
+    </script>
+    <script>
 (() => {
   'use strict';
-  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+  const { $, text, element, paint, tokens, controller } = Lab;
+  let n, divisor, crossedAt, primes, p, current, crosses, highlight, focusNumber = 2;
+  function reset() { n = Number($('limit').value); divisor = Array(n + 1).fill(0); crossedAt = []; primes = []; p = 0; current = 0; crosses = 0; highlight = 0; text('limitLabel', n); }
+  function* run() {
+    for (p = 2; p * p <= n; p++) {
+      if (divisor[p]) continue;
+      primes.push(p); current = p; yield `${p} to najmniejsza kolejna nieskreślona liczba, więc jest pierwsza.`;
+      for (let k = $('optimization').value === 'square' ? p * p : 2 * p; k <= n; k += p) {
+        const repeated = !!divisor[k]; crosses++; current = k;
+        if (!repeated) { divisor[k] = p; crossedAt[k] = ctl.steps + 1; }
+        yield `${k} = ${p} · ${k / p}: ${repeated ? `powtórne skreślenie (wcześniej przez ${divisor[k]})` : 'skreślamy liczbę złożoną'}.`;
+      }
+    }
+    primes = Array.from({ length: n - 1 }, (_, i) => i + 2).filter(k => !divisor[k]); current = 0;
+    yield `p² > ${n}. Wszystkie pozostałe nieskreślone liczby są pierwsze.`;
+    const count = square => primes.filter(v => v * v <= n).reduce((sum, v) => sum + Math.floor((n - (square ? v * v : 2 * v)) / v) + 1, 0);
+    text('resultText', `Do ${n} jest ${primes.length} liczb pierwszych. Skreślenia od p²: ${count(true)}, od 2p: ${count(false)}; oszczędność: ${count(false) - count(true)}.`);
+    return 'Sito zakończone. Wybierz liczbę, aby sprawdzić jej dzielniki.';
+  }
+  function factors(k) { const list = []; for (let d = 2; d * d <= k; d++) while (k % d === 0) { list.push(d); k /= d; } if (k > 1) list.push(k); return list.join(' · '); }
+  function inspect(k) {
+    if (ctl.running) return;
+    if (!ctl.done && !divisor[k] && !primes.includes(k)) {
+      let next = Math.max(2, p); while (next <= n && (divisor[next] || primes.includes(next))) next++;
+      if (k !== next) { text('operation', `Kolejna najmniejsza nieskreślona liczba to ${next}; wybierz ją lub użyj „Jeden krok”.`); return; }
+      // Advance the same generator: manual selection cannot corrupt the sieve state.
+      ctl.next(); return;
+    }
+    text('operation', divisor[k] ? `${k} = ${factors(k)}. Pierwsze skreślenie przez ${divisor[k]}, w kroku ${crossedAt[k]}.` : `${k} jest liczbą pierwszą${ctl.done || primes.includes(k) ? '.' : ' - jeszcze niepotwierdzoną przez sito.'}`);
+  }
+  function render() {
+    paint($('grid'), root => {
+      for (let start = 2; start <= n; start += 10) {
+        const row = element('div', { role: 'row', class: 'lab-sieve-row' });
+        for (let k = start; k < Math.min(start + 10, n + 1); k++) {
+          const state = current === k ? 'lab-current' : highlight && k % highlight === 0 ? 'lab-dependency' : divisor[k] ? 'lab-rejected' : primes.includes(k) ? 'lab-accepted' : '';
+          const label = `${k}${divisor[k] ? `, skreślona przez ${divisor[k]} w kroku ${crossedAt[k]}` : primes.includes(k) ? ', pierwsza' : ', niesprawdzona'}`;
+          const cell = element('button', { type: 'button', role: 'gridcell', tabindex: k === focusNumber ? '0' : '-1', 'data-focus': String(k), class: `${state} ${divisor[k] ? 'lab-crossed' : ''}`, 'aria-label': label, title: `${k} = ${factors(k)}; ${label}` }, k);
+          cell.addEventListener('click', () => inspect(k));
+          cell.addEventListener('focus', () => { focusNumber = k; $('grid').querySelectorAll('button').forEach(b => b.tabIndex = b === cell ? 0 : -1); });
+          cell.addEventListener('keydown', event => {
+            const d = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -10, ArrowDown: 10 }[event.key];
+            if (d) { event.preventDefault(); focusNumber = Math.max(2, Math.min(n, k + d)); $('grid').querySelector(`[data-focus="${focusNumber}"]`)?.focus(); }
+          }); row.append(cell);
+        } root.append(row);
+      }
+    });
+    tokens('chosen', primes, index => { if (ctl.running) return; highlight = highlight === primes[index] ? 0 : primes[index]; render(); text('operation', `Wielokrotności liczby ${primes[index]} są wyróżnione.`); });
+    text('currentPrime', p || '-'); text('primeCount', primes.length); text('crossCount', crosses); text('stepCount', ctl.steps);
+    text('phaseText', ctl.done ? 'Wszystkie liczby pierwsze w zadanym zakresie.' : 'Potwierdzone liczby pierwsze. Kliknij liczbę, aby wyróżnić jej wielokrotności.');
+  }
+  const ctl = controller({ run, render, reset, locked: ['scenario', 'limit', 'optimization'] });
+  $('scenario').addEventListener('change', () => { const limit = { example: 50, small: 30, large: 100 }[$('scenario').value]; if (limit) $('limit').value = limit; ctl.reset(); });
+  $('limit').addEventListener('input', () => { $('scenario').value = 'custom'; focusNumber = 2; ctl.reset(); });
+  $('optimization').addEventListener('change', ctl.reset);
+  ctl.reset();
 })();
     </script>
   </body>

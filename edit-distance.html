@@ -7,7 +7,7 @@
     <title>Odległość edycyjna (Levenshtein) · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="step-lab">
+  <body class="step-lab interactive-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -30,7 +30,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela odległości</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela odległości</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
           <p class="lab-table-hint" id="tableHint">D[i, j] to najmniejsza liczba operacji zamieniająca pierwsze i liter słowa źródłowego w pierwsze j liter słowa docelowego.</p>
           <div class="lab-dp-viewport" tabindex="0" role="region" aria-label="Przewijana tabela programowania dynamicznego" aria-describedby="tableHint"><table id="dpTable" class="graph-table lab-dp"><caption>Wiersze: litery słowa źródłowego · kolumny: litery słowa docelowego</caption><thead id="dpHead"></thead><tbody id="dpBody"></tbody></table></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Obliczana / odtwarzana</span><span><i class="lab-key ready" aria-hidden="true"></i>Odczytywane sąsiednie komórki</span><span><i class="lab-key accepted" aria-hidden="true"></i>Ścieżka przekształcenia</span></div>
@@ -38,8 +38,8 @@
         </section>
         <section class="stats" aria-label="Statystyki algorytmu">
           <div class="stat"><span>Obliczone komórki</span><output id="cellCount">0</output><small>bez wiersza i kolumny bazowej</small></div>
-          <div class="stat"><span>Odległość edycyjna</span><output id="distance">—</output><small>minimum operacji</small></div>
-          <div class="stat"><span>Zamiany / wstawienia / usunięcia</span><output id="opMix">—</output><small>na odtworzonej ścieżce</small></div>
+          <div class="stat"><span>Odległość edycyjna</span><output id="distance">-</output><small>minimum operacji</small></div>
+          <div class="stat"><span>Zamiany / wstawienia / usunięcia</span><output id="opMix">-</output><small>na odtworzonej ścieżce</small></div>
           <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>obliczenia i odtwarzanie</small></div>
         </section>
         <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Przekształcenie słowa</h2><p id="phaseText">Najpierw wypełnimy tabelę, potem odczytamy operacje.</p><ol id="chosen" class="graph-tokens" aria-label="Kolejne operacje edycyjne"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
@@ -50,36 +50,196 @@
         <dl class="complexity"><div><dt>Czas</dt><dd>O(n · m)</dd></div><div><dt>Pamięć</dt><dd>O(n · m)</dd></div><div><dt>Sama wartość</dt><dd>O(min(n, m)) pamięci</dd></div><div><dt>Operacje</dt><dd>Wstaw, usuń, zamień</dd></div><div><dt>Odtwarzanie</dt><dd>O(n + m)</dd></div></dl>
         <p class="complexity-note">n i m to długości słów. Pełna tabela jest potrzebna tylko do odtworzenia listy operacji; samą odległość można policzyć, trzymając dwa wiersze.</p>
         <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Zamiana pustego słowa na prefiks długości j kosztuje j wstawień, a odwrotnie — j usunięć.</li><li>Dla każdej pary prefiksów wybierz najtańszą z trzech operacji na ostatnim znaku.</li><li>Zgodne litery nie kosztują nic, różne kosztują 1 za zamianę.</li><li>Od prawego dolnego rogu cofaj się do komórki, z której pochodzi minimum.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Ostatni znak słowa źródłowego jest albo dopasowany, albo zamieniony, albo usunięty, albo trzeba dopisać ostatni znak docelowy. Każdy z tych przypadków sprowadza się do mniejszego, już policzonego podproblemu.</p><h3>Remisy</h3><p>Gdy kilka operacji daje to samo minimum, wynik nie jest jedyny. Symulacja powinna jasno opisać przyjętą kolejność wyboru.</p></div>
+          <div><h3>Jak to działa?</h3><ol><li>Zamiana pustego słowa na prefiks długości j kosztuje j wstawień, a odwrotnie - j usunięć.</li><li>Dla każdej pary prefiksów wybierz najtańszą z trzech operacji na ostatnim znaku.</li><li>Zgodne litery nie kosztują nic, różne kosztują 1 za zamianę.</li><li>Od prawego dolnego rogu cofaj się do komórki, z której pochodzi minimum.</li></ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Ostatni znak słowa źródłowego jest albo dopasowany, albo zamieniony, albo usunięty, albo trzeba dopisać ostatni znak docelowy. Każdy z tych przypadków sprowadza się do mniejszego, już policzonego podproblemu.</p><h3>Remisy</h3><p>Gdy kilka operacji daje to samo minimum, wynik nie jest jedyny. Przy remisie wybieramy przekątną (zgodność lub zamianę), następnie usunięcie, a na końcu wstawienie.</p></div>
           <div><h3>Kiedy się przydaje?</h3><p>Przy sprawdzaniu pisowni i podpowiedziach „czy chodziło o…?”, porównywaniu sekwencji DNA, wykrywaniu zmian między wersjami tekstu oraz w wyszukiwaniu przybliżonym.</p></div>
         </div>
       </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
-// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
-// Wzorzec: knapsack.html (tabela DP, generator kroków, zegar, Start/Pauza/Krok/Reset).
-//
-// DO ZAIMPLEMENTOWANIA
-// 1. Stan: słowa A i B, tabela dp (n+1 x m+1, null = nieobliczona), kierunki wyboru, ścieżka, faza ('fill' | 'trace' | 'done'), liczniki.
-// 2. Generator kroków (function*): wiersz i kolumna bazowa -> komórki wierszami, każda jako jeden krok z opisem w #operation
-//    (który z trzech wariantów wygrał: wstawienie / usunięcie / zamiana / zgodność) -> odtwarzanie ścieżki od D[n, m] do D[0, 0].
-// 3. Renderowanie: nagłówki z literami słów; klasy komórek lab-current, lab-dependency (3 sąsiedzi), lab-accepted (ścieżka);
-//    strzałki ↖ ↑ ← w komórkach; #chosen = lista operacji, #opMix, #distance, #cellCount, #stepCount, #statusText.
-// 4. Dane: scenariusze z #scenario, losowanie (#randomBtn), walidacja pól #wordA/#wordB (długość, puste słowo dozwolone),
-//    przełączenie na "Własne słowa" po ręcznej edycji. Każda zmiana danych wywołuje reset().
-// 5. Sterowanie: Start/Pauza/Jeden krok/Reset, #speed (tempo), blokowanie pól podczas działania, aria-live w #operation.
-//
-// PRZEWIDZIANA INTERAKCJA
-// - Klik w komórkę tabeli po zakończeniu: podświetl jej zależności (trzech sąsiadów) i pokaż w #operation, skąd wzięła się wartość.
-// - Najechanie / fokus na komórce: tooltip "D[i, j] = min(...)" z trzema kandydatami; komórki mają tabindex i obsługę Enter/Spacji.
-// - Klik w operację na liście #chosen: podświetl odpowiadający fragment ścieżki w tabeli i literę w słowach.
-// - Klawiatura: strzałki przesuwają fokus po komórkach tabeli; Spacja = pauza/wznowienie, N = jeden krok.
-// - Opcjonalnie: wizualizacja przekształcenia "kitten" -> "sitting" literka po literce pod tabelą (animacja operacji).
+/* Shared controls and accessible drawing helpers for the step-by-step labs. */
+'use strict';
+window.Lab = (() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { if ($(id)) $(id).textContent = value; };
+  function element(tag, attrs = {}, content) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function svg(tag, attrs = {}, content) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function action(node, callback, label, key) {
+    node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+    node.setAttribute('aria-label', label); node.setAttribute('data-focus', key);
+    node.addEventListener('click', callback);
+    node.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); callback(event); }
+    });
+    return node;
+  }
+  function paint(node, draw) {
+    const focus = node.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus') : null;
+    node.replaceChildren(); draw(node);
+    if (focus !== null) [...node.querySelectorAll('[data-focus]')].find(el => el.getAttribute('data-focus') === focus)?.focus({ preventScroll: true });
+  }
+  function tokens(id, items, callback) {
+    paint($(id), root => items.forEach((item, i) => {
+      const li = element('li', { class: item.className || '' });
+      if (callback) {
+        const button = element('button', { type: 'button', 'data-focus': String(i) }, item.label ?? item);
+        button.addEventListener('click', event => callback(i, event)); li.append(button);
+      } else li.textContent = item.label ?? item;
+      root.append(li);
+    }));
+  }
+  function node(root, x, y, label, style = '', note = '', callback, key = label, radius = 19) {
+    const group = svg('g', { transform: `translate(${x} ${y})` });
+    group.append(svg('circle', { r: radius, class: `lab-node ${style}${radius < 19 ? ' compact' : ''}` }), svg('text', { y: 5, class: `lab-number ${style}` }, label));
+    if (note !== '') group.append(svg('text', { y: radius + 17, class: 'lab-node-note' }, note));
+    if (callback) action(group, callback, `${label}, ${note}`, String(key));
+    root.append(group); return group;
+  }
+  function point(board, event) {
+    return new DOMPoint(event.clientX, event.clientY).matrixTransform(board.getScreenCTM().inverse());
+  }
+  function controller({ run, render, reset, validate = () => true, locked = [], manual = () => false, update = () => {} }) {
+    let iterator = null, timer = null;
+    const api = { running: false, done: false, steps: 0, started: false,
+      sync() {
+        $('startBtn').disabled = api.running || api.done || manual();
+        $('pauseBtn').disabled = !api.started || api.done || manual();
+        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        $('stepBtn').disabled = api.running || api.done || manual();
+        $('stopBtn').disabled = false;
+        locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
+        $('speed').disabled = manual();
+        text('statusText', manual() ? (api.done ? 'Ukończono' : 'Tryb ręczny') : api.done ? 'Zakończono' : api.running ? 'W trakcie' : api.started ? 'Pauza' : 'Gotowe');
+        update(api);
+      },
+      refresh() { render(); api.sync(); },
+      pause() { clearTimeout(timer); timer = null; api.running = false; api.sync(); },
+      reset() {
+        api.pause(); iterator = null; api.done = false; api.started = false; api.steps = 0;
+        text('operation', 'Wybierz Start lub wykonaj pierwszy krok.'); text('resultText', 'Wynik pojawi się po zakończeniu.');
+        reset(); api.refresh();
+      },
+      next() {
+        if (api.done || manual() || !validate()) return;
+        api.started = true; iterator ||= run();
+        const result = iterator.next();
+        if (result.done) { api.done = true; api.pause(); if (result.value) text('operation', result.value); }
+        else { api.steps++; text('operation', result.value); }
+        api.refresh();
+      },
+      start() {
+        if (api.running || api.done || manual() || !validate()) return;
+        api.running = true; api.next();
+        const tick = () => {
+          if (!api.running) return;
+          api.next();
+          if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+        };
+        if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+      },
+      replace(generator) { api.pause(); iterator = generator; api.done = false; api.started = false; api.sync(); },
+      // Replaying a deterministic generator restores Hanoi's recursion and undo history.
+      rewind(count) { api.reset(); for (let i = 0; i < count; i++) api.next(); }
+    };
+    $('startBtn').addEventListener('click', api.start);
+    $('pauseBtn').addEventListener('click', () => api.running ? api.pause() : api.start());
+    $('stepBtn').addEventListener('click', () => { api.pause(); api.next(); });
+    $('stopBtn').addEventListener('click', api.reset);
+    $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
+    document.addEventListener('keydown', event => {
+      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.key.toLowerCase() === 'n' && !api.running) api.next();
+      if (event.key.toLowerCase() === 'r') api.reset();
+    });
+    return api;
+  }
+  return { $, text, element, svg, action, paint, tokens, node, point, controller };
+})();
+    </script>
+    <script>
 (() => {
   'use strict';
-  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+  const { $, text, element, paint, tokens, controller } = Lab;
+  let a, b, dp, directions, path, edits, current, cells, phase;
+  const describe = (i, j) => !i || !j ? `D[${i}, ${j}] = ${dp[i][j]}: ${i || j} ${i ? 'usunięć' : 'wstawień'}.` :
+    `D[${i}, ${j}] = min(usuń: ${dp[i - 1][j]} + 1, wstaw: ${dp[i][j - 1]} + 1, ${a[i - 1] === b[j - 1] ? 'zgodność' : 'zamień'}: ${dp[i - 1][j - 1]} + ${Number(a[i - 1] !== b[j - 1])}) = ${dp[i][j]}. Wybrano ${directions[i][j]}.`;
+  function reset() {
+    a = Array.from($('wordA').value); b = Array.from($('wordB').value);
+    dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(null));
+    directions = dp.map(row => row.map(() => '')); path = []; edits = []; current = null; cells = 0; phase = 'fill';
+    for (let i = 0; i <= a.length; i++) { dp[i][0] = i; directions[i][0] = i ? '↑' : ''; }
+    for (let j = 0; j <= b.length; j++) { dp[0][j] = j; directions[0][j] = j ? '←' : ''; }
+  }
+  function* run() {
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+      const candidates = [dp[i - 1][j - 1] + Number(a[i - 1] !== b[j - 1]), dp[i - 1][j] + 1, dp[i][j - 1] + 1];
+      dp[i][j] = Math.min(...candidates); directions[i][j] = ['↖', '↑', '←'][candidates.indexOf(dp[i][j])];
+      current = [i, j]; cells++; yield describe(i, j);
+    }
+    phase = 'trace'; let i = a.length, j = b.length;
+    path.push([i, j]);
+    while (i || j) {
+      const from = [i, j], direction = directions[i][j]; let kind, label;
+      if (direction === '↖') { kind = a[i - 1] === b[j - 1] ? 'keep' : 'replace'; label = kind === 'keep' ? `Zachowaj „${a[i - 1]}”` : `Zamień „${a[i - 1]}” na „${b[j - 1]}”`; i--; j--; }
+      else if (direction === '↑') { kind = 'delete'; label = `Usuń „${a[i - 1]}”`; i--; }
+      else { kind = 'insert'; label = `Wstaw „${b[j - 1]}”`; j--; }
+      edits.unshift({ kind, label, from, to: [i, j] }); path.push([i, j]); current = from;
+      yield `${label}. Cofamy się ${direction} do D[${i}, ${j}].`;
+    }
+    phase = 'done'; current = null;
+    text('resultText', `„${a.join('')}” → „${b.join('')}”: minimum ${dp[a.length][b.length]} operacji. Remisy: najpierw przekątna (zgodność/zamiana), potem usunięcie, potem wstawienie.`);
+    return 'Odtworzono optymalne przekształcenie. Wybierz komórkę lub operację, aby zobaczyć szczegóły.';
+  }
+  function inspect(i, j) { if (ctl.running || dp[i][j] === null) return; current = [i, j]; text('operation', describe(i, j)); render(); }
+  function render() {
+    paint($('dpHead'), root => { const row = element('tr'); ['', '∅', ...b].forEach(c => row.append(element('th', { scope: 'col' }, c))); root.append(row); });
+    paint($('dpBody'), root => dp.forEach((row, i) => {
+      const tr = element('tr'); tr.append(element('th', { scope: 'row' }, i ? a[i - 1] : '∅'));
+      row.forEach((value, j) => {
+        const active = current && current[0] === i && current[1] === j;
+        const dependency = current && ((i === current[0] - 1 && (j === current[1] || j === current[1] - 1)) || (i === current[0] && j === current[1] - 1));
+        const onPath = path.some(p => p[0] === i && p[1] === j);
+        const td = element('td', { class: active ? 'lab-current' : dependency ? 'lab-dependency' : onPath ? 'lab-accepted' : '' });
+        const button = element('button', { type: 'button', 'data-focus': `${i}-${j}`, title: value === null ? 'Jeszcze nieobliczona' : describe(i, j), 'aria-label': `D[${i}, ${j}]: ${value ?? 'nieobliczona'}` }, `${value ?? '·'} ${directions[i][j]}`);
+        button.addEventListener('click', () => inspect(i, j));
+        button.addEventListener('keydown', event => {
+          const delta = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[event.key];
+          if (!delta) return; event.preventDefault();
+          $('dpBody').querySelector(`[data-focus="${Math.max(0, Math.min(a.length, i + delta[0]))}-${Math.max(0, Math.min(b.length, j + delta[1]))}"]`)?.focus();
+        }); td.append(button); tr.append(td);
+      }); root.append(tr);
+    }));
+    tokens('chosen', edits.map(e => e.label), index => inspect(...edits[index].from));
+    text('cellCount', cells); text('distance', dp[a.length][b.length] ?? '-'); text('stepCount', ctl.steps);
+    text('opMix', ['replace', 'insert', 'delete'].map(kind => edits.filter(e => e.kind === kind).length).join(' / '));
+    text('phaseText', phase === 'fill' ? 'Wypełnianie tabeli. Remisy: przekątna, usunięcie, wstawienie.' : phase === 'trace' ? 'Odtwarzanie od końca; lista pokazuje operacje w kolejności od początku słowa.' : 'Czytaj operacje od lewej do prawej. Zachowanie znaku kosztuje 0.');
+  }
+  const ctl = controller({ run, render, reset, locked: ['scenario', 'wordA', 'wordB', 'randomBtn'], validate: () => {
+    if (a.length <= 8 && b.length <= 8) return true; text('operation', 'Każde słowo może mieć najwyżej 8 znaków.'); return false;
+  } });
+  $('scenario').addEventListener('change', () => {
+    const pair = { example: ['kitten', 'sitting'], same: ['algorytm', 'algorytm'], empty: ['', 'kot'] }[$('scenario').value];
+    if (pair) { $('wordA').value = pair[0]; $('wordB').value = pair[1]; } ctl.reset();
+  });
+  ['wordA', 'wordB'].forEach(id => $(id).addEventListener('input', () => { $('scenario').value = 'custom'; ctl.reset(); }));
+  $('randomBtn').addEventListener('click', () => {
+    const words = ['kot', 'kołtun', 'kawa', 'ława', 'dom', 'dym', 'pies', 'las', 'lis', ''];
+    $('wordA').value = words[Math.floor(Math.random() * words.length)]; $('wordB').value = words[Math.floor(Math.random() * words.length)]; $('scenario').value = 'custom'; ctl.reset();
+  });
+  ctl.reset();
 })();
     </script>
   </body>

@@ -40,7 +40,7 @@
         </section>
         <section class="stats" aria-label="Statystyki algorytmu">
           <div class="stat"><span>Obliczone komórki</span><output id="cellCount">0</output><small id="cellGoal">bez wiersza i kolumny bazowej</small></div>
-          <div class="stat"><span>Wartość optymalna</span><output id="bestValue">—</output><small>dla całego zestawu i pojemności</small></div>
+          <div class="stat"><span>Wartość optymalna</span><output id="bestValue">-</output><small>dla całego zestawu i pojemności</small></div>
           <div class="stat"><span>Waga wybranych</span><output id="selectedWeight">0</output><small id="weightLimit">pojemność: 10</small></div>
           <div class="stat"><span>Wykonane kroki</span><output id="stepCount">0</output><small>obliczenia i odtwarzanie</small></div>
         </section>
@@ -50,7 +50,7 @@
       <section class="panel lesson" aria-labelledby="lessonTitle">
         <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Problem plecakowy 0/1</h2></div><span class="tag">Programowanie dynamiczne</span></div>
         <dl class="complexity"><div><dt>Czas</dt><dd>O(n · (W + 1))</dd></div><div><dt>Pamięć</dt><dd>O(n · (W + 1))</dd></div><div><dt>Wybór przedmiotu</dt><dd>0 albo 1 raz</dd></div><div><dt>Wagi</dt><dd>Dodatnie całkowite</dd></div><div><dt>Odtwarzanie</dt><dd>O(n)</dd></div></dl>
-        <p class="complexity-note">n to liczba przedmiotów, W — pojemność. Zwykle zapisujemy O(nW); tutaj W + 1 uwzględnia też zerową pojemność. Czas jest pseudowielomianowy: zależy od wartości W, a nie liczby bitów jej zapisu. Koszty nie obejmują odświeżania widoku. Pełna tabela ułatwia odtworzenie wyboru; samą wartość można obliczyć z pamięcią O(W + 1).</p>
+        <p class="complexity-note">n to liczba przedmiotów, W - pojemność. Zwykle zapisujemy O(nW); tutaj W + 1 uwzględnia też zerową pojemność. Czas jest pseudowielomianowy: zależy od wartości W, a nie liczby bitów jej zapisu. Koszty nie obejmują odświeżania widoku. Pełna tabela ułatwia odtworzenie wyboru; samą wartość można obliczyć z pamięcią O(W + 1).</p>
         <div class="lesson-columns">
           <div><h3>Jak to działa?</h3><ol><li>Dla braku przedmiotów lub pojemności 0 wpisz wartość 0.</li><li>Dla kolejnego przedmiotu i każdej pojemności porównaj pominięcie z zabraniem, jeśli się mieści.</li><li>Oba warianty odczytuj z poprzedniego wiersza, aby nie użyć przedmiotu drugi raz.</li><li>Od ostatniej komórki cofaj się po wierszach. Zmiana wartości oznacza zabranie przedmiotu i zmniejszenie wolnej pojemności.</li></ol></div>
           <div><h3>Dlaczego to działa?</h3><p>Optymalne rozwiązanie albo zawiera ostatni rozważany przedmiot, albo go pomija. W obu przypadkach reszta musi być optymalnym rozwiązaniem mniejszego podproblemu. Tabela przechowuje te wyniki, zamiast liczyć je wielokrotnie.</p><h3>Remisy</h3><p>Gdy obie decyzje dają taką samą wartość, pomijamy bieżący przedmiot. Wynik jest optymalny, ale może nie być jedyny. Nie obiecujemy najmniejszej wagi spośród wszystkich optymalnych zestawów.</p></div>
@@ -117,7 +117,7 @@
         state.dp[i][c] = Math.max(skip, take); state.choices[i][c] = take > skip; state.cells++;
         yield take === -Infinity
           ? `DP[${i}, ${c}]: przedmiot ${i} jest za ciężki (${item.weight} > ${c}). ↑ Pomijamy: przepisujemy ${skip}.`
-          : `DP[${i}, ${c}]: pomiń = ${skip}; weź = ${item.value} + ${state.dp[i - 1][c - item.weight]} = ${take}. ${take > skip ? '↖ Bierzemy' : take === skip ? '↑ Remis — pomijamy' : '↑ Pomijamy'}: zapisujemy ${state.dp[i][c]}.`;
+          : `DP[${i}, ${c}]: pomiń = ${skip}; weź = ${item.value} + ${state.dp[i - 1][c - item.weight]} = ${take}. ${take > skip ? '↖ Bierzemy' : take === skip ? '↑ Remis - pomijamy' : '↑ Pomijamy'}: zapisujemy ${state.dp[i][c]}.`;
       }
     }
     state.phase = 'trace'; state.dependencies.clear();
@@ -162,17 +162,17 @@
         const active = state.active?.i === i && state.active.c === c;
         cell.className = active ? 'lab-current' : state.path.has(position) ? 'lab-accepted' : state.dependencies.has(position) ? 'lab-dependency' : '';
         const arrow = value !== null && i > 0 && c > 0 ? state.choices[i][c] ? ' ↖' : ' ↑' : '';
-        cell.textContent = value === null ? '—' : `${value}${arrow}`;
+        cell.textContent = value === null ? '-' : `${value}${arrow}`;
         cell.setAttribute('aria-label', `DP[${i}, ${c}]: ${value === null ? 'nieobliczona' : value}${arrow ? state.choices[i][c] ? ', weź przedmiot' : ', pomiń przedmiot' : ''}${active ? ', bieżąca' : ''}`);
         row.append(cell);
       });
       return row;
     }));
     $('cellCount').textContent = state.cells; $('cellGoal').textContent = `z ${state.items.length * state.capacity} komórek poza bazą`;
-    $('bestValue').textContent = state.dp[state.items.length][state.capacity] ?? '—';
+    $('bestValue').textContent = state.dp[state.items.length][state.capacity] ?? '-';
     $('selectedWeight').textContent = state.selected.reduce((sum, i) => sum + state.items[i].weight, 0);
     $('weightLimit').textContent = `pojemność: ${state.capacity}`; $('stepCount').textContent = state.steps;
-    $('phaseText').textContent = state.phase === 'trace' ? 'Odtwarzanie od ostatniego wiersza — wybrane przedmioty przybywają krok po kroku.' : state.done ? 'Odtwarzanie zakończone. Oto jeden z optymalnych zestawów.' : 'Najpierw wypełnimy tabelę, potem odtworzymy wybór.';
+    $('phaseText').textContent = state.phase === 'trace' ? 'Odtwarzanie od ostatniego wiersza - wybrane przedmioty przybywają krok po kroku.' : state.done ? 'Odtwarzanie zakończone. Oto jeden z optymalnych zestawów.' : 'Najpierw wypełnimy tabelę, potem odtworzymy wybór.';
     const chosen = state.selected.slice().sort((a, b) => a - b);
     $('chosen').replaceChildren(...(chosen.length ? chosen : [-1]).map(i => {
       const token = document.createElement('li'); token.textContent = i < 0 ? state.done ? 'Pusty plecak' : 'Jeszcze nie wybrano' : `Przedmiot ${i + 1}`;

@@ -7,7 +7,7 @@
     <title>Kopiec binarny (kolejka priorytetowa) · AlgorithmsLab</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="step-lab">
+  <body class="step-lab interactive-lab">
     <a class="skip" href="#visualization">Przejdź do wizualizacji</a>
     <main class="shell">
       <header class="masthead">
@@ -15,23 +15,23 @@
         <span class="meta">Struktury danych · Kopiec</span>
       </header>
       <section class="intro" aria-labelledby="pageTitle">
-        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Kopiec binarny (kolejka priorytetowa)</h1><p>Najmniejszy element zawsze czeka na samej górze. Zobacz, jak kopiec utrzymuje ten porządek, gdy dodajesz i usuwasz elementy, i jak drzewo mieści się w zwykłej tablicy.</p></div>
-        <span class="badge">Kopiec min · krok po kroku</span>
+        <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Kopiec binarny (kolejka priorytetowa)</h1><p>W kopcu min najmniejszy element czeka na samej górze; w kopcu max - największy. Zobacz, jak kopiec utrzymuje ten porządek, gdy dodajesz i usuwasz elementy, i jak drzewo mieści się w zwykłej tablicy.</p></div>
+        <span class="badge">Kopiec min / max · krok po kroku</span>
       </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields four">
-          <div class="field"><label for="scenario">Ciąg operacji</label><select id="scenario"><option value="example">Przykład: wstaw i usuń minimum</option><option value="build">Budowa kopca z tablicy</option><option value="sorted">Wstawianie rosnące (bez zamian)</option><option value="heapsort">Sortowanie przez kopcowanie</option></select></div>
+          <div class="field"><label for="scenario">Ciąg operacji</label><select id="scenario"><option value="example">Przykład: wstaw i usuń minimum</option><option value="build">Budowa kopca z tablicy</option><option value="sorted">Wstawianie rosnące (bez zamian dla min)</option><option value="heapsort">Sortowanie przez kopcowanie</option></select></div>
           <div class="field"><label for="heapType">Rodzaj kopca</label><select id="heapType"><option value="min">Kopiec min</option><option value="max">Kopiec max</option></select></div>
           <div class="field"><label for="value">Wartość do wstawienia</label><input id="value" type="number" min="1" max="99" value="7"></div>
           <div class="field"><label for="speed">Tempo <output id="speedLabel" for="speed">3 op./s</output></label><input id="speed" type="range" min="1" max="12" value="3"></div>
         </div>
         <div class="actions"><button type="button" id="insertBtn" class="btn">＋ Wstaw</button><button type="button" id="extractBtn" class="btn">− Usuń korzeń</button><button type="button" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="pauseBtn" class="btn" disabled>Pauza</button><button type="button" id="stepBtn" class="btn">Jeden krok</button><button type="button" id="stopBtn" class="btn" disabled>Reset</button><button type="button" id="randomBtn" class="btn">↻ Losuj kopiec</button></div>
-        <p class="control-hint">Start odtwarza zaplanowany ciąg operacji. Możesz też sam wstawiać wartości i usuwać korzeń. Jeden krok to jedno porównanie albo jedna zamiana rodzica z dzieckiem. Wartości to liczby całkowite 1–99.</p>
+        <p class="control-hint">Start odtwarza zaplanowany ciąg operacji. Możesz też sam wstawiać wartości i usuwać korzeń. Jeden krok to jedno porównanie albo jedna zamiana rodzica z dzieckiem. Wartości to liczby całkowite 1-99.</p>
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Kopiec jako drzewo</h2></div><span id="statusText" role="status">Szkielet — symulacja do zaimplementowania</span></div>
-          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="img" aria-label="Kopiec binarny narysowany jako drzewo"></svg></div>
+          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Kopiec jako drzewo</h2></div><span id="statusText" role="status">Szkielet - symulacja do zaimplementowania</span></div>
+          <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="group" aria-label="Kopiec binarny narysowany jako drzewo"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Przesuwany element</span><span><i class="lab-key ready" aria-hidden="true"></i>Porównywany sąsiad</span><span><i class="lab-key accepted" aria-hidden="true"></i>Element na miejscu</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start, wstaw wartość lub wykonaj pierwszy krok.</p>
         </section>
@@ -39,7 +39,7 @@
         <section class="stats" aria-label="Statystyki algorytmu">
           <div class="stat"><span>Rozmiar kopca</span><output id="heapSize">0</output><small>liczba elementów</small></div>
           <div class="stat"><span>Wysokość</span><output id="heapHeight">0</output><small>⌊log₂ n⌋</small></div>
-          <div class="stat"><span>Porównania</span><output id="compareCount">0</output><small>rodzic z dzieckiem</small></div>
+          <div class="stat"><span>Porównania</span><output id="compareCount">0</output><small>dzieci oraz rodzic z dzieckiem</small></div>
           <div class="stat"><span>Zamiany</span><output id="swapCount">0</output><small>przesunięcia w górę i w dół</small></div>
         </section>
         <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Kolejność wyjmowania</h2><p id="phaseText">Wyjęte korzenie pojawią się tutaj, w kolejności priorytetu.</p><ol id="chosen" class="graph-tokens" aria-label="Wyjęte elementy"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
@@ -58,30 +58,226 @@
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
-// TODO: implementacja symulacji. Szkielet celowo nie zawiera logiki algorytmu.
-// Wzorzec: sort.html (animowane zamiany) i kruskal.html (rysowanie drzewa/grafu w SVG).
-//
-// DO ZAIMPLEMENTOWANIA
-// 1. Stan: tablica kopca, typ (min/max), kolejka zaplanowanych operacji z #scenario, wyjęte elementy, liczniki, bieżący indeks naprawy.
-// 2. Generatory kroków: insert(x) -> dopisz na końcu -> sift-up (porównanie z rodzicem, zamiana, kolejny poziom);
-//    extract() -> zapamiętaj korzeń -> przenieś ostatni na wierzch -> sift-down (wybór mniejszego dziecka, porównanie, zamiana);
-//    build(arr) -> sift-down od ostatniego rodzica do korzenia; heapsort -> build + n x extract z pokazaniem posortowanego końca tablicy.
-// 3. Układ drzewa: pozycje (x, y) węzłów wyliczane z indeksu i poziomu; animuj zamianę dwóch węzłów jako ich ruch po krawędzi.
-//    Równolegle odświeżaj #heapArray (te same elementy, zsynchronizowane podświetlenie) i indeksy pod węzłami.
-// 4. Statystyki: #heapSize, #heapHeight, #compareCount, #swapCount; #chosen = wyjęte elementy; #resultText = podsumowanie i sprawdzenie warunku kopca.
-// 5. Walidacja #value (1–99, całkowita), limit rozmiaru kopca (np. 15 węzłów, żeby drzewo się mieściło), komunikaty w #operation.
-//
-// PRZEWIDZIANA INTERAKCJA
-// - #insertBtn / klawisz Enter w polu #value: wstawia wartość i animuje sift-up (blokuj przyciski do końca animacji lub kolejkuj).
-// - #extractBtn: usuwa korzeń i animuje sift-down; wyłączony dla pustego kopca.
-// - Klik w węzeł drzewa lub komórkę tablicy: zaznacz go i pokaż jego rodzica i dzieci oraz wzór indeksów (i → 2i+1, 2i+2) w #operation.
-// - Dwuklik w węzeł (lub Delete): usuń dowolny element — zamień z ostatnim i napraw w górę lub w dół (opcjonalnie).
-// - Przełącznik #heapType: przebuduj bieżące elementy do kopca max/min (animowana build).
-// - Najechanie na węzeł: tooltip z indeksem, rodzicem i dziećmi; elementy mają tabindex, Enter = zaznacz, strzałki = poruszanie po drzewie.
-// - Spacja = pauza, N = jeden krok, R = reset.
+/* Shared controls and accessible drawing helpers for the step-by-step labs. */
+'use strict';
+window.Lab = (() => {
+  const $ = id => document.getElementById(id);
+  const text = (id, value) => { if ($(id)) $(id).textContent = value; };
+  function element(tag, attrs = {}, content) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function svg(tag, attrs = {}, content) {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    if (content !== undefined) node.textContent = content;
+    return node;
+  }
+  function action(node, callback, label, key) {
+    node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+    node.setAttribute('aria-label', label); node.setAttribute('data-focus', key);
+    node.addEventListener('click', callback);
+    node.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); callback(event); }
+    });
+    return node;
+  }
+  function paint(node, draw) {
+    const focus = node.contains(document.activeElement) ? document.activeElement.getAttribute('data-focus') : null;
+    node.replaceChildren(); draw(node);
+    if (focus !== null) [...node.querySelectorAll('[data-focus]')].find(el => el.getAttribute('data-focus') === focus)?.focus({ preventScroll: true });
+  }
+  function tokens(id, items, callback) {
+    paint($(id), root => items.forEach((item, i) => {
+      const li = element('li', { class: item.className || '' });
+      if (callback) {
+        const button = element('button', { type: 'button', 'data-focus': String(i) }, item.label ?? item);
+        button.addEventListener('click', event => callback(i, event)); li.append(button);
+      } else li.textContent = item.label ?? item;
+      root.append(li);
+    }));
+  }
+  function node(root, x, y, label, style = '', note = '', callback, key = label, radius = 19) {
+    const group = svg('g', { transform: `translate(${x} ${y})` });
+    group.append(svg('circle', { r: radius, class: `lab-node ${style}${radius < 19 ? ' compact' : ''}` }), svg('text', { y: 5, class: `lab-number ${style}` }, label));
+    if (note !== '') group.append(svg('text', { y: radius + 17, class: 'lab-node-note' }, note));
+    if (callback) action(group, callback, `${label}, ${note}`, String(key));
+    root.append(group); return group;
+  }
+  function point(board, event) {
+    return new DOMPoint(event.clientX, event.clientY).matrixTransform(board.getScreenCTM().inverse());
+  }
+  function controller({ run, render, reset, validate = () => true, locked = [], manual = () => false, update = () => {} }) {
+    let iterator = null, timer = null;
+    const api = { running: false, done: false, steps: 0, started: false,
+      sync() {
+        $('startBtn').disabled = api.running || api.done || manual();
+        $('pauseBtn').disabled = !api.started || api.done || manual();
+        text('pauseBtn', api.running ? 'Pauza' : 'Wznów');
+        $('stepBtn').disabled = api.running || api.done || manual();
+        $('stopBtn').disabled = false;
+        locked.forEach(id => { $(id).disabled = api.running; $(id).setAttribute('aria-disabled', String(api.running)); });
+        $('speed').disabled = manual();
+        text('statusText', manual() ? (api.done ? 'Ukończono' : 'Tryb ręczny') : api.done ? 'Zakończono' : api.running ? 'W trakcie' : api.started ? 'Pauza' : 'Gotowe');
+        update(api);
+      },
+      refresh() { render(); api.sync(); },
+      pause() { clearTimeout(timer); timer = null; api.running = false; api.sync(); },
+      reset() {
+        api.pause(); iterator = null; api.done = false; api.started = false; api.steps = 0;
+        text('operation', 'Wybierz Start lub wykonaj pierwszy krok.'); text('resultText', 'Wynik pojawi się po zakończeniu.');
+        reset(); api.refresh();
+      },
+      next() {
+        if (api.done || manual() || !validate()) return;
+        api.started = true; iterator ||= run();
+        const result = iterator.next();
+        if (result.done) { api.done = true; api.pause(); if (result.value) text('operation', result.value); }
+        else { api.steps++; text('operation', result.value); }
+        api.refresh();
+      },
+      start() {
+        if (api.running || api.done || manual() || !validate()) return;
+        api.running = true; api.next();
+        const tick = () => {
+          if (!api.running) return;
+          api.next();
+          if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+        };
+        if (api.running) timer = setTimeout(tick, 1000 / Number($('speed').value));
+      },
+      replace(generator) { api.pause(); iterator = generator; api.done = false; api.started = false; api.sync(); },
+      // Replaying a deterministic generator restores Hanoi's recursion and undo history.
+      rewind(count) { api.reset(); for (let i = 0; i < count; i++) api.next(); }
+    };
+    $('startBtn').addEventListener('click', api.start);
+    $('pauseBtn').addEventListener('click', () => api.running ? api.pause() : api.start());
+    $('stepBtn').addEventListener('click', () => { api.pause(); api.next(); });
+    $('stopBtn').addEventListener('click', api.reset);
+    $('speed').addEventListener('input', () => text('speedLabel', `${$('speed').value} op./s`));
+    document.addEventListener('visibilitychange', () => { if (document.hidden && api.running) api.pause(); });
+    document.addEventListener('keydown', event => {
+      if (event.target.closest('input, select, textarea, button, [role="button"], [role="gridcell"]') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key === ' ') { event.preventDefault(); api.running ? api.pause() : api.start(); }
+      if (event.key.toLowerCase() === 'n' && !api.running) api.next();
+      if (event.key.toLowerCase() === 'r') api.reset();
+    });
+    return api;
+  }
+  return { $, text, element, svg, action, paint, tokens, node, point, controller };
+})();
+    </script>
+    <script>
 (() => {
   'use strict';
-  document.querySelectorAll('.actions .btn').forEach(button => { button.disabled = true; button.title = 'Symulacja jeszcze nie jest zaimplementowana'; });
+  const { $, text, svg, paint, tokens, controller } = Lab;
+  let heap = [], extracted, comparisons, swaps, active, neighbor, busy, initial, selected, motion;
+  const better = (a, b) => $('heapType').value === 'min' ? a < b : a > b;
+  function reset() { heap = []; extracted = []; comparisons = 0; swaps = 0; active = -1; neighbor = -1; selected = -1; busy = false; motion = null; }
+  function* siftUp(i) {
+    while (i > 0) {
+      const parent = Math.floor((i - 1) / 2); active = i; neighbor = parent; comparisons++;
+      yield `Porównaj ${heap[i]} (indeks ${i}) z rodzicem ${heap[parent]} (indeks ${parent}).`;
+      if (!better(heap[i], heap[parent])) break;
+      [heap[i], heap[parent]] = [heap[parent], heap[i]]; swaps++; active = parent; neighbor = i; motion = [i, parent];
+      yield `Zamień indeksy ${i} i ${parent}; przesuwamy element w górę.`; i = parent;
+    }
+  }
+  function* siftDown(i) {
+    while (2 * i + 1 < heap.length) {
+      let child = 2 * i + 1;
+      if (child + 1 < heap.length) {
+        active = child; neighbor = child + 1; comparisons++;
+        yield `Porównaj dzieci ${heap[child]} i ${heap[child + 1]}, aby wybrać ${$('heapType').value === 'min' ? 'mniejsze' : 'większe'}.`;
+        if (better(heap[child + 1], heap[child])) child++;
+      }
+      active = i; neighbor = child; comparisons++;
+      yield `Porównaj rodzica ${heap[i]} z wybranym dzieckiem ${heap[child]}.`;
+      if (!better(heap[child], heap[i])) break;
+      [heap[i], heap[child]] = [heap[child], heap[i]]; swaps++; active = child; neighbor = i; motion = [i, child];
+      yield `Zamień indeksy ${i} i ${child}; przesuwamy element w dół.`; i = child;
+    }
+  }
+  function* insert(value) { heap.push(value); active = heap.length - 1; neighbor = -1; yield `Dopisz ${value} na końcu tablicy (indeks ${active}).`; yield* siftUp(active); }
+  function* extract() {
+    if (!heap.length) return;
+    const value = heap[0], last = heap.pop(); extracted.push(value);
+    if (heap.length) heap[0] = last;
+    active = heap.length ? 0 : -1; neighbor = -1;
+    yield `Wyjmij korzeń ${value}.${heap.length ? ` Przenieś ostatni element ${last} do korzenia.` : ' Kopiec jest pusty.'}`;
+    yield* siftDown(0);
+  }
+  function* build(values) {
+    heap = [...values]; active = -1; neighbor = -1;
+    yield `Zapisz ${heap.length} elementów w tablicy. Naprawiamy od ostatniego rodzica do korzenia - budowa O(n).`;
+    for (let i = Math.floor(heap.length / 2) - 1; i >= 0; i--) yield* siftDown(i);
+  }
+  function* finish(task) {
+    busy = true; yield* task; active = -1; neighbor = -1; busy = false;
+    const valid = heap.every((value, i) => !i || !better(value, heap[Math.floor((i - 1) / 2)]));
+    text('resultText', `Kopiec ${$('heapType').value}: ${heap.length} elementów. Warunek kopca ${valid ? 'spełniony' : 'niespełniony'}. Porównania: ${comparisons}, zamiany: ${swaps}.${extracted.length ? ` Wyjęto: ${extracted.join(', ')}.` : ''}`);
+    return 'Operacje zakończone. Możesz wstawić nową wartość lub usunąć korzeń.';
+  }
+  function* scenario() {
+    const kind = $('scenario').value;
+    if (kind === 'build' || kind === 'heapsort') {
+      yield* build(initial);
+      if (kind === 'heapsort') while (heap.length) yield* extract();
+    } else {
+      const values = kind === 'sorted' ? [...initial].sort((a, b) => a - b) : initial;
+      for (const value of values) yield* insert(value);
+      if (kind === 'example') { yield* extract(); yield* insert(7); yield* extract(); }
+    }
+  }
+  function startTask(task) { text('resultText', 'Trwa aktualizacja kopca.'); selected = -1; ctl.replace(finish(task)); ctl.start(); }
+  function inspect(i) {
+    if (ctl.running) return; selected = i;
+    text('operation', `Indeks ${i}, wartość ${heap[i]}. Rodzic: ${i ? Math.floor((i - 1) / 2) : 'brak'}. Dzieci 2i+1 = ${2 * i + 1}${2 * i + 1 >= heap.length ? ' (brak)' : ''}, 2i+2 = ${2 * i + 2}${2 * i + 2 >= heap.length ? ' (brak)' : ''}.`); render();
+  }
+  function render() {
+    const positions = heap.map((_, i) => { const level = Math.floor(Math.log2(i + 1)); return { x: (i - (2 ** level - 1) + 0.5) * 640 / 2 ** level, y: 45 + level * 85 }; });
+    const levels = heap.length ? Math.floor(Math.log2(heap.length)) + 1 : 1;
+    $('board').setAttribute('viewBox', `0 0 640 ${Math.max(150, 45 + (levels - 1) * 85 + 55)}`);
+    paint($('board'), root => {
+      if (!heap.length) root.append(svg('text', { x: 320, y: 75, class: 'lab-node-note' }, 'Kopiec pusty - wstaw element lub uruchom scenariusz.'));
+      positions.forEach((p, i) => { if (i) { const parent = positions[Math.floor((i - 1) / 2)]; root.append(svg('line', { x1: p.x, y1: p.y, x2: parent.x, y2: parent.y, class: 'lab-edge' })); } });
+      positions.forEach((p, i) => {
+        const style = i === active || i === selected ? 'current' : i === neighbor || (selected >= 0 && (i === Math.floor((selected - 1) / 2) || i === 2 * selected + 1 || i === 2 * selected + 2)) ? 'ready' : !busy ? 'accepted' : '';
+        const group = Lab.node(root, p.x, p.y, heap[i], style, `i = ${i}`, () => inspect(i), i);
+        if (motion?.includes(i) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const old = positions[motion.find(index => index !== i)];
+          group.animate([{ transform: `translate(${old.x}px, ${old.y}px)` }, { transform: `translate(${p.x}px, ${p.y}px)` }], { duration: Math.min(350, 800 / Number($('speed').value)), easing: 'ease-in-out' });
+        }
+        group.append(svg('title', {}, `Indeks ${i}; rodzic ${i ? Math.floor((i - 1) / 2) : 'brak'}; dzieci ${2 * i + 1}, ${2 * i + 2}.`));
+        group.addEventListener('keydown', event => {
+          const next = { ArrowUp: Math.floor((i - 1) / 2), ArrowLeft: 2 * i + 1, ArrowRight: 2 * i + 2, ArrowDown: 2 * i + 1 }[event.key];
+          if (next !== undefined) { event.preventDefault(); $('board').querySelector(`[data-focus="${next}"]`)?.focus(); }
+        });
+      });
+    });
+    motion = null;
+    tokens('heapArray', heap.map((v, i) => ({ label: `[${i}] ${v}`, className: i === active || i === selected ? 'lab-current' : i === neighbor ? 'lab-dependency' : '' })), inspect);
+    tokens('chosen', extracted); text('heapSize', heap.length); text('heapHeight', heap.length ? Math.floor(Math.log2(heap.length)) : '-'); text('compareCount', comparisons); text('swapCount', swaps);
+    text('phaseText', `Kopiec ${$('heapType').value}. Usuwanie wszystkich korzeni daje kolejność ${$('heapType').value === 'min' ? 'rosnącą' : 'malejącą'}; wynik zapisujemy w osobnej tablicy.`);
+  }
+  const ctl = controller({ run: () => finish(scenario()), render, reset, locked: ['scenario', 'heapType', 'randomBtn'], update: () => {
+    $('insertBtn').disabled = busy || ctl.running || heap.length >= 15; $('extractBtn').disabled = busy || ctl.running || !heap.length; $('value').disabled = busy || ctl.running;
+  } });
+  function insertValue() {
+    if (busy || ctl.running) return;
+    const value = Number($('value').value);
+    if (!Number.isInteger(value) || value < 1 || value > 99) { text('operation', 'Wpisz liczbę całkowitą od 1 do 99.'); $('value').focus(); return; }
+    if (heap.length >= 15) { text('operation', 'Na planszy mieści się najwyżej 15 elementów.'); return; }
+    startTask(insert(value));
+  }
+  $('insertBtn').addEventListener('click', insertValue); $('extractBtn').addEventListener('click', () => startTask(extract()));
+  $('value').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); insertValue(); } });
+  $('heapType').addEventListener('change', () => { if (heap.length) startTask(build([...heap])); else ctl.reset(); });
+  $('scenario').addEventListener('change', () => { initial = [12, 5, 18, 3, 9, 21, 7, 14, 1]; ctl.reset(); });
+  $('randomBtn').addEventListener('click', () => { initial = Array.from({ length: 10 }, () => 1 + Math.floor(Math.random() * 99)); $('scenario').value = 'build'; ctl.reset(); });
+  initial = [12, 5, 18, 3, 9, 21, 7, 14, 1]; ctl.reset();
 })();
     </script>
   </body>
