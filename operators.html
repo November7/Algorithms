@@ -97,9 +97,11 @@
   function power(a, b, c, width) {
     if (a === 0n && b < 0n) return failure('dzielenie przez zero');
     if (b < 0n) {
+      if (a === 1n || a === -1n) return integer(a === -1n && b % 2n !== 0n ? -1n : 1n, width);
       const value = Number(a) ** Number(b);
       if (!Number.isFinite(value)) return failure('wynik poza zakresem liczby rzeczywistej');
-      return { final: String(value), raw: null, flag: 'brak', note: 'Ujemny wykładnik: wynik rzeczywisty, bez zawijania bitów.' };
+      if (value === 0) return failure('wynik zbyt bliski zeru do przedstawienia (niedomiar)');
+      return { final: String(value), raw: null, flag: 'brak', note: 'Ujemny wykładnik: przybliżony wynik rzeczywisty, bez zawijania bitów.' };
     }
     if (b > 64n && (a < -1n || a > 1n)) return { final: 'poza zakresem demonstracji', raw: null, flag: 'limit demonstracji', note: 'Dla tej podstawy użyj wykładnika nie większego niż 64.' };
     const value = b > 64n ? (a === -1n ? (b % 2n === 0n ? 1n : -1n) : a) : a ** b;
@@ -109,7 +111,8 @@
     return (a, b, c, width) => {
       const bits = BigInt(width), count = ((b % bits) + bits) % bits;
       const value = direction === 'left' ? a << count : direction === 'signed' ? a >> count : BigInt.asUintN(width, a) >> count;
-      const result = integer(value, width);
+      // A logical right shift reinterprets a bit pattern; shifting by zero cannot overflow.
+      const result = integer(direction === 'unsigned' ? BigInt.asIntN(width, value) : value, width);
       result.note = b !== count ? `W modelu przesuwamy o B modulo ${width}, czyli ${count} pozycji.` : '';
       return result;
     };
@@ -117,7 +120,10 @@
   const assign = (a, b) => ({ final: `x = ${b}`, raw: b, flag: 'brak' });
   function compound(fn) {
     return (...args) => {
-      const result = fn(...args);
+      let result = fn(...args);
+      if (result.raw === null && result.flag === 'brak') {
+        result = { ...failure('wynik niecałkowity'), note: `Wynik działania (${result.final}) nie może być zapisany w całkowitym x w tym modelu.` };
+      }
       return result.raw === null ? { ...result, note: `${result.note || ''} W tym modelu x pozostaje bez zmian.`.trim() } : { ...result, final: `x = ${result.final}` };
     };
   }
@@ -241,6 +247,7 @@
     if (sym === '+=') note = 'W C++ (std::string), C#, Javie, Pythonie i JavaScripcie += może też dopisywać tekst do zmiennej tekstowej.';
     if (sym === '/=') note = 'Model zachowuje całkowity typ x. W Pythonie, JavaScripcie (Number), PHP i VB.NET /= może zapisać wynik ułamkowy.';
     if (sym === '%=') note = 'Model używa reszty ze znakiem x. Python i Ruby używają modulo ze znakiem dzielnika.';
+    if (sym === '**=') note = 'Model zachowuje całkowity typ x: wynik ułamkowy zgłasza jako błąd i pozostawia x bez zmian. W językach dopuszczających zmianę typu wynik może być rzeczywisty.';
     if (sym.endsWith('_eq')) note = 'W C zapis wymaga nagłówka iso646.h; w C++ jest słowem kluczowym.';
     add(sym, 'assign', sym, 'Przypisanie z działaniem', compound(fn), langs, `Oblicza x ${base} B i zapisuje wynik w x. Każdy wiersz zaczyna od x = A.`, note, { shape: 'assign', bits: ['&', '|', '^', '<<', '>>', '>>>'].includes(base) });
   });
