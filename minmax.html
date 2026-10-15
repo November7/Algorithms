@@ -30,11 +30,59 @@
         </div>
         <span class="badge">5 algorytmów · jeden zestaw danych</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div>
+            <p class="eyebrow">01 / Zrozum algorytm</p>
+            <h2 id="lessonTitle"></h2>
+          </div>
+          <span class="tag" id="family"></span>
+        </div>
+        <dl class="complexity" id="complexity"></dl>
+        <p class="complexity-note" id="complexityNote"></p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <p id="description"></p>
+            <ol id="steps"></ol>
+          </div>
+          <div>
+            <h3>Zalety</h3>
+            <p id="pros"></p>
+            <h3>Ograniczenia</h3>
+            <p id="cons"></p>
+          </div>
+          <div>
+            <h3>Kiedy się przydaje?</h3>
+            <p id="uses"></p>
+            <div class="exercise">
+              <h3>Sprawdź samodzielnie</h3>
+              <p id="exercise"></p>
+            </div>
+          </div>
+        </div>
+        <details class="glossary">
+          <summary>Jak czytać liczbę porównań?</summary>
+          <div class="glossary-grid">
+            <div>
+              <h3>Czas</h3>
+              <p>n oznacza liczbę elementów. Wszystkie algorytmy są liniowe, Θ(n), ale różnią się współczynnikiem: 2n, 1,5n lub między n a 2n. Podajemy dokładną liczbę porównań, bo to ona odróżnia te metody.</p>
+            </div>
+            <div>
+              <h3>Pamięć pomocnicza</h3>
+              <p>Dodatkowa pamięć algorytmu bez danych wejściowych. Wersje iteracyjne potrzebują O(1), a dziel i zwyciężaj dodatkowo stosu rekurencji O(log n).</p>
+            </div>
+            <div>
+              <h3>Dlaczego ⌈3n/2⌉ − 2?</h3>
+              <p>Każdy element poza jednym musi przegrać w jakimś porównaniu (maksimum nie przegrywa) i każdy poza jednym musi wygrać (minimum nie wygrywa). Porównanie dwóch elementów, które jeszcze w niczym nie uczestniczyły, daje obie informacje naraz; każde inne – tylko jedną. Takich podwójnych porównań może być najwyżej n/2, stąd dolna granica około 1,5n.</p>
+            </div>
+          </div>
+        </details>
+      </section>
       <div class="workspace">
         <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
-          <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
+          <h2 class="section-label" id="algorithmsTitle">02 / Wybierz algorytm</h2>
           <div id="algorithmList"></div>
-          <!-- <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p> -->
         </aside>
         <div class="main-column">
           <section class="panel controls" aria-label="Ustawienia i sterowanie">
@@ -75,7 +123,7 @@
           <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
             <div class="chart-heading">
               <div>
-                <div class="eyebrow">02 / Obserwuj działanie</div>
+                <div class="eyebrow">03 / Obserwuj działanie</div>
                 <h2 id="chartTitle">Jeden przebieg</h2>
               </div>
               <span id="statusText" role="status">Gotowy</span>
@@ -118,62 +166,12 @@
           </details>
         </div>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header">
-          <div>
-            <p class="eyebrow">03 / Zrozum algorytm</p>
-            <h2 id="lessonTitle"></h2>
-          </div>
-          <span class="tag" id="family"></span>
-        </div>
-        <dl class="complexity" id="complexity"></dl>
-        <p class="complexity-note" id="complexityNote"></p>
-        <div class="lesson-columns">
-          <div>
-            <h3>Jak to działa?</h3>
-            <p id="description"></p>
-            <ol id="steps"></ol>
-          </div>
-          <div>
-            <h3>Zalety</h3>
-            <p id="pros"></p>
-            <h3>Ograniczenia</h3>
-            <p id="cons"></p>
-          </div>
-          <div>
-            <h3>Kiedy się przydaje?</h3>
-            <p id="uses"></p>
-            <div class="exercise">
-              <h3>Sprawdź samodzielnie</h3>
-              <p id="exercise"></p>
-            </div>
-          </div>
-        </div>
-        <details class="glossary">
-          <summary>Jak czytać liczbę porównań?</summary>
-          <div class="glossary-grid">
-            <div>
-              <h3>Czas</h3>
-              <p>n oznacza liczbę elementów. Wszystkie algorytmy są liniowe, Θ(n), ale różnią się współczynnikiem: 2n, 1,5n lub między n a 2n. Podajemy dokładną liczbę porównań, bo to ona odróżnia te metody.</p>
-            </div>
-            <div>
-              <h3>Pamięć pomocnicza</h3>
-              <p>Dodatkowa pamięć algorytmu bez danych wejściowych. Wersje iteracyjne potrzebują O(1), a dziel i zwyciężaj dodatkowo stosu rekurencji O(log n).</p>
-            </div>
-            <div>
-              <h3>Dlaczego ⌈3n/2⌉ − 2?</h3>
-              <p>Każdy element poza jednym musi przegrać w porównaniu (maksimum nie może przegrać) i każdy poza jednym musi wygrać (minimum nie może wygrać). Dobry algorytm w jednym porównaniu załatwia obie sprawy, więc dolna granica to około 1,5n.</p>
-            </div>
-          </div>
-        </details>
-      </section>
       <footer>
         <span>AlgorithmsLab · Interaktywna nauka algorytmów</span>
         <a href="index.html">Wszystkie symulacje</a>
       </footer>
     </main>
     <p id="stepAnnouncement" class="sr-only" role="status"></p>
-    <div id="algorithmTooltip" class="tooltip" role="tooltip" hidden></div>
 <script>
 (() => {
   'use strict';
@@ -181,30 +179,30 @@
   // These descriptions refer to the exact variants implemented below.
   const ALGO_INFO = {
     twoPasses: { name: 'Dwa przebiegi', title: 'Minimum i maksimum w dwóch przebiegach', family: 'Przeglądanie po kolei', best: '2(n − 1)', average: '2(n − 1)', worst: '2(n − 1)', memory: 'O(1)',
-      description: 'Najpierw znajduje minimum przeglądając całą tablicę, potem osobnym przebiegiem maksimum.',
-      steps: ['Przejrzyj tablicę, zapamiętując najmniejszą dotąd wartość.', 'Przejrzyj ją jeszcze raz, zapamiętując największą.', 'Zwróć obie pozycje.'],
+      description: 'Wykonuje dwa osobne zadania: najpierw szuka najmniejszej wartości, a potem największej. W każdym przejściu zapamiętuje najlepszego dotąd kandydata i porównuje z nim następne elementy. Dla [4, 2, 7] pierwszy przebieg wybierze 2, a drugi 7. Tablica pozostaje w tej samej kolejności — do znalezienia skrajnych wartości nie trzeba jej sortować.',
+      steps: ['Przyjmij pierwszy element jako minimum. Porównaj z nim kolejne wartości i aktualizuj minimum, gdy znajdziesz mniejszą.', 'Zacznij od początku, tym razem przyjmując pierwszy element jako maksimum. Aktualizuj je, gdy znajdziesz większą wartość.', 'Po obu przebiegach podaj znalezione minimum i maksimum oraz ich pozycje. Każdy przebieg wymaga n − 1 porównań.'],
       pros: 'Najprostszy do napisania; każda część działa niezależnie.', cons: 'Dwukrotnie czyta dane; zawsze 2(n − 1) porównań, nawet dla układów korzystnych.', uses: 'Gdy potrzebne jest tylko minimum albo tylko maksimum, bo wtedy wystarcza jeden przebieg.',
       note: 'Każdy przebieg to n − 1 porównań. Dla danych w strumieniu, które można przeczytać raz, ta metoda się nie nadaje.', exercise: 'Zmień układ danych. Czy liczba porównań się zmienia?' },
     both: { name: 'Jeden przebieg', title: 'Minimum i maksimum w jednym przebiegu', family: 'Przeglądanie po kolei', best: '2(n − 1)', average: '2(n − 1)', worst: '2(n − 1)', memory: 'O(1)',
-      description: 'Przegląda tablicę raz. Każdy element porównuje z bieżącym minimum i z bieżącym maksimum.',
-      steps: ['Przyjmij pierwszy element za minimum i maksimum.', 'Porównaj kolejny element z minimum i z maksimum.', 'Aktualizuj kandydatów, aż skończą się elementy.'],
+      description: 'Szuka minimum i maksimum jednocześnie, przechodząc przez dane tylko raz. Zapamiętuje dwóch kandydatów: najmniejszą i największą dotąd widzianą wartość. Każdy następny element porównuje osobno z obojgiem. Po każdym kroku kandydaci są poprawnym minimum i maksimum całego już obejrzanego fragmentu.',
+      steps: ['Przyjmij pierwszy element za minimum i maksimum — na razie jest jedyną znaną wartością.', 'Dla każdego następnego elementu sprawdź, czy jest mniejszy od minimum, i niezależnie sprawdź, czy jest większy od maksimum.', 'Po udanym porównaniu zaktualizuj odpowiedniego kandydata i jego pozycję. Po ostatnim elemencie oba wyniki są gotowe.'],
       pros: 'Czyta dane tylko raz; prosta logika.', cons: 'Zawsze dwa porównania na element, nawet gdy pierwsze rozstrzyga sprawę.', uses: 'Przetwarzanie strumieni i danych, które można odczytać jednokrotnie.',
-      note: 'Liczba porównań jest taka sama jak w dwóch przebiegach; zysk dotyczy odczytów danych.', exercise: 'Porównaj liczbę porównań z wersją „Z else”. Dla jakiego układu danych są równe?' },
-    elseIf: { name: 'Z pomijaniem', title: 'Jeden przebieg z pomijaniem porównania', family: 'Przeglądanie po kolei', best: 'n − 1', average: 'ok. 1,5n', worst: '2(n − 1)', memory: 'O(1)',
-      description: 'Porównuje element z maksimum. Tylko gdy nie jest większy, sprawdza jeszcze, czy jest mniejszy od minimum.',
-      steps: ['Porównaj element z bieżącym maksimum.', 'Jeśli jest większy, zaktualizuj maksimum i pomiń drugie porównanie.', 'W przeciwnym razie porównaj z minimum.'],
+      note: 'Liczba porównań jest taka sama jak w dwóch przebiegach; zysk dotyczy odczytów danych.', exercise: 'Porównaj liczbę porównań z wersją „Z pomijaniem”. Dla jakiego układu danych są równe?' },
+    elseIf: { name: 'Z pomijaniem', title: 'Jeden przebieg z pomijaniem porównania', family: 'Przeglądanie po kolei', best: 'n − 1', average: 'Bliska 2n (losowe)', worst: '2(n − 1)', memory: 'O(1)',
+      description: 'Usprawnia jeden przebieg, wykorzystując zależność między minimum a maksimum. Najpierw sprawdza, czy nowy element jest większy od dotychczasowego maksimum. Jeśli tak, na pewno nie może być nowym minimum, więc drugie porównanie jest zbędne. Oszczędność zależy od kolejności danych: szczególnie dużo porównań znika, gdy kolejne liczby są coraz większe.',
+      steps: ['Ustaw minimum i maksimum na pierwszy element. Każdy następny porównaj najpierw z maksimum.', 'Jeśli jest większy, zapamiętaj nowe maksimum i przejdź od razu do następnego elementu.', 'Tylko w przeciwnym przypadku porównaj element z minimum i ewentualnie je zmień. Zakończ po przejrzeniu całej tablicy.'],
       pros: 'Często pomija jedno porównanie; w układzie rosnącym wykonuje tylko n − 1.', cons: 'W najgorszym przypadku nadal 2(n − 1); wynik zależy od kolejności danych.', uses: 'Gdy dane są zwykle uporządkowane rosnąco lub prawie rosnąco.',
-      note: 'Dla losowej permutacji średnia to około 1,5n, ale bez gwarancji. Najgorszy przypadek to układ malejący.', exercise: 'Porównaj układy rosnący i malejący. Dlaczego różnica jest tak duża?' },
+      note: 'Dla losowej permutacji średnia jest bliska 2n (drugie porównanie pomijamy tylko przy nowym maksimum, a rekordów jest ok. ln n), więc bez gwarancji poprawy. Najgorszy przypadek to układ malejący.', exercise: 'Porównaj układy rosnący i malejący. Dlaczego różnica jest tak duża?' },
     pairs: { name: 'Parami', title: 'Minimum i maksimum parami', family: 'Przetwarzanie par', best: '⌈3n/2⌉ − 2', average: '⌈3n/2⌉ − 2', worst: '⌈3n/2⌉ − 2', memory: 'O(1)',
-      description: 'Bierze elementy parami. Najpierw porównuje je ze sobą, potem większy z bieżącym maksimum, a mniejszy z bieżącym minimum.',
-      steps: ['Porównaj dwa kolejne elementy między sobą.', 'Większy porównaj z maksimum, mniejszy z minimum.', 'Przy nieparzystej liczbie elementów zacznij od pierwszego jako kandydata.'],
+      description: 'Rozpatruje dwie liczby naraz i najpierw ustala, która z nich jest mniejsza. Tylko mniejsza może poprawić minimum, a tylko większa — maksimum. Dla pary [3, 8] nie trzeba więc sprawdzać 8 jako kandydata na minimum ani 3 jako kandydata na maksimum. Dzięki temu na każdą kolejną parę wystarczają trzy porównania zamiast czterech.',
+      steps: ['Jeśli liczba elementów jest nieparzysta, ustaw minimum i maksimum na pierwszy element. Jeśli parzysta, porównaj pierwszą parę i z niej ustal obu kandydatów.', 'Bierz następne elementy parami i jednym porównaniem ustal mniejszy oraz większy w parze.', 'Porównaj mniejszy z dotychczasowym minimum, a większy z maksimum. Zaktualizuj kandydatów i powtarzaj do końca tablicy.'],
       pros: 'Gwarantuje około 1,5n porównań niezależnie od danych; osiąga dolną granicę.', cons: 'Nieco trudniejszy do zapisania; wymaga obsługi nieparzystej liczby elementów.', uses: 'Gdy porównania są kosztowne, np. dla długich napisów lub złożonych obiektów.',
       note: 'Trzy porównania na dwa elementy zamiast czterech. Dla n elementów wykonuje dokładnie ⌈3n/2⌉ − 2 porównań.', exercise: 'Dla 40 elementów policz porównania. Czy zgadza się z granicą 58?' },
-    divide: { name: 'Dziel i zwyciężaj', title: 'Minimum i maksimum metodą dziel i zwyciężaj', family: 'Dziel i zwyciężaj', best: '⌈3n/2⌉ − 2', average: '⌈3n/2⌉ − 2', worst: '⌈3n/2⌉ − 2', memory: 'O(log n)',
-      description: 'Dzieli tablicę na połowy, wyznacza minimum i maksimum w każdej, a potem łączy wyniki dwoma porównaniami.',
-      steps: ['Podziel przedział na dwie części.', 'Rekurencyjnie znajdź minimum i maksimum obu części.', 'Porównaj minima i maksima, aby wybrać wynik dla całości.'],
+    divide: { name: 'Dziel i zwyciężaj', title: 'Minimum i maksimum metodą dziel i zwyciężaj', family: 'Dziel i zwyciężaj', best: 'Zależna od n', average: 'Zależna od n', worst: 'Zależna od n', memory: 'O(log n)',
+      description: 'Dzieli zadanie na mniejsze: osobno szuka minimum i maksimum w lewej oraz prawej połowie tablicy. Potem porównuje dwa minima, aby wybrać mniejsze, i dwa maksima, aby wybrać większe. Każdą połowę rozwiązuje tym samym sposobem, czyli rekurencyjnie. Gdy fragment ma tylko jeden lub dwa elementy, wynik można już ustalić bez dalszego dzielenia.',
+      steps: ['Dla jednego elementu przyjmij go jako minimum i maksimum. Dla dwóch elementów ustal oba wyniki jednym porównaniem.', 'Większy fragment podziel na połowy i znajdź minimum oraz maksimum w każdej z nich, stosując te same reguły.', 'Wykonaj dwa porównania: wybierz mniejsze z minimów i większe z maksimów. Zwróć tę parę jako wynik dla całego fragmentu.'],
       pros: 'Gwarantuje ⌈3n/2⌉ − 2 porównań dla n będącego potęgą dwójki; łatwy do zrównoleglenia.', cons: 'Rekurencja zużywa stos O(log n); gdy n nie jest potęgą dwójki, liczba porównań bywa większa od granicy (dla n ≤ 160 o maks. 16).', uses: 'Obliczenia równoległe i rozproszone, gdzie wyniki cząstkowe łączy się na końcu.',
-      note: 'Przedział o dwóch elementach kosztuje jedno porównanie, scalanie dwa. Dla n = 2ᵏ wynik to dokładnie 3n/2 − 2; dla innych n może być nieco większy.', exercise: 'Ustaw 32 elementy i porównaj wynik z granicą. Potem zmień na 40.' }
+      note: 'Liczba porównań zależy od rozmiaru n, a nie od kolejności wartości, więc najlepszy, średni i najgorszy przypadek dla ustalonego n są równe. Fragment jednoelementowy nie wymaga porównania, dwuelementowy wymaga jednego, a połączenie wyników dwóch fragmentów — dwóch. Dla n = 2ᵏ, k ≥ 1, wynik to dokładnie 3n/2 − 2; dla innych n może być nieco większy.', exercise: 'Ustaw 32 elementy i porównaj wynik z granicą. Potem zmień na 40.' }
   };
 
   const MAX_VALUE = 100;
@@ -447,32 +445,6 @@
     if (state.running && !state.paused && !document.hidden && frameId === null) frameId = requestAnimationFrame(frame);
   }
 
-  // Shared tooltip: hoverable, dismissible, and available by touch or keyboard.
-  const tooltip = $('algorithmTooltip');
-  let tipAnchor = null, pinned = false, tipTimer = null;
-  function closeTip() {
-    clearTimeout(tipTimer);
-    if (tipAnchor) { tipAnchor.removeAttribute('aria-describedby'); tipAnchor.setAttribute('aria-expanded', 'false'); }
-    tipAnchor = null; pinned = false; tooltip.hidden = true;
-  }
-  function placeTip() {
-    if (!tipAnchor) return;
-    const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
-    const viewportWidth = document.documentElement.clientWidth, viewportHeight = window.innerHeight;
-    const right = a.right + 12;
-    const x = right + box.width <= viewportWidth - 12 ? right : Math.max(12, a.left - box.width - 12);
-    const y = Math.max(12, Math.min(a.top - 16, viewportHeight - box.height - 12));
-    tooltip.style.setProperty('--tooltip-x', `${x}px`); tooltip.style.setProperty('--tooltip-y', `${y}px`);
-  }
-  function openTip(button, pin = false) {
-    clearTimeout(tipTimer);
-    if (tipAnchor !== button) closeTip();
-    tipAnchor = button; pinned = pin || pinned;
-    const info = ALGO_INFO[button.dataset.info];
-    tooltip.innerHTML = `<h3>${info.title}</h3><p>${info.description}</p><p><strong>Zalety:</strong> ${info.pros}</p><p><strong>Ograniczenia:</strong> ${info.cons}</p><p><strong>Zastosowania:</strong> ${info.uses}</p><p class="tip-metrics"><strong>Porównania</strong> (najlepszy / średni / najgorszy):<br>${info.best} / ${info.average} / ${info.worst}<br><strong>Pamięć:</strong> ${info.memory}</p><p>${info.note}</p><small>Esc lub kliknięcie poza dymkiem zamyka opis.</small>`;
-    tooltip.hidden = false; button.setAttribute('aria-describedby', 'algorithmTooltip'); button.setAttribute('aria-expanded', 'true'); placeTip();
-  }
-  function deferClose() { if (!pinned) tipTimer = setTimeout(closeTip, 180); }
   for (const [index, [key, info]] of Object.entries(ALGO_INFO).entries()) {
     const row = document.createElement('div'); row.className = 'algorithm-row';
     const pick = document.createElement('button'); pick.type = 'button'; pick.className = 'algorithm-pick'; pick.dataset.algorithm = key;
@@ -482,22 +454,8 @@
       state.selected = key; clearCounters(); renderLesson(); setStatus('Gotowy');
       $('operation').textContent = 'Algorytm zmieniony. Dane pozostały bez zmian.'; rafDraw();
     });
-    const infoButton = document.createElement('button'); infoButton.type = 'button'; infoButton.className = 'info-button'; infoButton.dataset.info = key;
-    infoButton.innerHTML = '<span aria-hidden="true">i</span>';
-    infoButton.setAttribute('aria-label', `Informacje: ${info.title.toLowerCase()}`); infoButton.setAttribute('aria-expanded', 'false');
-    infoButton.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openTip(infoButton); });
-    infoButton.addEventListener('pointerleave', deferClose);
-    infoButton.addEventListener('focus', () => openTip(infoButton));
-    infoButton.addEventListener('blur', closeTip);
-    infoButton.addEventListener('click', () => { if (tipAnchor === infoButton && pinned) closeTip(); else openTip(infoButton, true); });
-    row.append(pick, infoButton); $('algorithmList').append(row);
+    row.append(pick); $('algorithmList').append(row);
   }
-  tooltip.addEventListener('pointerenter', () => clearTimeout(tipTimer));
-  tooltip.addEventListener('pointerleave', deferClose);
-  document.addEventListener('pointerdown', event => { if (tipAnchor && !tooltip.contains(event.target) && !tipAnchor.contains(event.target)) closeTip(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeTip(); });
-  window.addEventListener('scroll', placeTip, { capture: true, passive: true });
-  window.addEventListener('resize', placeTip);
   $('startBtn').addEventListener('click', () => begin());
   $('pauseBtn').addEventListener('click', togglePause);
   $('stepBtn').addEventListener('click', () => { if (!state.running) begin(true); if (state.paused) { nextStep(); $('stepAnnouncement').textContent = $('operation').textContent; rafDraw(); } });

@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Sortowanie topologiczne</h1><p>Najpierw wymagania, potem zadanie. Śledź, jak algorytm Kahna usuwa spełnione zależności i tworzy porządek topologiczny - albo odkrywa, że blokuje go cykl.</p></div>
         <span class="badge">Zależności · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Sortowanie topologiczne Kahna</h2></div><span class="tag">Kolejka FIFO</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(V + E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Reprezentacja</dt><dd>Listy sąsiedztwa</dd></div><div><dt>Pełny porządek</dt><dd>Tylko dla DAG</dd></div><div><dt>Wynik</dt><dd>Kolejność zadań</dd></div></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E – krawędzi. Każdy wierzchołek trafia do kolejki raz; każdą krawędź usuwamy raz. Kolejka ma indeks początku, więc pobieranie nie przesuwa tablicy. Koszty dotyczą algorytmu, bez rysowania i aktualizacji tabel.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Układa zadania w kolejności zgodnej z zależnościami. Krawędź A → B oznacza: najpierw wykonaj A, dopiero potem B. Stopień wejściowy to liczba krawędzi prowadzących do zadania, czyli liczba jego jeszcze niespełnionych wymagań. Algorytm wybiera zadania gotowe do wykonania i odblokowuje następne. Pełna kolejność istnieje tylko dla DAG, czyli grafu skierowanego bez cykli.</p><ol>
+              <li>Policz stopnie wejściowe wszystkich zadań. Te o stopniu 0 dodaj do kolejki FIFO — pierwsze dodane zadanie będzie pierwsze pobrane.</li>
+              <li>Pobierz zadanie z początku kolejki i dopisz je do wyniku. Wszystkie jego wymagania zostały już spełnione.</li>
+              <li>Potraktuj jego krawędzie wychodzące jako usunięte: dla każdego następnego zadania zmniejsz stopień wejściowy o 1. Gdy spadnie do 0, dodaj to zadanie na koniec kolejki.</li>
+              <li>Powtarzaj do opróżnienia kolejki. Jeśli wynik zawiera wszystkie zadania, kolejność jest gotowa. Jeśli jakieś zostały, graf zawiera cykl zależności i pełnej kolejności nie da się ustalić.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Zadanie o zerowym stopniu wejściowym nie ma już niespełnionych wymagań. Można je bezpiecznie umieścić jako następne. W każdym niepustym DAG istnieje taki wierzchołek.</p><h3>Co oznacza blokada?</h3><p>Wierzchołki pozostałe po zatrzymaniu leżą w cyklu lub zależą od cyklu. Algorytm wykrywa jego istnienie, ale nie wskazuje dokładnie wszystkich wierzchołków należących do cykli.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy ustalaniu kolejności kompilacji modułów, wykonywania zadań i realizacji kursów z wymaganiami wstępnymi. Poprawny porządek nie musi być jedyny; algorytm nie wyznacza czasu trwania harmonogramu.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz niezależne zadania. Ile różnych poprawnych kolejności można utworzyć? Potem uruchom graf z cyklem i sprawdź, dlaczego pusta kolejka nie oznacza sukcesu.</p></div></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields">
           <div class="field"><label for="scenario">Rodzaj grafu</label><select id="scenario"><option value="dag">Bez cyklu (DAG)</option><option value="cycle">Z cyklem</option><option value="independent">Niezależne zadania</option></select></div>
@@ -30,7 +46,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf zależności</h2></div><span id="statusText" role="status">Gotowy</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Graf zależności</h2></div><span id="statusText" role="status">Gotowy</span></div>
           <div class="lab-viewport" tabindex="0" role="region" aria-label="Przewijany widok grafu"><svg id="board" class="lab-board" viewBox="0 0 760 420" role="img" aria-label="Graf skierowany ze stopniami wejściowymi" aria-describedby="operation graphText"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>▶ Wybrane teraz</span><span><i class="lab-key ready" aria-hidden="true"></i>Q W kolejce</span><span><i class="lab-key accepted" aria-hidden="true"></i>✓ W wyniku</span><span><i class="lab-key rejected" aria-hidden="true"></i>! Zablokowane</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
@@ -49,16 +65,6 @@
         <section class="panel lab-table-panel" aria-labelledby="degreeTitle"><h2 id="degreeTitle">Niespełnione zależności</h2><p>Stopień wejściowy maleje po usunięciu krawędzi od wykonanego poprzednika.</p><div class="graph-table-wrap" tabindex="0" role="region" aria-label="Tabela zadań"><table class="graph-table"><caption>Stan zadań i liczba pozostałych wejść</caption><thead><tr><th scope="col">Zadanie</th><th scope="col">Pozostałe wejścia</th><th scope="col">Stan</th></tr></thead><tbody id="degreeTable"></tbody></table></div></section>
         <details class="data-details"><summary>Lista zależności i wynik tekstowy</summary><p id="graphText"></p><p id="orderText"></p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Sortowanie topologiczne Kahna</h2></div><span class="tag">Kolejka FIFO</span></div>
-        <dl class="complexity"><div><dt>Czas</dt><dd>O(V + E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Reprezentacja</dt><dd>Listy sąsiedztwa</dd></div><div><dt>Pełny porządek</dt><dd>Tylko dla DAG</dd></div><div><dt>Wynik</dt><dd>Kolejność zadań</dd></div></dl>
-        <p class="complexity-note">V to liczba wierzchołków, E - krawędzi. Każdy wierzchołek trafia do kolejki raz; każdą krawędź usuwamy raz. Kolejka ma indeks początku, więc pobieranie nie przesuwa tablicy. Koszty dotyczą algorytmu, bez rysowania i aktualizacji tabel.</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Policz stopnie wejściowe i dodaj do kolejki wszystkie zadania o stopniu 0.</li><li>Pobierz pierwsze zadanie i dopisz je do wyniku.</li><li>Usuń jego krawędzie wychodzące. Gdy stopień sąsiada spadnie do 0, dodaj go do kolejki.</li><li>Powtarzaj do opróżnienia kolejki. Jeśli pozostały zadania, graf zawiera cykl.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Zadanie o zerowym stopniu wejściowym nie ma już niespełnionych wymagań. Można je bezpiecznie umieścić jako następne. W każdym niepustym DAG istnieje taki wierzchołek.</p><h3>Co oznacza blokada?</h3><p>Wierzchołki pozostałe po zatrzymaniu leżą w cyklu lub zależą od cyklu. Algorytm wykrywa jego istnienie, ale nie wskazuje dokładnie wszystkich wierzchołków należących do cykli.</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>Przy ustalaniu kolejności kompilacji modułów, wykonywania zadań i realizacji kursów z wymaganiami wstępnymi. Poprawny porządek nie musi być jedyny; algorytm nie wyznacza czasu trwania harmonogramu.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz niezależne zadania. Ile różnych poprawnych kolejności można utworzyć? Potem uruchom graf z cyklem i sprawdź, dlaczego pusta kolejka nie oznacza sukcesu.</p></div></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Porównaj operatory arytmetyczne, relacji, logiczne, bitowe i przypisania. Podaj wartości i oblicz całą tabelę wybranej kategorii jednym przyciskiem.">
+    <title>Operatory w językach programowania · AlgorithmsLab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="step-lab interactive-lab operators-lab">
+    <a class="skip" href="#visualization">Przejdź do tabeli operatorów</a>
+    <main class="shell">
+      <header class="masthead">
+        <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>AlgorithmsLab <span class="graph-brand-note"> / edukacja</span></a>
+        <span class="meta">Podstawy programowania · Operatory</span>
+      </header>
+      <section class="intro" aria-labelledby="pageTitle">
+        <div>
+          <span class="eyebrow">Te same dane, różne działania</span>
+          <h1 id="pageTitle">Operatory w językach programowania</h1>
+          <p>Wybierz kategorię i wpisz wartości A oraz B. Naciśnij Start, aby zobaczyć obok siebie wyniki wszystkich operatorów tej kategorii. Porównaj, co różne działania robią z tymi samymi liczbami.</p>
+        </div>
+        <span class="badge">6 kategorii · wspólne dane</span>
+      </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div><p class="eyebrow">01 / Zrozum operatory</p><h2 id="lessonTitle">Operatory arytmetyczne</h2></div>
+          <span class="tag" id="operatorCount"></span>
+        </div>
+        <p id="categoryDescription" class="op-category-description"></p>
+        <div class="lesson-columns">
+          <div><h3>Jak porównywać?</h3><p>Każdy wiersz wykonuje osobne działanie na tych samych danych. Operator jednoargumentowy, np. zmiana znaku, korzysta tylko z A. Zmiana danych usuwa wyniki - oblicz je ponownie przyciskiem Start.</p></div>
+          <div><h3>Zasady tej tabeli</h3><p>Liczymy na liczbach całkowitych ze znakiem o wybranej szerokości. Całkowity wynik poza zakresem zawijamy do tej szerokości i oznaczamy przepełnienie. // zaokrągla w dół, a div i dzielenie / w tym modelu obcinają w stronę zera. Dla warunków 0 oznacza fałsz, a pozostałe liczby - prawdę.</p></div>
+          <div><h3>Sprawdź samodzielnie</h3><p id="categoryExercise"></p><p>To model do porównywania działań, a nie symulacja jednego języka. Przy każdym operatorze znajdziesz listę wybranych języków używających tego zapisu oraz krótkie uwagi o różnicach.</p></div>
+        </div>
+      </section>
+      <form id="calculatorForm" class="panel controls" aria-labelledby="controlsTitle" novalidate>
+        <h2 id="controlsTitle" class="op-section-title">02 / Wybierz kategorię i dane</h2>
+        <div class="op-settings">
+          <div class="field"><label for="category">Kategoria operatorów</label><select id="category"></select></div>
+          <div class="field"><label for="width">Szerokość liczb</label><select id="width"><option value="8">8 bitów</option><option value="16">16 bitów</option><option value="32">32 bity</option></select></div>
+        </div>
+        <div class="op-inputs">
+          <div class="field"><label for="inA" id="labelA">Wartość A</label><input id="inA" type="text" inputmode="numeric" value="12" required autocomplete="off" spellcheck="false" aria-describedby="rangeHint inAError"><p id="inAError" class="op-input-error" aria-live="polite" hidden></p></div>
+          <div class="field"><label for="inB" id="labelB">Wartość B</label><input id="inB" type="text" inputmode="numeric" value="10" required autocomplete="off" spellcheck="false" aria-describedby="rangeHint inBError"><p id="inBError" class="op-input-error" aria-live="polite" hidden></p></div>
+          <div class="field" id="fieldC" hidden><label for="inC">C - gdy warunek jest fałszywy</label><input id="inC" type="text" inputmode="numeric" value="0" required disabled autocomplete="off" spellcheck="false" aria-describedby="rangeHint inCError"><p id="inCError" class="op-input-error" aria-live="polite" hidden></p></div>
+        </div>
+        <p id="rangeHint" class="control-hint"></p>
+        <p id="categoryHint" class="control-hint"></p>
+        <div class="actions"><button type="submit" id="startBtn" class="btn primary">▶ Start</button><button type="button" id="clearBtn" class="btn">Wyczyść wyniki</button></div>
+        <p class="control-hint">Start oblicza wszystkie wiersze jednocześnie. Wartości A i B zostają zachowane po zmianie kategorii.</p>
+      </form>
+      <div class="main-column lab-results">
+        <section class="panel op-results" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
+          <div class="chart-heading"><div><div class="eyebrow">03 / Porównaj wyniki</div><h2 id="chartTitle">Operatory arytmetyczne</h2></div><span id="statusText" role="status" aria-live="polite">Wpisz dane i naciśnij Start</span></div>
+          <p id="resultSummary" class="op-result-summary">Wyniki pojawią się po naciśnięciu Start.</p>
+          <p id="binaryInputs" class="op-binary-inputs" hidden></p>
+          <div class="op-table-scroll" tabindex="0" role="region" aria-labelledby="chartTitle">
+            <table class="op-table">
+              <caption id="tableCaption">Operatory wybranej kategorii</caption>
+              <thead><tr><th scope="col">Operator</th><th scope="col">Wyrażenie</th><th scope="col">Wynik</th><th scope="col">Co robi?</th></tr></thead>
+              <tbody id="operatorRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+      <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
+    </main>
+    <script>
+'use strict';
+(() => {
+  const $ = id => document.getElementById(id);
+  const bin = (value, width) => BigInt.asUintN(width, value).toString(2).padStart(width, '0');
+  const range = width => [-(1n << BigInt(width - 1)), (1n << BigInt(width - 1)) - 1n];
+  const truth = value => value !== 0n;
+  const operand = value => typeof value === 'bigint' && value < 0n ? `(${value})` : String(value);
+  const failure = message => ({ final: message, raw: null, flag: 'błąd' });
+  const integer = (value, width, note = '') => {
+    const raw = BigInt.asIntN(width, value);
+    return { final: String(raw), raw, flag: raw === value ? 'brak' : 'przepełnienie', note };
+  };
+  const boolean = value => ({ final: value ? 'prawda' : 'fałsz', raw: value ? 1n : 0n, flag: 'brak' });
+  const math = fn => (a, b, c, width) => integer(fn(a, b), width);
+  const compare = fn => (a, b) => boolean(fn(a, b));
+  const logic = fn => (a, b) => boolean(fn(truth(a), truth(b)));
+  function division(floor = false) {
+    return (a, b, c, width) => {
+      if (b === 0n) return failure('dzielenie przez zero');
+      let quotient = a / b;
+      if (floor && a % b !== 0n && (a < 0n) !== (b < 0n)) quotient--;
+      return integer(quotient, width, floor ? 'Zaokrąglenie w dół.' : 'Obcięcie w stronę zera.');
+    };
+  }
+  function remainder(a, b, c, width) {
+    return b === 0n ? failure('dzielenie przez zero') : integer(a % b, width);
+  }
+  function power(a, b, c, width) {
+    if (a === 0n && b < 0n) return failure('dzielenie przez zero');
+    if (b < 0n) {
+      const value = Number(a) ** Number(b);
+      if (!Number.isFinite(value)) return failure('wynik poza zakresem liczby rzeczywistej');
+      return { final: String(value), raw: null, flag: 'brak', note: 'Ujemny wykładnik: wynik rzeczywisty, bez zawijania bitów.' };
+    }
+    if (b > 64n && (a < -1n || a > 1n)) return { final: 'poza zakresem demonstracji', raw: null, flag: 'limit demonstracji', note: 'Dla tej podstawy użyj wykładnika nie większego niż 64.' };
+    const value = b > 64n ? (a === -1n ? (b % 2n === 0n ? 1n : -1n) : a) : a ** b;
+    return integer(value, width);
+  }
+  function shift(direction) {
+    return (a, b, c, width) => {
+      const bits = BigInt(width), count = ((b % bits) + bits) % bits;
+      const value = direction === 'left' ? a << count : direction === 'signed' ? a >> count : BigInt.asUintN(width, a) >> count;
+      const result = integer(value, width);
+      result.note = b !== count ? `W modelu przesuwamy o B modulo ${width}, czyli ${count} pozycji.` : '';
+      return result;
+    };
+  }
+  const assign = (a, b) => ({ final: `x = ${b}`, raw: b, flag: 'brak' });
+  function compound(fn) {
+    return (...args) => {
+      const result = fn(...args);
+      return result.raw === null ? { ...result, note: `${result.note || ''} W tym modelu x pozostaje bez zmian.`.trim() } : { ...result, final: `x = ${result.final}` };
+    };
+  }
+  function increment(delta, pre) {
+    return (a, b, c, width) => {
+      const result = integer(a + delta, width), value = pre ? result.raw : a;
+      return { ...result, final: `wyrażenie = ${value}, x po operacji = ${result.raw}`, raw: value };
+    };
+  }
+  const conditional = (a, b, c) => ({ final: String(truth(a) ? b : c), raw: truth(a) ? b : c, flag: 'brak', note: truth(a) ? 'Wybrano B; C pominięto.' : 'Wybrano C; B pominięto.' });
+
+  const CATS = {
+    arith: { name: 'Arytmetyczne', title: 'Operatory arytmetyczne', description: 'Wykonują działania na liczbach. Osobne wiersze pokazują różne zapisy, np. //, div i \\, oraz ich reguły zaokrąglania.', exercise: 'Wpisz A = -7 i B = 3. Porównaj wyniki // i div. Następnie ustaw B = 0 i sprawdź, które działania nadal mają wynik.', hint: 'B jest drugim argumentem lub wykładnikiem potęgi. Operatory jednoargumentowe korzystają tylko z A.' },
+    rel: { name: 'Relacji (porównania)', title: 'Operatory relacji', description: 'Sprawdzają relację między A i B. Ten sam zapis może pełnić inną rolę w innym języku, np. = oznacza tu porównanie, a w kategorii przypisań zapis do zmiennej.', exercise: 'Ustaw A = B. Porównaj < z <=, == z != oraz = z <>. Potem zmień jedną z wartości.', hint: 'Obie wartości mają ten sam typ liczbowy, więc == i === dają tu ten sam wynik. Nie testujemy tożsamości obiektów.' },
+    logic: { name: 'Logiczne', title: 'Operatory logiczne', description: 'Łączą warunki lub je negują. and i && mają osobne wiersze oraz własne listy języków. W modelu 0 to fałsz, a pozostałe liczby to prawda; wynik pokazujemy jako prawda lub fałsz.', exercise: 'Sprawdź pary (0, 0), (1, 0), (0, 1) i (1, 1). Porównaj AND, OR i XOR.', hint: 'W językach wymagających typu bool trzeba najpierw zamienić liczby na warunki, np. A != 0. Negacja używa tylko A.' },
+    bit: { name: 'Bitowe', title: 'Operatory bitowe', description: 'Przetwarzają poszczególne bity liczb. Zapisy symboliczne, np. &, i słowne, np. and lub bitand, pokazujemy oddzielnie. Liczby odczytujemy ze znakiem w wybranej szerokości.', exercise: 'Dla A = 12 i B = 10 porównaj &, | i ^. Następnie ustaw A = -20 i B = 2: czym różnią się >> i shr?', hint: 'B jest drugą liczbą lub liczbą przesunięć. Przy przesunięciach ten model stosuje B modulo szerokość; rzeczywiste języki mają różne reguły dla B spoza zakresu.' },
+    assign: { name: 'Przypisania', title: 'Operatory przypisania', description: 'Zapisują wartość w zmiennej x. Każdy wiersz zaczyna niezależnie od x = A, więc wynik jednego przypisania nie wpływa na następne.', exercise: 'Wpisz A = -7 i B = 3. Porównaj /= i //=. Następnie sprawdź, czym różnią się ++x i x++.', hint: 'A jest początkową wartością x, a B argumentem działania. ++ i -- korzystają tylko z A.' },
+    other: { name: 'Warunkowe', title: 'Operatory warunkowe', description: 'Wybierają wartość zależnie od warunku. Każdy zapis jest osobnym wierszem, w tym wyrażenie warunkowe Pythona i skrócony operator ?: z PHP.', exercise: 'Ustaw B = 10, C = 20. Zmień A z 1 na 0 i porównaj pełny operator warunkowy ze skróconym A ?: B.', hint: 'W pełnych wyrażeniach A jest warunkiem, B wynikiem dla prawdy, a C dla fałszu. Skrócone A ?: B nie korzysta z C.' }
+  };
+  const common = ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP', 'Pascal', 'Delphi', 'Ruby', 'Lua', 'Go', 'VB.NET'];
+  const cStyle = ['C', 'C++', 'C#', 'Java', 'JavaScript', 'PHP', 'Go', 'Rust', 'Kotlin', 'Swift'];
+  const bitStyle = ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP', 'Ruby', 'Go', 'Rust', 'Swift'];
+  const alternative = ['C (z iso646.h)', 'C++'];
+  const OPS = [];
+  function add(id, cat, sym, title, exec, languages, desc, note = '', options = {}) {
+    OPS.push({ id, cat, sym, title, exec, languages, desc, note, shape: 'bin', uses: ['a', 'b'], bits: cat === 'bit', ...options });
+  }
+  const unary = { shape: 'pre', uses: ['a'] };
+
+  add('+', 'arith', '+', 'Dodawanie', math((a, b) => a + b), common, 'Dodaje B do A.', 'W C++ (std::string), C#, Javie, Pythonie, JavaScripcie, Pascalu, Delphi, Ruby, Go i VB.NET operator + służy także do konkatenacji, czyli łączenia tekstów.');
+  add('-', 'arith', '-', 'Odejmowanie', math((a, b) => a - b), common, 'Odejmuje B od A. Kolejność argumentów ma znaczenie.');
+  add('*', 'arith', '*', 'Mnożenie', math((a, b) => a * b), common, 'Mnoży A przez B.', 'W Pythonie i Ruby operator * może też powielać tekst, np. "ab" * 3 daje "ababab".');
+  add('/', 'arith', '/', 'Dzielenie', division(), common, 'Dzieli A przez B. W tej tabeli wynik jest całkowity, obcięty w stronę zera.', 'W C, C++, C# i Javie / dla liczb całkowitych obcina wynik. W Pythonie, JavaScripcie (Number), PHP, Pascalu, Delphi i Lua może dać ułamek; w Ruby dla liczb całkowitych zaokrągla w dół.');
+  add('//', 'arith', '//', 'Dzielenie całkowite w dół', division(true), ['Python', 'Lua'], 'Dzieli A przez B i zaokrągla w dół: -7 // 3 daje -3.', 'W Lua operator jest dostępny od wersji 5.3.');
+  add('div', 'arith', 'div', 'Dzielenie całkowite', division(), ['Pascal', 'Delphi'], 'Dzieli liczby całkowite i obcina wynik w stronę zera: -7 div 3 daje -2.');
+  add('backslash', 'arith', '\\', 'Dzielenie całkowite', division(), ['VB.NET'], 'Dla wpisanych liczb całkowitych dzieli A przez B i obcina część ułamkową w stronę zera.');
+  add('%', 'arith', '%', 'Reszta z dzielenia', remainder, ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP', 'Ruby', 'Lua', 'Go', 'Rust', 'Swift', 'Kotlin'], 'Zwraca resztę z dzielenia. W modelu znak niezerowej reszty jest taki jak znak A.', 'W Pythonie, Ruby i Lua % ma regułę modulo z zaokrągleniem ilorazu w dół: -7 % 3 daje 2. W C, C++, C#, Javie, JavaScripcie i PHP otrzymamy -1, jak w tej tabeli.');
+  add('mod', 'arith', 'mod', 'Reszta z dzielenia', remainder, ['Pascal', 'Delphi', 'VB.NET'], 'Zwraca resztę po dzieleniu całkowitym: A - (A div B) * B.', 'W Pascalu, Delphi i VB.NET niezerowa reszta ma znak dzielnej A. W VB.NET zwykle zapisujemy Mod.');
+  add('**', 'arith', '**', 'Potęgowanie', power, ['Python', 'JavaScript', 'PHP', 'Ruby', 'Perl', 'Fortran'], 'Podnosi A do potęgi B. Wykładnik 0 daje w modelu 1.', 'W Pythonie, JavaScripcie i PHP potęgowanie jest prawostronnie łączne: 2 ** 3 ** 2 oznacza 2 ** (3 ** 2).');
+  add('power-caret', 'arith', '^', 'Potęgowanie', power, ['Lua', 'VB.NET'], 'Podnosi A do potęgi B.', 'Ten wiersz dotyczy potęgowania w Lua i VB.NET. Operator ^ z kategorii bitowej ma inne znaczenie i inną listę języków.');
+  add('neg', 'arith', '-', 'Zmiana znaku', math(a => -a), common, 'Zwraca liczbę przeciwną do A. Nie korzysta z B.', 'Dodatnia wartość przeciwna do najmniejszej liczby wybranego typu nie mieści się w zakresie.', unary);
+  add('pos', 'arith', '+', 'Plus jednoargumentowy', math(a => a), common.filter(name => name !== 'Lua'), 'Dla wpisanej liczby całkowitej pozostawia wartość A bez zmian.', 'W JavaScripcie + może również zamieniać tekst na liczbę, np. +"12" daje 12.', unary);
+
+  const comparisons = [
+    ['==', 'Równość', (a, b) => a === b, ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP', 'Ruby', 'Lua', 'Go', 'Rust', 'Kotlin', 'Swift'], 'Sprawdza, czy A i B są równe.', 'W JavaScripcie i PHP == może konwertować typy. Tu oba argumenty są już liczbami tego samego typu.'],
+    ['!=', 'Nierówność', (a, b) => a !== b, ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP', 'Ruby', 'Go', 'Rust', 'Kotlin', 'Swift'], 'Sprawdza, czy A i B są różne.', ''],
+    ['<', 'Mniejszy niż', (a, b) => a < b, common, 'Sprawdza, czy A jest mniejsze od B.', ''],
+    ['>', 'Większy niż', (a, b) => a > b, common, 'Sprawdza, czy A jest większe od B.', ''],
+    ['<=', 'Mniejszy lub równy', (a, b) => a <= b, common, 'Sprawdza, czy A jest mniejsze od B lub równe B.', ''],
+    ['>=', 'Większy lub równy', (a, b) => a >= b, common, 'Sprawdza, czy A jest większe od B lub równe B.', ''],
+    ['===', 'Ścisła równość', (a, b) => a === b, ['JavaScript', 'PHP'], 'Sprawdza zgodność wartości i typu.', 'W tej tabeli wynik jest taki sam jak przy ==, ponieważ nie porównujemy różnych typów danych.'],
+    ['!==', 'Ścisła nierówność', (a, b) => a !== b, ['JavaScript', 'PHP'], 'Sprawdza, czy wartości lub typy są różne.', 'Tu oba argumenty mają ten sam typ, więc wynik jest taki sam jak przy !=.'],
+    ['<>', 'Nierówność', (a, b) => a !== b, ['PHP', 'Pascal', 'Delphi', 'VB.NET', 'SQL'], 'Zwraca prawdę, gdy A i B są różne.', ''],
+    ['~=', 'Nierówność', (a, b) => a !== b, ['Lua'], 'Zwraca prawdę, gdy A i B są różne.', ''],
+    ['=', 'Równość', (a, b) => a === b, ['Pascal', 'Delphi', 'VB.NET', 'SQL'], 'Porównuje wartości A i B.', 'Tutaj = oznacza porównanie. W kategorii przypisań = ma osobny wiersz i listę języków.'],
+    ['not_eq', 'Nierówność', (a, b) => a !== b, alternative, 'Słowny zapis operatora !=.', 'W C jest makrem z nagłówka iso646.h, a w C++ słowem kluczowym.']
+  ];
+  comparisons.forEach(([sym, title, fn, langs, desc, note]) => add(sym === '=' ? 'equal-sign' : sym, 'rel', sym, title, compare(fn), langs, desc, note));
+  add('<=>', 'rel', '<=>', 'Porównanie trójstanowe', (a, b) => ({ final: a < b ? '-1' : a > b ? '1' : '0', raw: a < b ? -1n : a > b ? 1n : 0n, flag: 'brak' }), ['C++', 'PHP', 'Ruby', 'Perl'], 'Rozróżnia trzy sytuacje: A < B, A = B oraz A > B. Pokazujemy je jako -1, 0 i 1.', 'W C++20 wynikiem jest obiekt kategorii porównania, a nie liczba -1 lub 1. W PHP i Ruby otrzymujemy wynik liczbowy.');
+
+  add('&&', 'logic', '&&', 'AND logiczne', logic((a, b) => a && b), [...cStyle, 'Ruby', 'Perl'], 'Prawda, gdy oba warunki są prawdziwe. Fałszywe A pozwala pominąć B.', 'W JavaScripcie i Ruby && zwraca jeden z operandów. W tej tabeli pokazujemy wartość logiczną po zamianie liczb na warunki.');
+  add('||', 'logic', '||', 'OR logiczne', logic((a, b) => a || b), [...cStyle, 'Ruby', 'Perl'], 'Prawda, gdy przynajmniej jeden warunek jest prawdziwy. Prawdziwe A pozwala pominąć B.', 'W JavaScripcie i Ruby || może zwracać wartość operandu zamiast bool.');
+  add('!', 'logic', '!', 'Negacja logiczna', logic(a => !a), [...cStyle, 'Ruby', 'Perl'], 'Odwraca wartość logiczną A. B jest pomijane.', 'W Rust ! zastosowane do liczby całkowitej jest negacją bitową; do bool jest negacją logiczną.', unary);
+  add('and', 'logic', 'and', 'AND logiczne', logic((a, b) => a && b), [...alternative, 'Python', 'PHP', 'Pascal', 'Delphi', 'Ruby', 'Lua', 'VB.NET', 'SQL', 'Perl'], 'Prawda, gdy oba warunki są prawdziwe.', 'Python, Ruby i Lua zwracają jeden z operandów. Ruby i Lua uznają także 0 za prawdę. W VB.NET And oblicza obie strony; w Pythonie and może pominąć drugą. Model pokazuje wynik dla warunków A != 0 i B != 0.');
+  add('or', 'logic', 'or', 'OR logiczne', logic((a, b) => a || b), [...alternative, 'Python', 'PHP', 'Pascal', 'Delphi', 'Ruby', 'Lua', 'VB.NET', 'SQL', 'Perl'], 'Prawda, gdy przynajmniej jeden warunek jest prawdziwy.', 'Python, Ruby i Lua zwracają jeden z operandów. W VB.NET Or oblicza obie strony; w Pythonie or może pominąć drugą.');
+  add('not', 'logic', 'not', 'Negacja logiczna', logic(a => !a), [...alternative, 'Python', 'Pascal', 'Delphi', 'Ruby', 'Lua', 'VB.NET', 'SQL', 'Perl'], 'Odwraca wartość logiczną A.', 'W C zapis słowny wymaga iso646.h. Dla operatorów słownych SQL, Pascal, Delphi i VB.NET wielkość liter nie ma znaczenia.', unary);
+  add('xor', 'logic', 'xor', 'XOR logiczne', logic((a, b) => a !== b), [...alternative, 'PHP', 'Pascal', 'Delphi', 'VB.NET', 'Perl', 'SQL (MySQL)'], 'Prawda, gdy dokładnie jeden warunek jest prawdziwy.', 'W C i C++ xor jest alternatywnym zapisem ^; na liczbach działa bitowo. Ten wiersz pokazuje wynik dla wartości logicznych.');
+  add('AndAlso', 'logic', 'AndAlso', 'AND ze skrótem', logic((a, b) => a && b), ['VB.NET'], 'Prawda, gdy oba warunki są prawdziwe. Gdy A jest fałszem, B nie jest obliczane.');
+  add('OrElse', 'logic', 'OrElse', 'OR ze skrótem', logic((a, b) => a || b), ['VB.NET'], 'Prawda, gdy przynajmniej jeden warunek jest prawdziwy. Gdy A jest prawdą, B nie jest obliczane.');
+  add('bool-xor', 'logic', '^', 'XOR na wartościach logicznych', logic((a, b) => a !== b), ['C#', 'Java', 'Python', 'Rust'], 'Dla bool zwraca prawdę, gdy warunki mają różne wartości.', 'Obie strony są obliczane. Na liczbach ^ jest operatorem bitowym.');
+  add('bool-and', 'logic', '&', 'AND bez skrótu', logic((a, b) => a && b), ['C#', 'Java', 'Python', 'Rust'], 'Dla bool zwraca prawdę, gdy oba warunki są prawdziwe.', 'Obie strony są obliczane, nawet jeśli A jest fałszem.');
+  add('bool-or', 'logic', '|', 'OR bez skrótu', logic((a, b) => a || b), ['C#', 'Java', 'Python', 'Rust'], 'Dla bool zwraca prawdę, gdy przynajmniej jeden warunek jest prawdziwy.', 'Obie strony są obliczane, nawet jeśli A jest prawdą.');
+
+  const bitAnd = math((a, b) => a & b), bitOr = math((a, b) => a | b), bitXor = math((a, b) => a ^ b), bitNot = math(a => ~a);
+  add('&', 'bit', '&', 'AND bitowe', bitAnd, [...bitStyle, 'Lua'], 'Ustawia bit wyniku na 1 tylko wtedy, gdy oba odpowiadające bity są równe 1.');
+  add('|', 'bit', '|', 'OR bitowe', bitOr, [...bitStyle, 'Lua'], 'Ustawia bit wyniku na 1, gdy przynajmniej jeden odpowiadający bit jest równy 1.');
+  add('^', 'bit', '^', 'XOR bitowe', bitXor, bitStyle, 'Ustawia bit wyniku na 1, gdy odpowiadające bity się różnią.');
+  add('~', 'bit', '~', 'Negacja bitowa', bitNot, ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP', 'Ruby', 'Lua', 'Swift'], 'Odwraca wszystkie bity A: 0 na 1, a 1 na 0.', 'Dla liczb ze znakiem w tej tabeli ~A = -A - 1.', unary);
+  add('<<', 'bit', '<<', 'Przesunięcie w lewo', shift('left'), [...bitStyle, 'Lua', 'VB.NET'], 'Przesuwa bity A w lewo o B pozycji. Z prawej dopisuje zera, a bity poza szerokością odrzuca.', 'W Pythonie liczby całkowite mogą rosnąć bez limitu wybranych tu bitów. Ta tabela celowo ogranicza szerokość.');
+  add('>>', 'bit', '>>', 'Przesunięcie w prawo', shift('signed'), [...bitStyle, 'Lua', 'VB.NET'], 'W modelu przesuwa A w prawo, powielając bit znaku.', 'W Lua >> wstawia zera z lewej. W JavaScripcie >> działa na 32 bitach; w C wynik dla ujemnej liczby zależy od implementacji.');
+  add('>>>', 'bit', '>>>', 'Przesunięcie logiczne w prawo', shift('unsigned'), ['C#', 'Java', 'JavaScript'], 'Przesuwa bity A w prawo, wstawiając zera z lewej.', 'C# obsługuje >>> od wersji 11. Java i JavaScript stosują co najmniej 32 bity. Tutaj obowiązuje wybrana szerokość i odczyt wyniku ze znakiem.');
+  add('bit-and-word', 'bit', 'and', 'AND bitowe', bitAnd, ['Pascal', 'Delphi', 'VB.NET', 'Kotlin'], 'Dla liczb całkowitych porównuje bity, a nie prawdziwość całych liczb.', 'W Kotlinie and jest funkcją infiksową używaną w zapisie A and B.');
+  add('bit-or-word', 'bit', 'or', 'OR bitowe', bitOr, ['Pascal', 'Delphi', 'VB.NET', 'Kotlin'], 'Ustawia każdy bit wyniku, który jest ustawiony w A lub w B.', 'W Kotlinie or jest funkcją infiksową.');
+  add('bit-xor-word', 'bit', 'xor', 'XOR bitowe', bitXor, [...alternative, 'Pascal', 'Delphi', 'VB.NET', 'Kotlin'], 'Ustawia bit wyniku, gdy odpowiadające bity A i B są różne.', 'W Kotlinie xor jest funkcją infiksową. W C wymaga nagłówka iso646.h.');
+  add('bit-not-word', 'bit', 'not', 'Negacja bitowa', bitNot, ['Pascal', 'Delphi', 'VB.NET'], 'Dla liczby całkowitej odwraca każdy bit A.', 'Nie myl z logicznym not na wartościach prawda/fałsz.', unary);
+  add('bitand', 'bit', 'bitand', 'AND bitowe', bitAnd, alternative, 'Słowny zapis operatora &.', 'W C wymaga iso646.h, w C++ jest słowem kluczowym.');
+  add('bitor', 'bit', 'bitor', 'OR bitowe', bitOr, alternative, 'Słowny zapis operatora |.', 'W C wymaga iso646.h, w C++ jest słowem kluczowym.');
+  add('compl', 'bit', 'compl', 'Negacja bitowa', bitNot, alternative, 'Słowny zapis operatora ~.', 'W C wymaga iso646.h, w C++ jest słowem kluczowym.', unary);
+  add('shl', 'bit', 'shl', 'Przesunięcie w lewo', shift('left'), ['Pascal', 'Delphi', 'Kotlin'], 'Przesuwa A w lewo o B pozycji i dopisuje zera.', 'W Kotlinie shl jest funkcją infiksową.');
+  add('shr', 'bit', 'shr', 'Przesunięcie logiczne w prawo', shift('unsigned'), ['Pascal', 'Delphi'], 'Przesuwa A w prawo i wstawia zera po lewej, zgodnie z działaniem shr w Pascalu i Delphi.');
+  add('kotlin-shr', 'bit', 'shr', 'Przesunięcie arytmetyczne w prawo', shift('signed'), ['Kotlin'], 'Przesuwa A w prawo, zachowując bit znaku.', 'Funkcja infiksowa Kotlina. Ma ten sam zapis co shr w Pascalu, ale dla ujemnych liczb zachowuje się inaczej.');
+  add('ushr', 'bit', 'ushr', 'Przesunięcie logiczne w prawo', shift('unsigned'), ['Kotlin'], 'Przesuwa A w prawo i wstawia zera z lewej.', 'W Kotlinie ushr jest funkcją infiksową dla Int i Long.');
+  add('lua-xor', 'bit', '~', 'XOR bitowe', bitXor, ['Lua'], 'W zapisie dwuargumentowym A ~ B ustawia bity, które są różne.', 'To XOR w Lua 5.3+. Jednoargumentowe ~A w tym samym języku oznacza negację bitową.');
+  add('go-not', 'bit', '^', 'Negacja bitowa', bitNot, ['Go'], 'W zapisie jednoargumentowym ^A odwraca bity A.', 'Dwuargumentowe A ^ B w Go to XOR.', unary);
+  add('rust-not', 'bit', '!', 'Negacja bitowa', bitNot, ['Rust'], 'Dla liczby całkowitej !A odwraca wszystkie bity.', 'Dla bool ! jest negacją logiczną.', unary);
+
+  const assignLanguages = [...cStyle, 'Python', 'Ruby', 'Lua', 'VB.NET'];
+  add('=', 'assign', '=', 'Przypisanie', assign, assignLanguages, 'Zapisuje B w zmiennej x, zastępując poprzednią wartość A.', '', { shape: 'assign' });
+  add(':=', 'assign', ':=', 'Przypisanie lub deklaracja', assign, ['Python', 'Pascal', 'Delphi', 'Go', 'Ada'], 'Zapisuje B w x.', 'Pascal, Delphi i Ada używają := do przypisania. Python 3.8+ używa go w wyrażeniach, zwykle w nawiasach; w Go := deklaruje co najmniej jedną nową zmienną.', { shape: 'assign' });
+  const basicCompound = ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP', 'Ruby', 'Go', 'Rust', 'Kotlin', 'Swift'];
+  [
+    ['+=', '+', math((a, b) => a + b), [...basicCompound, 'VB.NET']],
+    ['-=', '-', math((a, b) => a - b), [...basicCompound, 'VB.NET']],
+    ['*=', '*', math((a, b) => a * b), [...basicCompound, 'VB.NET']],
+    ['/=', '/', division(), [...basicCompound, 'VB.NET']],
+    ['%=', '%', remainder, basicCompound],
+    ['//=', '//', division(true), ['Python']],
+    ['**=', '**', power, ['Python', 'JavaScript', 'PHP', 'Ruby', 'Perl']],
+    ['\\=', '\\', division(), ['VB.NET']],
+    ['&=', '&', bitAnd, basicCompound.filter(name => name !== 'Kotlin')],
+    ['|=', '|', bitOr, basicCompound.filter(name => name !== 'Kotlin')],
+    ['^=', '^', bitXor, basicCompound.filter(name => name !== 'Kotlin')],
+    ['<<=', '<<', shift('left'), [...basicCompound.filter(name => name !== 'Kotlin'), 'VB.NET']],
+    ['>>=', '>>', shift('signed'), [...basicCompound.filter(name => name !== 'Kotlin'), 'VB.NET']],
+    ['>>>=', '>>>', shift('unsigned'), ['C#', 'Java', 'JavaScript']],
+    ['and_eq', '&', bitAnd, alternative],
+    ['or_eq', '|', bitOr, alternative],
+    ['xor_eq', '^', bitXor, alternative]
+  ].forEach(([sym, base, fn, langs]) => {
+    let note = '';
+    if (sym === '+=') note = 'W C++ (std::string), C#, Javie, Pythonie i JavaScripcie += może też dopisywać tekst do zmiennej tekstowej.';
+    if (sym === '/=') note = 'Model zachowuje całkowity typ x. W Pythonie, JavaScripcie (Number), PHP i VB.NET /= może zapisać wynik ułamkowy.';
+    if (sym === '%=') note = 'Model używa reszty ze znakiem x. Python i Ruby używają modulo ze znakiem dzielnika.';
+    if (sym.endsWith('_eq')) note = 'W C zapis wymaga nagłówka iso646.h; w C++ jest słowem kluczowym.';
+    add(sym, 'assign', sym, 'Przypisanie z działaniem', compound(fn), langs, `Oblicza x ${base} B i zapisuje wynik w x. Każdy wiersz zaczyna od x = A.`, note, { shape: 'assign', bits: ['&', '|', '^', '<<', '>>', '>>>'].includes(base) });
+  });
+  for (const [id, delta, pre] of [['++x', 1n, true], ['x++', 1n, false], ['--x', -1n, true], ['x--', -1n, false]]) {
+    add(id, 'assign', id, `${pre ? 'Pre' : 'Post'}${delta > 0n ? 'inkrementacja' : 'dekrementacja'}`, increment(delta, pre), ['C', 'C++', 'C#', 'Java', 'JavaScript', 'PHP', 'Perl', 'Kotlin', ...(!pre ? ['Go'] : [])], `Zmienia x o ${delta > 0n ? '+1' : '-1'}. Wartość wyrażenia to ${pre ? 'nowe' : 'poprzednie'} x.`, pre ? '' : 'W Go x++ i x-- są instrukcjami i nie zwracają wartości wyrażenia. Tabela pokazuje też wartość wyrażenia używaną np. w C# i Javie.', { shape: 'inc', uses: ['a'] });
+  }
+
+  add('?:', 'other', '?:', 'Operator warunkowy', conditional, ['C', 'C++', 'C#', 'Java', 'JavaScript', 'PHP', 'Ruby', 'Perl', 'Swift'], 'Wybiera B, gdy A jest prawdą, albo C, gdy A jest fałszem. Obliczana jest tylko wybrana gałąź.', '', { shape: 'tri', uses: ['a', 'b', 'c'] });
+  add('if-else', 'other', 'if ... else', 'Wyrażenie warunkowe', conditional, ['Python'], 'W zapisie B if A else C wybiera B dla prawdy, a C dla fałszu.', 'Najpierw sprawdzany jest warunek A, chociaż zapis zaczyna się od B.', { shape: 'python-tri', uses: ['a', 'b', 'c'] });
+  add('short-ternary', 'other', '?:', 'Skrócony operator warunkowy', (a, b) => ({ final: String(truth(a) ? a : b), raw: truth(a) ? a : b, flag: 'brak' }), ['PHP'], 'W zapisie A ?: B zwraca A, jeśli A jest prawdziwe, a w przeciwnym razie B.', 'Dla liczb 0 jest fałszem. Ten wariant nie korzysta z C.', { shape: 'short-tri' });
+
+  const state = { results: null, args: null, width: 8 };
+  const category = $('category');
+  Object.entries(CATS).forEach(([key, info]) => category.add(new Option(info.name, key)));
+  const selectedOps = () => OPS.filter(op => op.cat === category.value);
+  const element = (tag, text, className) => {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = text;
+    if (className) node.className = className;
+    return node;
+  };
+  const priority = ['C', 'C++', 'C#', 'Java', 'Python', 'JavaScript', 'PHP'];
+  const languageRank = name => {
+    const index = priority.indexOf(name.split(' (')[0]);
+    return index < 0 ? priority.length : index;
+  };
+  function languageList(op) {
+    const block = element('div', undefined, 'op-language-block');
+    block.append(element('strong', 'Języki:'));
+    const list = element('ul', undefined, 'op-language-list');
+    [...new Set(op.languages)].sort((a, b) => languageRank(a) - languageRank(b)).forEach(name => list.append(element('li', name)));
+    block.append(list);
+    return block;
+  }
+  function expression(op, a, b, c) {
+    const sym = op.sym;
+    switch (op.shape) {
+      case 'pre': return `${sym}${/^[a-z]/i.test(sym) ? ' ' : ''}${operand(a)}`;
+      case 'inc': return sym;
+      case 'assign': return `x ${sym} ${operand(b)}`;
+      case 'tri': return `${operand(a)} ? ${operand(b)} : ${operand(c)}`;
+      case 'python-tri': return `${operand(b)} if ${operand(a)} else ${operand(c)}`;
+      case 'short-tri': return `${operand(a)} ?: ${operand(b)}`;
+      default: return `${operand(a)} ${sym} ${operand(b)}`;
+    }
+  }
+  function readInput(id) {
+    const input = $(id);
+    if (input.disabled) return { value: 0n, error: '' };
+    const text = input.value.trim();
+    if (!/^[+-]?\d+$/.test(text)) return { value: null, error: 'nieprawidłowa wartość (wpisz liczbę całkowitą)' };
+    const digits = text.replace(/^[+-]/, '').replace(/^0+/, '');
+    if (digits.length > 10) return { value: null, error: 'nieprawidłowa wartość (poza zakresem)' };
+    const value = BigInt(text), [lo, hi] = range(state.width);
+    return value < lo || value > hi ? { value: null, error: 'nieprawidłowa wartość (poza zakresem)' } : { value, error: '' };
+  }
+  function validateInputs() {
+    let valid = true;
+    for (const id of ['inA', 'inB', 'inC']) {
+      const { error } = readInput(id), input = $(id), message = $(id + 'Error');
+      input.setAttribute('aria-invalid', String(Boolean(error)));
+      input.setCustomValidity(error);
+      message.textContent = error; message.hidden = !error;
+      if (error) valid = false;
+    }
+    $('startBtn').disabled = !valid;
+    return valid;
+  }
+  const inputValues = () => ['inA', 'inB', 'inC'].map(id => readInput(id).value);
+  function renderTable() {
+    const args = state.args || inputValues();
+    $('operatorRows').replaceChildren(...selectedOps().map(op => {
+      const row = element('tr'); row.dataset.operator = op.id;
+      const heading = element('th'); heading.scope = 'row';
+      heading.append(element('code', op.sym, 'op-symbol'), element('span', op.title, 'op-name'));
+      const expr = element('td', undefined, 'op-expression');
+      const valid = op.uses.every(key => args[['a', 'b', 'c'].indexOf(key)] !== null);
+      expr.append(element('code', expression(op, ...(valid ? args : ['A', 'B', 'C']))));
+      if (op.cat === 'assign') expr.append(element('small', `Początkowo x = ${args[0] ?? 'A'}`));
+      const cell = element('td', undefined, 'op-result'), result = state.results?.get(op.id);
+      if (result) {
+        cell.append(element('strong', result.final, 'op-value'));
+        if (result.flag === 'przepełnienie') cell.append(element('small', `Przepełnienie: nowa wartość zawinięta do ${state.width} bitów.`));
+        if (result.note) cell.append(element('small', result.note));
+        if (result.flag !== 'brak') cell.classList.add('op-result-warning');
+        if (op.bits && result.raw !== null) cell.append(element('code', bin(result.raw, state.width), 'op-binary'));
+      } else {
+        cell.append(element('span', '-', 'op-value'), element('small', 'Czeka na Start'));
+        cell.classList.add('op-result-pending');
+      }
+      const explanation = element('td', undefined, 'op-explanation');
+      explanation.append(element('p', op.desc), languageList(op));
+      if (op.note) {
+        const note = element('p', undefined, 'op-note');
+        note.append(element('strong', 'Uwaga: '), document.createTextNode(op.note));
+        explanation.append(note);
+      }
+      row.append(heading, expr, cell, explanation);
+      return row;
+    }));
+    const hasBits = state.results && selectedOps().some(op => op.bits);
+    $('binaryInputs').hidden = !hasBits;
+    if (hasBits) $('binaryInputs').textContent = `Dane binarnie (${state.width} bitów): A = ${bin(args[0], state.width)}, B = ${bin(args[1], state.width)}.`;
+  }
+  function clearResults() {
+    state.results = null; state.args = null;
+    const valid = validateInputs();
+    $('statusText').textContent = valid ? 'Wpisz dane i naciśnij Start' : 'Popraw nieprawidłowe wartości';
+    $('resultSummary').textContent = 'Wyniki pojawią się po naciśnięciu Start. Każdy wiersz korzysta z tych samych danych wejściowych.';
+    renderTable();
+  }
+  function updateSettings() {
+    state.width = Number($('width').value);
+    const info = CATS[category.value];
+    $('lessonTitle').textContent = info.title; $('chartTitle').textContent = info.title;
+    $('operatorCount').textContent = `Liczba operatorów: ${selectedOps().length}`;
+    $('categoryDescription').textContent = info.description;
+    $('categoryExercise').textContent = info.exercise; $('categoryHint').textContent = info.hint;
+    $('tableCaption').textContent = `${info.title} - wspólne dane, niezależne wyniki`;
+    const hasThirdInput = selectedOps().some(op => op.uses.includes('c'));
+    $('fieldC').hidden = !hasThirdInput; $('inC').disabled = !hasThirdInput;
+    $('labelA').textContent = hasThirdInput ? 'A - warunek' : category.value === 'assign' ? 'A - początkowa wartość x' : 'Wartość A';
+    $('labelB').textContent = hasThirdInput ? 'B - gdy warunek jest prawdziwy' : 'Wartość B';
+    const [lo, hi] = range(state.width);
+    $('rangeHint').textContent = `Wpisz liczby całkowite od ${lo} do ${hi} (${state.width} bitów ze znakiem).`;
+    clearResults();
+  }
+  $('calculatorForm').addEventListener('submit', event => {
+    event.preventDefault();
+    if (!validateInputs()) return;
+    const args = inputValues(); state.args = args;
+    state.results = new Map(selectedOps().map(op => [op.id, op.exec(...args, state.width)]));
+    renderTable();
+    $('statusText').textContent = `Gotowe · obliczono ${state.results.size} działań`;
+    $('resultSummary').textContent = `Wyniki dla A = ${args[0]}, B = ${args[1]}${!$('inC').disabled ? `, C = ${args[2]}` : ''}; szerokość: ${state.width} bitów.${category.value === 'assign' ? ' Każdy wiersz zaczyna od x = A.' : ''}`;
+  });
+  category.addEventListener('change', updateSettings);
+  $('width').addEventListener('change', updateSettings);
+  for (const id of ['inA', 'inB', 'inC']) $(id).addEventListener('input', clearResults);
+  $('clearBtn').addEventListener('click', clearResults);
+  updateSettings();
+})();
+    </script>
+  </body>
+</html>

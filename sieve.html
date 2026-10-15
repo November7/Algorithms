@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Sito Eratostenesa</h1><p>Zamiast sprawdzać, czy każda liczba jest pierwsza, wykreślaj to, co na pewno pierwsze nie jest. Weź najmniejszą nieskreśloną liczbę i skreśl jej wielokrotności; to, co zostanie, to liczby pierwsze.</p></div>
         <span class="badge">Liczby pierwsze · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Sito Eratostenesa</h2></div><span class="tag">Teoria liczb</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n log log n)</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Osobne testy dzielników</dt><dd>O(n√n)</dd></div><div><dt>Granica pętli</dt><dd>p² ≤ n</dd></div><div><dt>Wynik</dt><dd>Wszystkie liczby pierwsze ≤ n</dd></div></dl>
+        <p class="complexity-note">n to górna granica zakresu. Sito jest najlepsze, gdy potrzebujemy wszystkich liczb pierwszych w zakresie, a nie testu jednej liczby.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Znajduje wszystkie liczby pierwsze nie większe niż n. Liczba pierwsza jest większa od 1 i ma dokładnie dwa dodatnie dzielniki: 1 oraz samą siebie. Zamiast osobno testować każdą liczbę, wykreślamy wielokrotności kolejnych liczb pierwszych. Na przykład przy 2 wykreślamy 4, 6, 8…; przy 3 wykreślamy 9, 12, 15…. Liczby, które pozostaną, tworzą wynik.</p><ol>
+              <li>Rozpatrz liczby od 2 do n i początkowo żadnej nie skreślaj. Liczby 0 i 1 nie są pierwsze, więc nie są kandydatami.</li>
+              <li>Wybierz kolejną, większą od poprzednio użytej, nieskreśloną liczbę p, zaczynając od 2. Jest pierwsza, bo nie ma mniejszego dzielnika pierwszego.</li>
+              <li>Skreśl wielokrotności p: p², p² + p, p² + 2p… aż do n. Wariant podstawowy zaczyna od 2p i wykonuje część skreśleń ponownie.</li>
+              <li>Przejdź do następnej nieskreślonej liczby. Gdy jej kwadrat przekroczy n, zakończ wykreślanie: wszystkie nieskreślone liczby w zakresie są pierwsze.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Każda liczba złożona m ma dzielnik pierwszy nie większy niż √m, więc zostanie skreślona przez jedną z liczb pierwszych p ≤ √m, które rozpatrzymy. Liczba, której nikt nie skreślił, nie ma takiego dzielnika, więc jest pierwsza.</p><h3>Dlaczego p²?</h3><p>Mniejsze wielokrotności p, czyli k·p dla 2 ≤ k &lt; p, mają mniejszy czynnik pierwszy niż p i zostały już skreślone. Na przykład przy p = 5 liczby 10, 15 i 20 wykreślono wcześniej przy 2 lub 3. Pierwszą nową liczbą do skreślenia może być dopiero 25, czyli 5².</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy rozkładzie na czynniki pierwsze, w kryptografii (wstępne generowanie liczb pierwszych), w zadaniach z teorii liczb oraz jako klasyczny przykład algorytmu o niemal liniowym czasie.</p></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields four">
           <div class="field"><label for="scenario">Zakres</label><select id="scenario"><option value="example">Przykład: do 50</option><option value="small">Mały zakres: do 30</option><option value="large">Duży zakres: do 100</option><option value="custom">Własna granica</option></select></div>
@@ -30,7 +46,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Siatka liczb od 2 do n</h2></div><span id="statusText" role="status">Gotowe</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Siatka liczb od 2 do n</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <div class="lab-viewport"><div id="grid" class="lab-sieve-grid" role="grid" aria-label="Siatka liczb do wykreślenia"></div></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Bieżąca liczba pierwsza p</span><span><i class="lab-key rejected" aria-hidden="true"></i>Skreślona wielokrotność</span><span><i class="lab-key accepted" aria-hidden="true"></i>Liczba pierwsza</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
@@ -44,16 +60,6 @@
         <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Liczby pierwsze</h2><p id="phaseText">Liczby pierwsze pojawią się tutaj, gdy algorytm je potwierdzi.</p><ol id="chosen" class="graph-tokens" aria-label="Znalezione liczby pierwsze"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
         <details class="data-details"><summary>Reguła algorytmu</summary><p>Zacznij od zbioru {2, …, n}. Dopóki p² ≤ n: weź najmniejszą nieskreśloną liczbę p, skreśl p², p² + p, p² + 2p, … aż do n. Wszystkie nieskreślone liczby są pierwsze. Mniejsze wielokrotności p zostały już skreślone przez mniejsze liczby pierwsze.</p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Sito Eratostenesa</h2></div><span class="tag">Teoria liczb</span></div>
-        <dl class="complexity"><div><dt>Czas</dt><dd>O(n log log n)</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Osobne testy dzielników</dt><dd>O(n√n)</dd></div><div><dt>Granica pętli</dt><dd>p² ≤ n</dd></div><div><dt>Wynik</dt><dd>Wszystkie liczby pierwsze ≤ n</dd></div></dl>
-        <p class="complexity-note">n to górna granica zakresu. Sito jest najlepsze, gdy potrzebujemy wszystkich liczb pierwszych w zakresie, a nie testu jednej liczby.</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Wypisz liczby od 2 do n i żadnej nie skreślaj.</li><li>Weź najmniejszą nieskreśloną liczbę p - jest pierwsza.</li><li>Skreśl jej wielokrotności, zaczynając od p².</li><li>Powtarzaj, aż p² będzie większe niż n.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Każda liczba złożona m ma dzielnik pierwszy nie większy niż √m, więc zostanie skreślona przez jedną z liczb pierwszych, które sprawdzimy. Liczba, której nikt nie skreślił, nie ma takiego dzielnika.</p><h3>Dlaczego p²?</h3><p>Mniejsze wielokrotności p mają mniejszy czynnik pierwszy i zostały już skreślone wcześniej.</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>Przy rozkładzie na czynniki pierwsze, w kryptografii (wstępne generowanie liczb pierwszych), w zadaniach z teorii liczb oraz jako klasyczny przykład algorytmu o niemal liniowym czasie.</p></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

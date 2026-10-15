@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Odległość edycyjna (Levenshtein)</h1><p>Ile najmniej poprawek dzieli jedno słowo od drugiego? Obserwuj, jak tabela podproblemów zamienia „kot” w „kołtun”, a potem odczytaj konkretne wstawienia, usunięcia i zamiany.</p></div>
         <span class="badge">Levenshtein · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Odległość edycyjna</h2></div><span class="tag">Programowanie dynamiczne</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n · m)</dd></div><div><dt>Pamięć</dt><dd>O(n · m)</dd></div><div><dt>Sama wartość</dt><dd>O(min(n, m)) pamięci</dd></div><div><dt>Operacje</dt><dd>Wstaw, usuń, zamień</dd></div><div><dt>Odtwarzanie</dt><dd>O(n + m)</dd></div></dl>
+        <p class="complexity-note">n i m to długości słów. Pełna tabela jest potrzebna tylko do odtworzenia listy operacji; samą odległość można policzyć, trzymając dwa wiersze.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Mierzy, ile pojedynczych zmian potrzeba, aby zamienić jedno słowo w drugie. Dozwolone są wstawienie litery, usunięcie litery i zamiana litery na inną; każda operacja kosztuje 1. Na przykład „kot” → „kod” wymaga jednej zamiany. Zamiast sprawdzać wszystkie możliwe ciągi zmian, zapisujemy w tabeli wyniki dla krótszych początków słów, czyli prefiksów. To przykład programowania dynamicznego: większy wynik budujemy z już obliczonych mniejszych.</p><ol>
+              <li>Komórka w wierszu i i kolumnie j oznacza najmniejszy koszt zamiany pierwszych i liter źródła na pierwsze j liter celu. Wpisz w pierwszy wiersz 0, 1, 2… wstawień, a w pierwszą kolumnę 0, 1, 2… usunięć.</li>
+              <li>Wypełniaj tabelę wierszami. Dla każdej komórki rozważ wynik z góry + 1 za usunięcie, z lewej + 1 za wstawienie oraz z przekątnej za dopasowanie ostatnich liter.</li>
+              <li>Do wyniku z przekątnej dodaj 0, jeśli litery są takie same, albo 1 za ich zamianę. Wpisz najmniejszy z trzech kosztów. Prawy dolny róg daje odległość całych słów.</li>
+              <li>Aby odtworzyć zmiany, cofaj się od prawego dolnego rogu do komórki, z której pochodzi wybrany koszt. Odczytane w odwrotnej kolejności kroki opisują zamianę źródła w cel.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Ostatni znak słowa źródłowego jest albo dopasowany lub zamieniony, albo usunięty, albo trzeba dopisać ostatni znak docelowy. Każdy z tych przypadków sprowadza się do mniejszego, już policzonego podproblemu.</p><h3>Remisy</h3><p>Gdy kilka operacji daje to samo minimum, może istnieć kilka różnych list zmian o tej samej najmniejszej długości. Sama odległość pozostaje jednoznaczna. Przy remisie wybieramy przekątną (zgodność lub zamianę), następnie usunięcie, a na końcu wstawienie.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy sprawdzaniu pisowni i podpowiedziach „czy chodziło o…?”, porównywaniu sekwencji DNA, wykrywaniu zmian między wersjami tekstu oraz w wyszukiwaniu przybliżonym.</p></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields four">
           <div class="field"><label for="scenario">Zestaw słów</label><select id="scenario"><option value="example">Przykład: kitten → sitting</option><option value="same">Identyczne słowa</option><option value="empty">Jedno słowo puste</option><option value="custom">Własne słowa</option></select></div>
@@ -30,7 +46,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela odległości</h2></div><span id="statusText" role="status">Gotowe</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Tabela odległości</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <p class="lab-table-hint" id="tableHint">D[i, j] to najmniejsza liczba operacji zamieniająca pierwsze i liter słowa źródłowego w pierwsze j liter słowa docelowego.</p>
           <div class="lab-dp-viewport" tabindex="0" role="region" aria-label="Przewijana tabela programowania dynamicznego" aria-describedby="tableHint"><table id="dpTable" class="graph-table lab-dp"><caption>Wiersze: litery słowa źródłowego · kolumny: litery słowa docelowego</caption><thead id="dpHead"></thead><tbody id="dpBody"></tbody></table></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Obliczana / odtwarzana</span><span><i class="lab-key ready" aria-hidden="true"></i>Odczytywane sąsiednie komórki</span><span><i class="lab-key accepted" aria-hidden="true"></i>Ścieżka przekształcenia</span></div>
@@ -45,16 +61,6 @@
         <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Przekształcenie słowa</h2><p id="phaseText">Najpierw wypełnimy tabelę, potem odczytamy operacje.</p><ol id="chosen" class="graph-tokens" aria-label="Kolejne operacje edycyjne"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
         <details class="data-details"><summary>Reguła przejścia</summary><p>D[i, 0] = i oraz D[0, j] = j. Dla pozostałych komórek: D[i, j] = min(D[i − 1, j] + 1, D[i, j − 1] + 1, D[i − 1, j − 1] + (A[i] ≠ B[j] ? 1 : 0)).</p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Odległość edycyjna</h2></div><span class="tag">Programowanie dynamiczne</span></div>
-        <dl class="complexity"><div><dt>Czas</dt><dd>O(n · m)</dd></div><div><dt>Pamięć</dt><dd>O(n · m)</dd></div><div><dt>Sama wartość</dt><dd>O(min(n, m)) pamięci</dd></div><div><dt>Operacje</dt><dd>Wstaw, usuń, zamień</dd></div><div><dt>Odtwarzanie</dt><dd>O(n + m)</dd></div></dl>
-        <p class="complexity-note">n i m to długości słów. Pełna tabela jest potrzebna tylko do odtworzenia listy operacji; samą odległość można policzyć, trzymając dwa wiersze.</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Zamiana pustego słowa na prefiks długości j kosztuje j wstawień, a odwrotnie - j usunięć.</li><li>Dla każdej pary prefiksów wybierz najtańszą z trzech operacji na ostatnim znaku.</li><li>Zgodne litery nie kosztują nic, różne kosztują 1 za zamianę.</li><li>Od prawego dolnego rogu cofaj się do komórki, z której pochodzi minimum.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Ostatni znak słowa źródłowego jest albo dopasowany, albo zamieniony, albo usunięty, albo trzeba dopisać ostatni znak docelowy. Każdy z tych przypadków sprowadza się do mniejszego, już policzonego podproblemu.</p><h3>Remisy</h3><p>Gdy kilka operacji daje to samo minimum, wynik nie jest jedyny. Przy remisie wybieramy przekątną (zgodność lub zamianę), następnie usunięcie, a na końcu wstawienie.</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>Przy sprawdzaniu pisowni i podpowiedziach „czy chodziło o…?”, porównywaniu sekwencji DNA, wykrywaniu zmian między wersjami tekstu oraz w wyszukiwaniu przybliżonym.</p></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

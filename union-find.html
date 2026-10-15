@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Union-Find (zbiory rozłączne)</h1><p>Struktura, która błyskawicznie odpowiada, czy dwa elementy należą do tej samej grupy, i potrafi grupy łączyć. To właśnie ona działa w środku algorytmu Kruskala. Zobacz, jak drzewa się spłaszczają.</p></div>
         <span class="badge">Find · Union · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Union-Find</h2></div><span class="tag">Struktura danych</span></div>
+        <dl class="complexity"><div><dt>find / union</dt><dd>O(α(n)) zamortyzowane (z obiema optymalizacjami)</dd></div><div><dt>Naiwnie</dt><dd>O(n) w najgorszym razie</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Optymalizacje</dt><dd>Ranga, kompresja ścieżek</dd></div><div><dt>Tworzenie</dt><dd>O(n)</dd></div></dl>
+        <p class="complexity-note">n oznacza liczbę elementów. Przy obu optymalizacjach koszt opisuje bardzo wolno rosnąca funkcja α(n), więc w praktyce operacje są niemal stałoczasowe. „Zamortyzowane” oznacza koszt rozłożony na całą serię operacji: pojedyncze wyszukanie może trwać dłużej, ale skraca drogę następnym. Bez optymalizacji drzewo może stać się długim łańcuchem.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Przechowuje podział elementów na rozłączne grupy: każdy element należy do dokładnie jednej z nich. Operacja find wskazuje reprezentanta grupy, a union łączy dwie grupy w jedną. Można myśleć o zespołach, które stopniowo się łączą. Każdą grupę zapisujemy jako drzewo odsyłaczy do rodzica, a reprezentantem jest korzeń. Dwa elementy należą do tej samej grupy wtedy i tylko wtedy, gdy find prowadzi do tego samego korzenia.</p><ol>
+              <li>Na początku każdy element jest osobną grupą i wskazuje sam siebie jako rodzica. Jest więc korzeniem własnego drzewa.</li>
+              <li>Aby wykonać find, idź po odsyłaczach do rodzica, aż trafisz na korzeń. Przy włączonej kompresji ścieżek podepnij odwiedzone elementy bezpośrednio pod niego, skracając przyszłe wyszukiwania.</li>
+              <li>Aby wykonać union, znajdź korzenie obu elementów. Jeśli są takie same, nic nie zmieniaj: elementy już należą do jednej grupy.</li>
+              <li>Jeśli korzenie są różne, połącz je. Przy łączeniu według rangi podepnij korzeń o mniejszej randze pod ten o większej; przy równych rangach wybierz jeden korzeń i zwiększ jego rangę o 1. Ranga pomaga ocenić wysokość drzewa.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Łączenie według rangi nie pozwala drzewom szybko rosnąć wzwyż, a kompresja skraca ścieżki dla przyszłych zapytań. Razem dają koszt prawie stały na operację. Po kompresji ranga jest tylko górnym ograniczeniem wysokości, a nie jej dokładną wartością.</p><h3>Czego nie umie?</h3><p>Podstawowa wersja nie rozdziela zbiorów: raz połączone elementy zostają razem. Dlatego dobrze obsługuje dodawanie połączeń, ale nie wystarcza do prostego usuwania połączenia i sprawdzania, czy grupa rozpadła się na części.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>W algorytmie Kruskala, przy wykrywaniu cykli w grafach nieskierowanych, w analizie spójnych składowych oraz w zadaniach typu „czy te dwa punkty są już połączone?”.</p></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields four">
           <div class="field"><label for="scenario">Ciąg operacji</label><select id="scenario"><option value="example">Przykład: kilka połączeń</option><option value="chain">Długi łańcuch (najgorszy przypadek)</option><option value="balanced">Łączenie parami</option><option value="random">Losowy</option></select></div>
@@ -31,7 +47,7 @@
       <div class="main-column lab-results">
         <section class="panel lab-table-panel" aria-labelledby="queueTitle"><h2 id="queueTitle">Kolejka operacji</h2><p>Operacje wykonywane po kolei. Bieżąca jest wyróżniona.</p><ol id="operations" class="graph-tokens" aria-labelledby="queueTitle"></ol></section>
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Las drzew zbiorów</h2></div><span id="statusText" role="status">Gotowe</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Las drzew zbiorów</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="group" aria-label="Las drzew reprezentujących zbiory rozłączne"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Element w operacji</span><span><i class="lab-key ready" aria-hidden="true"></i>Odwiedzana ścieżka</span><span><i class="lab-key accepted" aria-hidden="true"></i>Korzeń zbioru</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
@@ -45,16 +61,6 @@
         <section class="panel lab-table-panel" aria-labelledby="arrayTitle"><h2 id="arrayTitle">Tablica rodziców</h2><p>parent[i] wskazuje rodzica elementu i. Korzeń wskazuje na siebie.</p><table id="parentTable" class="graph-table"><caption>Element · rodzic · ranga</caption><thead id="parentHead"></thead><tbody id="parentBody"></tbody></table><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
         <details class="data-details"><summary>Reguły operacji</summary><p>find(x): idź do rodzica, aż trafisz na korzeń; przy kompresji ścieżek podepnij każdy odwiedzony element bezpośrednio pod korzeń. union(a, b): znajdź korzenie obu elementów i podepnij korzeń niższego drzewa (o mniejszej randze) pod korzeń wyższego.</p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Union-Find</h2></div><span class="tag">Struktura danych</span></div>
-        <dl class="complexity"><div><dt>find / union</dt><dd>O(α(n)) zamortyzowane</dd></div><div><dt>Naiwnie</dt><dd>O(n) w najgorszym razie</dd></div><div><dt>Pamięć</dt><dd>O(n)</dd></div><div><dt>Optymalizacje</dt><dd>Ranga, kompresja ścieżek</dd></div><div><dt>Tworzenie</dt><dd>O(n)</dd></div></dl>
-        <p class="complexity-note">α(n) to odwrotność funkcji Ackermanna, która dla każdego realnego n jest nie większa niż 4, więc koszt jest praktycznie stały. Bez optymalizacji drzewo może zdegenerować się do łańcucha.</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Na początku każdy element jest własnym zbiorem i własnym korzeniem.</li><li>find idzie do korzenia; elementy mają ten sam zbiór, gdy mają ten sam korzeń.</li><li>union łączy dwa drzewa, podpinając niższe pod wyższe.</li><li>Kompresja ścieżek spłaszcza drzewo przy okazji każdego find.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Łączenie według rangi nie pozwala drzewom szybko rosnąć wzwyż, a kompresja skraca ścieżki dla przyszłych zapytań. Razem dają koszt prawie stały na operację.</p><h3>Czego nie umie?</h3><p>Nie rozdziela zbiorów: raz połączone elementy zostają razem.</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>W algorytmie Kruskala, przy wykrywaniu cykli w grafach nieskierowanych, w analizie spójnych składowych oraz w zadaniach typu „czy te dwa punkty są już połączone?”.</p></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Kopiec binarny (kolejka priorytetowa)</h1><p>W kopcu min najmniejszy element czeka na samej górze; w kopcu max - największy. Zobacz, jak kopiec utrzymuje ten porządek, gdy dodajesz i usuwasz elementy, i jak drzewo mieści się w zwykłej tablicy.</p></div>
         <span class="badge">Kopiec min / max · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Kopiec binarny</h2></div><span class="tag">Struktura danych</span></div>
+        <dl class="complexity"><div><dt>Odczyt korzenia</dt><dd>O(1)</dd></div><div><dt>Wstawianie</dt><dd>O(log n)</dd></div><div><dt>Usuwanie korzenia</dt><dd>O(log n)</dd></div><div><dt>Budowa z tablicy</dt><dd>O(n)</dd></div><div><dt>Pamięć</dt><dd>O(n), bez wskaźników</dd></div></dl>
+        <p class="complexity-note">n to liczba elementów. Kopiec jest drzewem prawie pełnym, więc ma wysokość ⌊log₂ n⌋. Sortowanie przez kopcowanie to n usunięć korzenia: O(n log n).</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Kopiec pozwala szybko wybrać najmniejszy albo największy element z kolekcji. Ma kształt drzewa wypełnianego poziomami od lewej do prawej; każdy rodzic ma najwyżej dwoje dzieci. W kopcu min rodzic jest nie większy od dzieci, więc minimum leży w korzeniu, na samej górze. W kopcu max nierówność jest odwrotna i w korzeniu leży maksimum. Między rodzeństwem nie wymagamy żadnej kolejności.</p><ol>
+              <li>Przechowuj drzewo w tablicy, poziom po poziomie. Przy indeksach od 0 dzieci pozycji i są na 2i + 1 i 2i + 2, o ile te pozycje istnieją; rodzic dla i &gt; 0 jest na ⌊(i − 1)/2⌋.</li>
+              <li>Wstaw nowy element na końcu tablicy. Porównuj go z rodzicem i zamieniaj, gdy narusza warunek kopca: w kopcu min, gdy jest mniejszy, a w max, gdy większy. To przesuwanie w górę.</li>
+              <li>Aby usunąć korzeń, zastąp go ostatnim elementem i skróć tablicę. Przesuwaj nowy korzeń w dół, zamieniając go z mniejszym dzieckiem w kopcu min lub większym w max, dopóki porządek nie zostanie przywrócony.</li>
+              <li>Aby zbudować kopiec z gotowej tablicy, naprawiaj go od ostatniego rodzica ku korzeniowi. Nie trzeba wstawiać każdej wartości osobno.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Każda naprawa dotyczy jednej ścieżki między liściem a korzeniem, a ta ma długość najwyżej log₂ n. Pozostałe elementy nie wymagają poprawek, więc warunek kopca pozostaje spełniony.</p><h3>Czego nie umie?</h3><p>Szybko znajduje tylko skrajny element. Wyszukiwanie dowolnej wartości wymaga przejrzenia wielu elementów, O(n).</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>W kolejkach priorytetowych, algorytmie Dijkstry, planowaniu zadań, wyznaczaniu k największych elementów oraz w sortowaniu przez kopcowanie.</p></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields four">
           <div class="field"><label for="scenario">Ciąg operacji</label><select id="scenario"><option value="example">Przykład: wstaw i usuń minimum</option><option value="build">Budowa kopca z tablicy</option><option value="sorted">Wstawianie rosnące (bez zamian dla min)</option><option value="heapsort">Sortowanie przez kopcowanie</option></select></div>
@@ -30,7 +46,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Kopiec jako drzewo</h2></div><span id="statusText" role="status">Gotowe</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Kopiec jako drzewo</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <div class="lab-viewport"><svg id="board" class="lab-board" viewBox="0 0 640 360" role="group" aria-label="Kopiec binarny narysowany jako drzewo"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Przesuwany element</span><span><i class="lab-key ready" aria-hidden="true"></i>Porównywany sąsiad</span><span><i class="lab-key accepted" aria-hidden="true"></i>Element na miejscu</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start, wstaw wartość lub wykonaj pierwszy krok.</p>
@@ -45,16 +61,6 @@
         <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Kolejność wyjmowania</h2><p id="phaseText">Wyjęte korzenie pojawią się tutaj, w kolejności priorytetu.</p><ol id="chosen" class="graph-tokens" aria-label="Wyjęte elementy"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
         <details class="data-details"><summary>Reguły operacji</summary><p>Wstawianie: dopisz element na końcu tablicy i przesuwaj go w górę, dopóki jest mniejszy od rodzica. Usuwanie korzenia: zastąp korzeń ostatnim elementem, skróć kopiec i przesuwaj nowy korzeń w dół, zamieniając go z mniejszym dzieckiem, dopóki któreś dziecko jest od niego mniejsze.</p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Kopiec binarny</h2></div><span class="tag">Struktura danych</span></div>
-        <dl class="complexity"><div><dt>Odczyt korzenia</dt><dd>O(1)</dd></div><div><dt>Wstawianie</dt><dd>O(log n)</dd></div><div><dt>Usuwanie korzenia</dt><dd>O(log n)</dd></div><div><dt>Budowa z tablicy</dt><dd>O(n)</dd></div><div><dt>Pamięć</dt><dd>O(n), bez wskaźników</dd></div></dl>
-        <p class="complexity-note">n to liczba elementów. Kopiec jest drzewem prawie pełnym, więc ma wysokość ⌊log₂ n⌋. Sortowanie przez kopcowanie to n usunięć korzenia: O(n log n).</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Warunek kopca: rodzic nie jest większy od żadnego dziecka (kopiec min).</li><li>Wstawiany element ląduje na końcu i „wypływa” w górę.</li><li>Po usunięciu korzenia jego miejsce zajmuje ostatni element i „tonie” w dół.</li><li>Drzewo mieści się w tablicy, bo indeksy rodzica i dzieci wynikają z arytmetyki.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Każda naprawa dotyczy jednej ścieżki od liścia do korzenia, a ta ma długość najwyżej log₂ n. Reszta kopca nie jest naruszona, więc warunek pozostaje spełniony.</p><h3>Czego nie umie?</h3><p>Szybko znajduje tylko skrajny element. Wyszukiwanie dowolnej wartości wymaga przejrzenia wielu elementów, O(n).</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>W kolejkach priorytetowych, algorytmie Dijkstry, planowaniu zadań, wyznaczaniu k największych elementów oraz w sortowaniu przez kopcowanie.</p></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

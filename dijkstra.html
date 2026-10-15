@@ -25,6 +25,40 @@
         </div>
         <span class="badge">Najkrótsze ścieżki · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Algorytm Dijkstry</h2></div>
+          <span class="tag">Relaksacja krawędzi</span>
+        </div>
+        <dl class="complexity">
+          <div><dt>Reprezentacja</dt><dd>Listy sąsiedztwa</dd></div>
+          <div><dt>Czas</dt><dd>O(V² + E)</dd></div>
+          <div><dt>Pamięć</dt><dd>O(V + E)</dd></div>
+          <div><dt>Wagi</dt><dd>Nieujemne</dd></div>
+        </dl>
+        <p class="complexity-note">Ta wersja liniowo wyszukuje najbliższy nieustalony wierzchołek, dlatego jej czas wynosi O(V² + E). Kopiec priorytetowy pozwala uzyskać O((V + E) log V). V oznacza liczbę wierzchołków, a E – liczbę krawędzi.</p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <p>Wyznacza najtańsze drogi od wybranego startu, gdy wszystkie wagi krawędzi są nieujemne. Wierzchołki można wyobrazić sobie jako miasta, a wagi jako długości dróg. Dla każdego miasta zapisujemy najlepszą dotąd znalezioną odległość. Zawsze wybieramy najbliższe miasto, którego wyniku jeszcze nie zatwierdziliśmy, i sprawdzamy, czy przejście przez nie poprawia dojazd do sąsiadów.</p>
+            <ol>
+              <li>Ustaw odległość startu na 0, a pozostałych wierzchołków na nieskończoność: droga do nich nie jest jeszcze znana.</li>
+              <li>Wybierz spośród nieustalonych wierzchołków ten o najmniejszej skończonej odległości. Zatwierdź jego wynik — przy nieujemnych wagach nie będzie już krótszej drogi.</li>
+              <li>Dla każdego sąsiada dodaj odległość do wybranego wierzchołka i wagę łączącej ich krawędzi. Jeśli suma jest mniejsza od dotychczasowego wyniku sąsiada, popraw go i zapisz poprzednika. To relaksacja krawędzi.</li>
+              <li>Powtarzaj, aż zabraknie osiągalnych nieustalonych wierzchołków. Zapisani poprzednicy pozwalają odtworzyć drogę od celu do startu; nieskończoność oznacza brak drogi.</li>
+            </ol>
+          </div>
+          <div>
+            <h3>Dlaczego to działa?</h3>
+            <p>Wybieramy najmniejszą znaną odległość spośród jeszcze niezatwierdzonych wyników. Droga, która miałaby ją poprawić, musiałaby najpierw wyjść z obszaru już zatwierdzonych wierzchołków. Takie wyjścia zostały sprawdzone i żadne nie daje mniejszego kosztu niż właśnie wybrany. Dalsze krawędzie mają nieujemne wagi, więc nie obniżą tego kosztu. Dlatego wybrany wynik można zatwierdzić. Na przykład dojście o koszcie 5 i dalsza krawędź o wadze 2 dają 7, nigdy mniej niż 5.</p>
+          </div>
+          <div>
+            <h3>Ograniczenia i zastosowania</h3>
+            <p>Ujemne wagi łamią założenie algorytmu – do takich grafów służy m.in. algorytm Bellmana-Forda. Dijkstra jest używana w nawigacji, routingu sieciowym i wyznaczaniu kosztu dojścia w grafach.</p>
+            <div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Ustaw różne wierzchołki startowy i docelowy. Zatrzymuj animację przed końcem i obserwuj, jak odległość tymczasowa zmienia się po znalezieniu krótszej drogi.</p></div>
+          </div>
+        </div>
+      </section>
       <section class="panel dijkstra-controls" aria-label="Ustawienia i sterowanie">
         <div class="dijkstra-fields">
           <div class="field">
@@ -62,7 +96,7 @@
       <div class="main-column dijkstra-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
           <div class="chart-heading">
-            <div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf i badane krawędzie</h2></div>
+            <div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Graf i badane krawędzie</h2></div>
             <span id="statusText" role="status">Gotowy</span>
           </div>
           <div class="dijkstra-viewport" tabindex="0" role="region" aria-label="Graf ważony - przewijany widok">
@@ -103,39 +137,6 @@
           <p id="pathText">Wybierz wierzchołek startowy i cel, aby rozpocząć.</p>
         </details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header">
-          <div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Algorytm Dijkstry</h2></div>
-          <span class="tag">Relaksacja krawędzi</span>
-        </div>
-        <dl class="complexity">
-          <div><dt>Reprezentacja</dt><dd>Listy sąsiedztwa</dd></div>
-          <div><dt>Czas</dt><dd>O(V² + E)</dd></div>
-          <div><dt>Pamięć</dt><dd>O(V + E)</dd></div>
-          <div><dt>Wagi</dt><dd>Nieujemne</dd></div>
-        </dl>
-        <p class="complexity-note">Ta wersja liniowo wyszukuje najbliższy nieustalony wierzchołek, dlatego jej czas wynosi O(V² + E). Kopiec priorytetowy pozwala uzyskać O((V + E) log V). V oznacza liczbę wierzchołków, a E - liczbę krawędzi.</p>
-        <div class="lesson-columns">
-          <div>
-            <h3>Jak to działa?</h3>
-            <ol>
-              <li>Ustaw odległość startu na 0, a pozostałych wierzchołków na nieskończoność.</li>
-              <li>Wybierz nieustalony wierzchołek o najmniejszej znanej odległości i ustal tę odległość.</li>
-              <li>Dla każdego sąsiada sprawdź, czy droga przez wybrany wierzchołek jest krótsza. Jeśli tak, zaktualizuj odległość i poprzednika.</li>
-              <li>Powtarzaj, aż nie będzie można wybrać kolejnego osiągalnego wierzchołka.</li>
-            </ol>
-          </div>
-          <div>
-            <h3>Dlaczego to działa?</h3>
-            <p>Wszystkie wagi są nieujemne, więc droga, która opuszcza wierzchołek o najmniejszej tymczasowej odległości, nie może później poprawić jego wyniku. Możemy bezpiecznie uznać go za ostateczny, a następnie sprawdzić jego sąsiadów.</p>
-          </div>
-          <div>
-            <h3>Ograniczenia i zastosowania</h3>
-            <p>Ujemne wagi łamią założenie algorytmu - do takich grafów służy m.in. algorytm Bellmana-Forda. Dijkstra jest używana w nawigacji, routingu sieciowym i wyznaczaniu kosztu dojścia w grafach.</p>
-            <div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Ustaw różne wierzchołki startowy i docelowy. Zatrzymuj animację przed końcem i obserwuj, jak odległość tymczasowa zmienia się po znalezieniu krótszej drogi.</p></div>
-          </div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

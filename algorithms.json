@@ -94,5 +94,11 @@
     "description": "Rekurencyjne przenoszenie krążków, stos wywołań i minimalna liczba ruchów 2ⁿ − 1.",
     "url": "hanoi.html",
     "status": "published"
+  },
+  {
+    "title": "Operatory w językach programowania",
+    "description": "Operatory arytmetyczne, relacji, logiczne, bitowe i przypisania krok po kroku, z różnicami między językami.",
+    "url": "operators.html",
+    "status": "published"
   }
 ]

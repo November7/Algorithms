@@ -25,11 +25,28 @@
         </div>
         <span class="badge">2 algorytmy · jeden graf</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle"></h2></div><span class="tag" id="family"></span></div>
+        <dl class="complexity" id="complexity"></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E to liczba krawędzi. Dla list sąsiedztwa pełne przejście ma czas Θ(V + E) i pamięć pomocniczą O(V), bez grafu wejściowego. Przy przejściu tylko jednej składowej przeglądamy jej wierzchołki i krawędzie; tablice stanu w tej symulacji nadal zajmują O(V). Opis poniżej dotyczy algorytmu wybranego w kroku „02 / Wybierz algorytm”.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3><p id="description"></p><ol id="steps"></ol></div>
+          <div><h3>Zalety</h3><p id="pros"></p><h3>Ograniczenia</h3><p id="cons"></p></div>
+          <div><h3>Kiedy się przydaje?</h3><p id="uses"></p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p id="exercise"></p></div></div>
+        </div>
+        <details class="glossary">
+          <summary>Składowe, drzewo przeszukiwania i odległości</summary>
+          <div class="glossary-grid">
+            <div><h3>Graf niespójny</h3><p>Ze startu można dotrzeć tylko do jego składowej. W trybie „Cały graf” po jej przejściu wybieramy najmniejszy nieodkryty numer jako nowy korzeń. Nie istnieje krawędź łącząca te korzenie.</p></div>
+            <div><h3>Drzewo przeszukiwania</h3><p>Krawędź, przez którą odkrywamy wierzchołek, łączy go z rodzicem. Te krawędzie tworzą drzewo, a przy wielu składowych – las. Pozostałe krawędzie nadal należą do grafu.</p></div>
+            <div><h3>BFS a DFS</h3><p>BFS wyznacza najkrótszą odległość w liczbie krawędzi od korzenia danej składowej. DFS pokazuje głębokość w swoim drzewie, która nie musi być najkrótszą odległością. Korzeń ma wartość 0, a nieodkryty wierzchołek – kreskę.</p></div>
+          </div>
+        </details>
+      </section>
       <div class="workspace">
         <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
-          <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
+          <h2 class="section-label" id="algorithmsTitle">02 / Wybierz algorytm</h2>
           <div id="algorithmList"></div>
-          <!-- <p class="sidebar-note">Wybierz ⓘ, aby przeczytać krótkie objaśnienie. Zmiana algorytmu zachowuje graf i wierzchołek startowy.</p> -->
           <p class="sidebar-note">Graf jest nieskierowany i nieważony. Sąsiadów sprawdzamy zawsze według rosnących numerów.</p>
         </aside>
         <section class="panel controls" aria-label="Ustawienia i sterowanie">
@@ -79,7 +96,7 @@
         <div class="main-column graph-results">
           <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
             <div class="chart-heading">
-              <div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Przeszukiwanie wszerz (BFS)</h2></div>
+              <div><div class="eyebrow">03 / Obserwuj działanie</div><h2 id="chartTitle">Przeszukiwanie wszerz (BFS)</h2></div>
               <span id="statusText" role="status">Gotowy</span>
             </div>
             <div class="graph-diagrams">
@@ -127,28 +144,9 @@
           </details>
         </div>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">03 / Zrozum algorytm</p><h2 id="lessonTitle"></h2></div><span class="tag" id="family"></span></div>
-        <dl class="complexity" id="complexity"></dl>
-        <p class="complexity-note">V to liczba wierzchołków, E to liczba krawędzi. Dla list sąsiedztwa pełne przejście ma czas Θ(V + E) i pamięć pomocniczą O(V), bez grafu wejściowego. Przy przejściu tylko jednej składowej przeglądamy jej wierzchołki i krawędzie; tablice stanu w tej symulacji nadal zajmują O(V).</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><p id="description"></p><ol id="steps"></ol></div>
-          <div><h3>Zalety</h3><p id="pros"></p><h3>Ograniczenia</h3><p id="cons"></p></div>
-          <div><h3>Kiedy się przydaje?</h3><p id="uses"></p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p id="exercise"></p></div></div>
-        </div>
-        <details class="glossary">
-          <summary>Składowe, drzewo przeszukiwania i odległości</summary>
-          <div class="glossary-grid">
-            <div><h3>Graf niespójny</h3><p>Ze startu można dotrzeć tylko do jego składowej. W trybie „Cały graf” po jej przejściu wybieramy najmniejszy nieodkryty numer jako nowy korzeń. Nie istnieje krawędź łącząca te korzenie.</p></div>
-            <div><h3>Drzewo przeszukiwania</h3><p>Krawędź, przez którą odkrywamy wierzchołek, łączy go z rodzicem. Te krawędzie tworzą drzewo, a przy wielu składowych - las. Pozostałe krawędzie nadal należą do grafu.</p></div>
-            <div><h3>BFS a DFS</h3><p>BFS wyznacza najkrótszą odległość w liczbie krawędzi od korzenia danej składowej. DFS pokazuje głębokość w swoim drzewie, która nie musi być najkrótszą odległością. Korzeń ma wartość 0, a nieodkryty wierzchołek - kreskę.</p></div>
-          </div>
-        </details>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <p id="stepAnnouncement" class="sr-only" role="status"></p>
-    <div id="algorithmTooltip" class="tooltip" role="tooltip" hidden></div>
     <script>
 (() => {
   'use strict';
@@ -156,8 +154,8 @@
   const ALGO_INFO = {
     bfs: {
       name: 'Wszerz (BFS)', title: 'Przeszukiwanie wszerz (BFS)', family: 'Kolejka · FIFO',
-      description: 'Odkrywa graf warstwami. Najpierw sąsiedzi startu, potem ich nieodkryci sąsiedzi. Kolejka zachowuje kolejność zgłoszeń.',
-      steps: ['Oznacz start jako odkryty i dodaj go do kolejki.', 'Pobierz pierwszy wierzchołek i sprawdź kolejno jego sąsiadów.', 'Nieodkrytego sąsiada oznacz od razu, zapisz rodzica i dodaj na koniec kolejki.', 'Po sprawdzeniu sąsiadów zakończ wierzchołek. Powtarzaj do opróżnienia kolejki.'],
+      description: 'Przegląda graf warstwami, jak kręgi rozchodzące się od miejsca startu. Najpierw odkrywa wierzchołki oddalone o jedną krawędź, potem o dwie i tak dalej. Używa kolejki FIFO: kto został dodany pierwszy, ten pierwszy zostanie obsłużony, jak w kolejce do kasy. Dzięki temu w grafie bez wag pierwsze odkrycie wierzchołka wyznacza najkrótszą drogę do niego pod względem liczby krawędzi.',
+      steps: ['Oznacz wierzchołek startowy jako odkryty, ustaw jego odległość na 0 i dodaj go na koniec kolejki.', 'Pobierz wierzchołek z początku kolejki i sprawdź kolejno jego sąsiadów, czyli wierzchołki połączone z nim krawędzią.', 'Każdego nieodkrytego sąsiada od razu oznacz, zapisz bieżący wierzchołek jako jego rodzica i dodaj sąsiada na koniec kolejki. Jego odległość jest o 1 większa.', 'Po sprawdzeniu wszystkich sąsiadów zakończ bieżący wierzchołek. Powtarzaj do opróżnienia kolejki; wtedy odwiedzono całą składową dostępną ze startu.'],
       pros: 'Wyznacza najkrótsze ścieżki w grafie nieważonym. Oznaczenie przy dodawaniu zapobiega duplikatom w kolejce.',
       cons: 'Szeroka warstwa może wymagać dużej kolejki. Przy różnych wagach krawędzi nie gwarantuje najkrótszych ścieżek.',
       uses: 'Minimalna liczba ruchów w łamigłówce, odległości w sieci znajomości, przeszukiwanie labiryntu.',
@@ -165,8 +163,8 @@
     },
     dfs: {
       name: 'W głąb (DFS)', title: 'Przeszukiwanie w głąb (DFS)', family: 'Stos · LIFO',
-      description: 'Podąża do pierwszego nieodkrytego sąsiada i wraca dopiero po zbadaniu całej gałęzi. Jawny stos przechowuje aktywną ścieżkę i miejsce powrotu, tak jak wywołania rekurencyjne.',
-      steps: ['Oznacz start jako odkryty i umieść go na stosie.', 'Sprawdź następnego sąsiada wierzchołka ze szczytu stosu.', 'Jeśli sąsiad jest nieodkryty, zapisz rodzica, oznacz go i zejdź do niego, odkładając go na stos.', 'Gdy zabraknie sąsiadów, zakończ wierzchołek i zdejmij go ze stosu. Wróć do poprzedniego.'],
+      description: 'Przegląda graf podobnie do osoby badającej labirynt: wybiera przejście i idzie nim tak daleko, jak może. Gdy nie ma już nieodkrytych sąsiadów, wraca do poprzedniego wierzchołka i próbuje innej gałęzi. Miejsca powrotu zapamiętuje na stosie LIFO: ostatnio dodany element jest zdejmowany jako pierwszy, jak talerz ze stosu. W tej symulacji jawny stos zastępuje rekurencję, czyli kolejne wywołania tej samej procedury.',
+      steps: ['Oznacz start jako odkryty i połóż go na stosie. Stos będzie przechowywał bieżącą ścieżkę i informacje, gdzie kontynuować przeglądanie.', 'Sprawdź następnego sąsiada wierzchołka na szczycie stosu. Pomiń sąsiada, który został już odkryty.', 'Jeśli sąsiad jest nowy, oznacz go, zapisz jego rodzica i dodaj go na szczyt stosu. Teraz to jego sąsiedzi będą sprawdzani.', 'Gdy wierzchołek nie ma już sąsiadów do sprawdzenia, zakończ go i zdejmij ze stosu, wracając do poprzedniego. Pusty stos oznacza koniec przejścia tej składowej.'],
       pros: 'Naturalnie pokazuje zagłębianie i powroty. Jawny stos pozwala uniknąć ograniczenia głębokości rekurencji.',
       cons: 'Nie gwarantuje najkrótszej ścieżki. Długa gałąź może zająć O(V) miejsc na stosie.',
       uses: 'Wyznaczanie składowych, podstawa wykrywania cykli, przeszukiwanie z nawrotami. W grafach skierowanych także podstawa sortowania topologicznego.',
@@ -483,29 +481,6 @@
     treeFocus = focusKey;
   }
 
-  const tooltip = $('algorithmTooltip');
-  let tipAnchor = null, pinned = false, tipTimer = null;
-  function closeTip() {
-    clearTimeout(tipTimer);
-    if (tipAnchor) { tipAnchor.removeAttribute('aria-describedby'); tipAnchor.setAttribute('aria-expanded', 'false'); }
-    tipAnchor = null; pinned = false; tooltip.hidden = true;
-  }
-  function placeTip() {
-    if (!tipAnchor) return;
-    const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
-    const width = document.documentElement.clientWidth;
-    tooltip.style.setProperty('--tooltip-x', `${a.right + 12 + box.width <= width - 12 ? a.right + 12 : Math.max(12, a.left - box.width - 12)}px`);
-    tooltip.style.setProperty('--tooltip-y', `${Math.max(12, Math.min(a.top - 16, window.innerHeight - box.height - 12))}px`);
-  }
-  function openTip(button, pin = false) {
-    clearTimeout(tipTimer);
-    if (tipAnchor !== button) closeTip();
-    tipAnchor = button; pinned = pin || pinned;
-    const info = ALGO_INFO[button.dataset.info];
-    tooltip.innerHTML = `<h3>${info.title}</h3><p>${info.description}</p><p><strong>Zalety:</strong> ${info.pros}</p><p><strong>Ograniczenia:</strong> ${info.cons}</p><p class="tip-metrics">Pełne przejście: Θ(V + E)<br>Pamięć pomocnicza: O(V)<br>${info.family}</p><small>Esc lub kliknięcie poza dymkiem zamyka opis.</small>`;
-    tooltip.hidden = false; button.setAttribute('aria-describedby', 'algorithmTooltip'); button.setAttribute('aria-expanded', 'true'); placeTip();
-  }
-  function deferClose() { if (!pinned) tipTimer = setTimeout(closeTip, 180); }
   for (const [index, [key, info]] of Object.entries(ALGO_INFO).entries()) {
     const row = document.createElement('div'); row.className = 'algorithm-row';
     const pick = document.createElement('button'); pick.type = 'button'; pick.className = 'algorithm-pick'; pick.dataset.algorithm = key;
@@ -514,19 +489,8 @@
       if (state.running) return;
       state.selected = key; resetTraversal('Algorytm zmieniony. Graf i start pozostały bez zmian.'); renderLesson();
     });
-    const infoButton = document.createElement('button'); infoButton.type = 'button'; infoButton.className = 'info-button'; infoButton.dataset.info = key;
-    infoButton.innerHTML = '<span aria-hidden="true">i</span>';
-    infoButton.setAttribute('aria-label', `Informacje: ${info.title}`); infoButton.setAttribute('aria-expanded', 'false');
-    infoButton.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openTip(infoButton); });
-    infoButton.addEventListener('pointerleave', deferClose); infoButton.addEventListener('focus', () => openTip(infoButton));
-    infoButton.addEventListener('blur', closeTip);
-    infoButton.addEventListener('click', () => { if (tipAnchor === infoButton && pinned) closeTip(); else openTip(infoButton, true); });
-    row.append(pick, infoButton); $('algorithmList').append(row);
+    row.append(pick); $('algorithmList').append(row);
   }
-  tooltip.addEventListener('pointerenter', () => clearTimeout(tipTimer)); tooltip.addEventListener('pointerleave', deferClose);
-  document.addEventListener('pointerdown', event => { if (tipAnchor && !tooltip.contains(event.target) && !tipAnchor.contains(event.target)) closeTip(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeTip(); });
-  window.addEventListener('scroll', placeTip, { capture: true, passive: true }); window.addEventListener('resize', placeTip);
   $('startBtn').addEventListener('click', () => begin()); $('pauseBtn').addEventListener('click', togglePause);
   $('stepBtn').addEventListener('click', () => {
     if (!state.running) begin(true);

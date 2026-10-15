@@ -30,11 +30,59 @@
         </div>
         <span class="badge">10 algorytmów · jeden zestaw danych</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div>
+            <p class="eyebrow">01 / Zrozum algorytm</p>
+            <h2 id="lessonTitle"></h2>
+          </div>
+          <span class="tag" id="family"></span>
+        </div>
+        <dl class="complexity" id="complexity"></dl>
+        <p class="complexity-note" id="complexityNote"></p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <p id="description"></p>
+            <ol id="steps"></ol>
+          </div>
+          <div>
+            <h3>Zalety</h3>
+            <p id="pros"></p>
+            <h3>Ograniczenia</h3>
+            <p id="cons"></p>
+          </div>
+          <div>
+            <h3>Kiedy się przydaje?</h3>
+            <p id="uses"></p>
+            <div class="exercise">
+              <h3>Sprawdź samodzielnie</h3>
+              <p id="exercise"></p>
+            </div>
+          </div>
+        </div>
+        <details class="glossary">
+          <summary>Jak czytać złożoność i stabilność?</summary>
+          <div class="glossary-grid">
+            <div>
+              <h3>Czas</h3>
+              <p>n oznacza liczbę elementów. O opisuje górne ograniczenie tempa wzrostu liczby operacji; Θ oznacza ścisły rząd wzrostu. Θ(n²) rośnie szybciej niż Θ(n log n). Przypadek średni zależy od założeń o danych.</p>
+            </div>
+            <div>
+              <h3>Pamięć pomocnicza</h3>
+              <p>Podajemy dodatkową pamięć algorytmu, wraz ze stosem rekurencji, bez danych wejściowych. Kopia do przywracania danych oraz grafika aplikacji nie należą do tego kosztu.</p>
+            </div>
+            <div>
+              <h3>Stabilność</h3>
+              <p>Algorytm stabilny zachowuje kolejność rekordów o równych kluczach. Przykład: uczniowie z tą samą oceną pozostają w dotychczasowej kolejności. Same wysokości słupków nie pokazują tej różnicy.</p>
+            </div>
+          </div>
+        </details>
+      </section>
       <div class="workspace">
         <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
-          <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
+          <h2 class="section-label" id="algorithmsTitle">02 / Wybierz algorytm</h2>
           <div id="algorithmList"></div>
-          <!-- <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p> -->
         </aside>
         <div class="main-column">
           <section class="panel controls" aria-label="Ustawienia i sterowanie">
@@ -73,7 +121,7 @@
                 <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
                   <div class="chart-heading">
                     <div>
-                      <div class="eyebrow">02 / Obserwuj działanie</div>
+                      <div class="eyebrow">03 / Obserwuj działanie</div>
                       <h2 id="chartTitle">Sortowanie bąbelkowe</h2>
                     </div>
                     <span id="statusText" role="status">Gotowy</span>
@@ -116,60 +164,12 @@
                   </details>
 </div>
                 </div>
-                <section class="panel lesson" aria-labelledby="lessonTitle">
-                  <div class="lesson-header">
-                    <div>
-                      <p class="eyebrow">03 / Zrozum algorytm</p>
-                      <h2 id="lessonTitle"></h2>
-                    </div>
-                    <span class="tag" id="family"></span>
-                  </div>
-                  <dl class="complexity" id="complexity"></dl>
-                  <p class="complexity-note" id="complexityNote"></p>
-                  <div class="lesson-columns">
-                    <div>
-                      <h3>Jak to działa?</h3>
-                      <p id="description"></p>
-                      <ol id="steps"></ol>
-                    </div>
-                    <div>
-                      <h3>Zalety</h3>
-                      <p id="pros"></p>
-                      <h3>Ograniczenia</h3>
-                      <p id="cons"></p>
-                    </div>
-                    <div>
-                      <h3>Kiedy się przydaje?</h3>
-                      <p id="uses"></p>
-                      <div class="exercise">
-                        <h3>Sprawdź samodzielnie</h3>
-                        <p id="exercise"></p>
-                      </div></div>
-                    </div>
-                    <details class="glossary">
-                      <summary>Jak czytać złożoność i stabilność?</summary>
-                      <div class="glossary-grid">
-                        <div>
-                          <h3>Czas</h3>
-                          <p>n oznacza liczbę elementów. O opisuje górne ograniczenie tempa wzrostu liczby operacji; Θ oznacza ścisły rząd wzrostu. Θ(n²) rośnie szybciej niż Θ(n log n). Przypadek średni zależy od założeń o danych.</p>
-                        </div>
-                        <div>
-                          <h3>Pamięć pomocnicza</h3>
-                          <p>Podajemy dodatkową pamięć algorytmu, wraz ze stosem rekurencji, bez danych wejściowych. Kopia do przywracania danych oraz grafika aplikacji nie należą do tego kosztu.</p>
-                        </div>
-                        <div>
-                          <h3>Stabilność</h3>
-                          <p>Algorytm stabilny zachowuje kolejność rekordów o równych kluczach. Przykład: uczniowie z tą samą oceną pozostają w dotychczasowej kolejności. Same wysokości słupków nie pokazują tej różnicy.</p>
-                        </div></div>
-                      </details>
-</section>
                       <footer>
                         <span>AlgorithmsLab · Interaktywna nauka algorytmów</span>
                         <a href="index.html">Wszystkie symulacje</a>
                       </footer>
                       </main>
                       <p id="stepAnnouncement" class="sr-only" role="status"></p>
-                      <div id="algorithmTooltip" class="tooltip" role="tooltip" hidden></div>
 <script>
 (() => {
   'use strict';
@@ -177,53 +177,53 @@
   // These descriptions refer to the exact variants implemented below.
   const ALGO_INFO = {
     bubble: { name: 'Bąbelkowe', title: 'Sortowanie bąbelkowe', family: 'Sąsiednie zamiany', stable: true, best: 'Θ(n)', average: 'Θ(n²)', worst: 'Θ(n²)', memory: 'O(1)',
-      description: 'Porównuje sąsiadów i zamienia ich, gdy są w złej kolejności. Po każdym przejściu największa z pozostałych wartości trafia na koniec.',
-      steps: ['Porównaj kolejne pary sąsiadów.', 'Przesuń granicę nieposortowanej części w lewo.', 'Zakończ wcześniej, jeśli cały przebieg nie wymagał zamian.'],
+      description: 'Porządkuje liczby rosnąco, porównując zawsze dwa sąsiednie elementy. Jeśli większy stoi przed mniejszym, zamienia je miejscami. W jednym przejściu od lewej do prawej największa z jeszcze nieustawionych wartości „wędruje” na koniec, tak jak bąbelek ku powierzchni. Tego miejsca nie trzeba już sprawdzać w następnych przejściach.',
+      steps: ['Zacznij od lewej strony i porównuj sąsiadów. Zamieniaj ich tylko wtedy, gdy lewy jest większy od prawego.', 'Po dojściu do końca skróć sprawdzany fragment o ostatni element: jest już na właściwym miejscu.', 'Powtarzaj przejścia. Jeśli w całym przejściu nie wykonasz żadnej zamiany, tablica jest uporządkowana i możesz zakończyć.'],
       pros: 'Prosty do prześledzenia; stabilny; rozpoznaje już uporządkowane dane.', cons: 'Dużo porównań i zamian dla dużych, losowych zbiorów.', uses: 'Nauka porównywania i zamiany elementów; niewielkie przykłady.',
       note: 'Wersja z wcześniejszym zakończeniem po przebiegu bez zamian.', exercise: 'Wybierz dane rosnące. Dlaczego wystarczy n − 1 porównań?' },
     crazy: { name: 'Gnome (zwariowane)', title: 'Sortowanie Gnome', family: 'Sąsiednie zamiany', stable: true, best: 'Θ(n)', average: 'Θ(n²)', worst: 'Θ(n²)', memory: 'O(1)',
-      description: 'Wędruje po tablicy: jeśli sąsiedzi są uporządkowani, idzie w prawo; po zamianie wraca o pozycję w lewo.',
-      steps: ['Sprawdź element i jego poprzednika.', 'Zamień złą parę i cofnij się.', 'Idź do przodu, aż dojdziesz do końca.'],
+      description: 'Wyobraź sobie osobę idącą wzdłuż szeregu liczb i poprawiającą kolejność sąsiadów. Gdy para jest uporządkowana, robi krok w prawo. Gdy ją zamieni, cofa się o jedno miejsce, ponieważ przesunięta w lewo liczba może być mniejsza także od nowego poprzednika. W ten sposób stopniowo porządkuje coraz dłuższy początek tablicy.',
+      steps: ['Sprawdź bieżący element i element bezpośrednio przed nim. Na początku tablicy przejdź do drugiej pozycji.', 'Jeśli poprzednik jest większy, zamień parę i cofnij się o jedno miejsce, aby sprawdzić nowego sąsiada.', 'Jeśli para jest w dobrej kolejności, przejdź w prawo. Dojście poza ostatni element oznacza koniec sortowania.'],
       pros: 'Bardzo prosta logika; zachowuje kolejność równych wartości.', cons: 'Wielokrotnie wraca do wcześniej oglądanych pozycji.', uses: 'Ćwiczenia z indeksów i pętli; małe, prawie uporządkowane tablice.',
       note: '„Zwariowane” to wcześniejsza nazwa w aplikacji. To Gnome sort, nie losowe tasowanie (bogosort).', exercise: 'Porównaj liczbę zamian Gnome i sortowania przez wstawianie.' },
     selection: { name: 'Przez wybór', title: 'Sortowanie przez wybór', family: 'Wybieranie minimum', stable: false, best: 'Θ(n²)', average: 'Θ(n²)', worst: 'Θ(n²)', memory: 'O(1)',
-      description: 'Znajduje minimum w nieposortowanej części i zamienia je z pierwszym elementem tej części.',
-      steps: ['Zapamiętaj pozycję najmniejszej wartości.', 'Przeszukaj resztę tablicy.', 'Wstaw minimum jedną zamianą i przesuń granicę.'],
+      description: 'Dzieli tablicę na uporządkowany początek i pozostałą część, którą trzeba jeszcze przejrzeć. W tej pozostałej części szuka najmniejszej wartości i przenosi ją na pierwsze wolne miejsce wyniku. Na przykład w [4, 2, 3] wybierze 2 i zamieni je z 4, uzyskując [2, 4, 3]. Każdy taki wybór ustala pozycję jednego elementu.',
+      steps: ['Przyjmij pierwszy element nieposortowanej części jako kandydata na minimum.', 'Sprawdź wszystkie dalsze elementy tej części i zapamiętuj pozycję najmniejszego z nich.', 'Zamień znalezione minimum z pierwszym elementem tej części, jeśli stoją na różnych pozycjach. Przesuń granicę o jedno miejsce w prawo i powtórz.'],
       pros: 'Co najwyżej n − 1 zamian; niewiele zapisów w porównaniu z bąbelkowym.', cons: 'Zawsze n(n − 1)/2 porównań; dalekie zamiany mogą zmienić kolejność równych kluczy.', uses: 'Małe zbiory, gdy zamiana jest znacznie droższa od porównania.',
       note: 'Analizujemy zwykłą wersję z zamianą minimum, która nie jest stabilna.', exercise: 'Zmień dane z rosnących na malejące. Czy liczba porównań się zmieni?' },
     insertion: { name: 'Przez wstawianie', title: 'Sortowanie przez wstawianie', family: 'Budowanie prefiksu', stable: true, best: 'Θ(n)', average: 'Θ(n²)', worst: 'Θ(n²)', memory: 'O(1)',
-      description: 'Jak układanie kart w ręce: wyjmuje wartość i wstawia ją w odpowiednie miejsce uporządkowanego początku tablicy.',
-      steps: ['Zapamiętaj kolejną wartość.', 'Przesuwaj większe elementy o jedno miejsce w prawo.', 'Wpisz zapamiętaną wartość w powstałą lukę.'],
+      description: 'Działa podobnie do układania kart w ręce: kolejną kartę wsuwasz między te, które są już uporządkowane. Początek tablicy, nazywany prefiksem, traktujemy jako posortowany. Następną wartość zapamiętujemy, robimy dla niej miejsce i wstawiamy ją tak, aby ten początek nadal był uporządkowany. Dla [2, 5, 3] przesuwamy 5 w prawo i wpisujemy 3 między 2 a 5.',
+      steps: ['Uznaj pierwszy element za uporządkowany początek. Zapamiętaj wartość z następnej pozycji.', 'Idąc w lewo, przesuwaj o jedno miejsce w prawo wszystkie elementy większe od zapamiętanej wartości.', 'Wpisz wartość w powstałą lukę. Powtarzaj dla kolejnych pozycji, aż uporządkowany początek obejmie całą tablicę.'],
       pros: 'Bardzo dobry dla małych i prawie posortowanych zbiorów; stabilny.', cons: 'W odwrotnym porządku wymaga wielu przesunięć.', uses: 'Małe tablice; końcowe etapy algorytmów hybrydowych.',
       note: 'Uporządkowany prefiks może jeszcze zmieniać pozycje. Dlatego nie oznaczamy go jako wynik końcowy.', exercise: 'Ustaw dane prawie posortowane i porównaj liczbę zapisów z układem malejącym.' },
     shell: { name: 'Shella', title: 'Sortowanie Shella', family: 'Malejące odstępy', stable: false, best: 'Θ(n log n)', average: 'Zależna od odstępów¹', worst: 'Θ(n²)', memory: 'O(1)',
-      description: 'Rozszerza wstawianie: najpierw porządkuje elementy daleko od siebie, potem stopniowo zmniejsza odstęp.',
-      steps: ['Zacznij od odstępu ⌊n/2⌋.', 'Uporządkuj przez wstawianie każdą grupę o tym odstępie.', 'Dziel odstęp przez 2; zakończ po przebiegu z odstępem 1.'],
+      description: 'To rozwinięcie sortowania przez wstawianie, które najpierw pozwala liczbom przemieszczać się na duże odległości. Przy odstępie 3 porządkuje osobno pozycje 1, 4, 7…; osobno 2, 5, 8… i osobno 3, 6, 9…. Potem zmniejsza odstęp. Ostatnie przejście, z odstępem 1, jest zwykłym wstawianiem, ale pracuje już na częściowo uporządkowanych danych.',
+      steps: ['Ustaw odstęp na połowę liczby elementów, zaokrągloną w dół, czyli ⌊n/2⌋.', 'W każdej grupie pozycji odległych o ten odstęp wykonaj sortowanie przez wstawianie. Przesunięcie odbywa się o cały odstęp.', 'Zmniejsz odstęp o połowę, zaokrąglając w dół. Po wykonaniu przejścia z odstępem 1 cała tablica jest uporządkowana.'],
       pros: 'Przesuwa wartości na duże odległości bez dodatkowej tablicy.', cons: 'Niestabilny; wydajność silnie zależy od ciągu odstępów.', uses: 'Tablice średniej wielkości przy ograniczonej pamięci; nauka wpływu doboru odstępów.',
       note: '¹ Tu odstępy to ⌊n/2⌋, ⌊n/4⌋, …, 1. Dla średniej podajemy bezpieczne ograniczenie O(n²), nie uniwersalny ścisły wzór. Inne ciągi mają inne oszacowania.', exercise: 'Przy 12 elementach znajdź przebiegi z odstępami 6, 3 i 1.' },
     quick: { name: 'Szybkie (Quick)', title: 'Sortowanie szybkie', family: 'Dziel i zwyciężaj', stable: false, best: 'Θ(n log n)', average: 'Θ(n log n)', worst: 'Θ(n²)', memory: 'O(log n) / O(n)²',
-      description: 'Wybiera pivot, czyli element podziału. Umieszcza mniejsze wartości po jego lewej stronie, a pozostałe po prawej, po czym sortuje obie części.',
-      steps: ['Jako pivot wybierz ostatni element przedziału.', 'Podziel przedział i umieść pivot na pozycji końcowej.', 'Powtórz rekurencyjnie dla lewej i prawej części.'],
+      description: 'Wybiera jedną wartość jako punkt odniesienia, nazywany pivotem. W tej wersji jest to ostatni element rozpatrywanego fragmentu. Przestawia elementy tak, by mniejsze od pivota znalazły się po lewej, a większe lub równe po prawej. Pivot trafia wtedy na swoją końcową pozycję, lecz obie strony wymagają jeszcze sortowania. Ten sam sposób stosujemy do każdej z nich osobno — to właśnie rekurencja.',
+      steps: ['Wybierz ostatni element bieżącego fragmentu jako pivot.', 'Przejrzyj pozostałe elementy, zbierając mniejsze od pivota po lewej stronie. Następnie ustaw pivot między obiema grupami.', 'Tak samo posortuj część po lewej i część po prawej, bez pivota. Fragment pusty lub jednoelementowy nie wymaga pracy.'],
       pros: 'Średnio niewiele operacji; nie wymaga bufora na scalanie.', cons: 'Ta wersja źle radzi sobie z danymi uporządkowanymi i wieloma równymi kluczami.', uses: 'Sortowanie tablic w pamięci; w praktyce często warianty z lepszym wyborem pivota.',
       note: 'Partycjonowanie Lomuto, pivot na końcu. Średnia zakłada losową permutację różnych kluczy. ² Stos: średnio O(log n), najgorzej O(n).', exercise: 'Porównaj losowy i rosnący układ. Co robi wybór ostatniego elementu na pivot?' },
     cocktail: { name: 'Koktajlowe', title: 'Sortowanie koktajlowe', family: 'Przebiegi w obie strony', stable: true, best: 'Θ(n)', average: 'Θ(n²)', worst: 'Θ(n²)', memory: 'O(1)',
-      description: 'Odmiana bąbelkowego, która porównuje sąsiadów naprzemiennie od lewej i od prawej.',
-      steps: ['Przenieś maksimum w prawo.', 'Wracając, przenieś minimum w lewo.', 'Zawężaj przedział; przerwij po przebiegu bez zamian.'],
+      description: 'Działa jak sortowanie bąbelkowe, ale przechodzi po tablicy w obu kierunkach. Podczas ruchu w prawo przesuwa największą pozostałą wartość na koniec, a podczas powrotu przesuwa najmniejszą na początek. Dzięki temu mała liczba stojąca na końcu może wrócić daleko w lewo już w jednym przejściu. Uporządkowana część wyniku rośnie z obu stron.',
+      steps: ['Idź od lewej do prawej, porównując sąsiadów i zamieniając pary w złej kolejności. Ustal pozycję maksimum.', 'Skróć prawą granicę, a potem przejdź w lewo. Tak samo porównuj sąsiadów, aby ustalić pozycję minimum.', 'Przesuń lewą granicę i powtarzaj w coraz mniejszym przedziale. Zakończ, gdy przebieg nie wymaga zamian lub przedział się wyczerpie.'],
       pros: 'Przesuwa małe wartości z końca szybciej niż jednokierunkowe bąbelkowe.', cons: 'Nadal kwadratowe dla trudnych danych; wiele sąsiednich zamian.', uses: 'Porównanie kierunków przechodzenia po tablicy; małe zbiory.',
       note: 'Wersja z zawężaniem granic i wcześniejszym zakończeniem.', exercise: 'Obserwuj, jak finalne pozycje przyrastają z obu końców tablicy.' },
     comb: { name: 'Grzebieniowe (Comb)', title: 'Sortowanie grzebieniowe', family: 'Malejące odstępy', stable: false, best: 'Θ(n log n)', average: 'O(n²) - ograniczenie', worst: 'O(n²)', memory: 'O(1)',
-      description: 'Porównuje pary oddalone o dany odstęp. Po każdym przebiegu zmniejsza go, aż zacznie porównywać sąsiadów.',
-      steps: ['Zmniejsz odstęp: ⌊odstęp / 1,3⌋, co najmniej 1.', 'Wykonaj jeden przebieg porównań i zamian.', 'Przy odstępie 1 powtarzaj do przebiegu bez zamian.'],
+      description: 'Zaczyna od porównywania elementów odległych od siebie, dzięki czemu małe liczby z końca tablicy szybciej trafiają w lewo. Odstęp między porównywanymi pozycjami stopniowo maleje, jak rozstaw zębów coraz gęstszego grzebienia. Przy odstępie 1 algorytm działa już jak sortowanie bąbelkowe. Samo dojście do odstępu 1 nie wystarcza: trzeba jeszcze upewnić się, że żaden sąsiad nie stoi w złej kolejności.',
+      steps: ['Zacznij od odstępu równego długości tablicy. Przed przebiegiem podziel go przez 1,3, zaokrąglij w dół i przyjmij co najmniej 1.', 'Porównaj wszystkie pary pozycji oddalonych o ten odstęp. Zamień parę, jeśli lewa wartość jest większa.', 'Powtarzaj ze zmniejszonym odstępem. Zakończ dopiero wtedy, gdy odstęp wynosi 1 i w całym przebiegu nie było zamian.'],
       pros: 'Szybko usuwa odległe nieuporządkowane pary; mały koszt pamięci.', cons: 'Niestabilny; nie gwarantuje czasu O(n log n) dla każdego wejścia.', uses: 'Proste rozszerzenie bąbelkowego; ćwiczenia z malejącym odstępem.',
       note: 'Współczynnik zmniejszania: 1,3. O(n²) jest górnym ograniczeniem, nie ścisłym wzorem na średnią. Nawet dane rosnące wymagają przebiegów dla wielu odstępów.', exercise: 'Sprawdź, dlaczego po pierwszym przebiegu z odstępem 1 nie zawsze można zakończyć.' },
     heap: { name: 'Kopcowe (Heap)', title: 'Sortowanie kopcowe', family: 'Kopiec maksymalny', stable: false, best: 'Θ(n) / Θ(n log n)³', average: 'Θ(n log n)', worst: 'Θ(n log n)', memory: 'O(1)',
-      description: 'Buduje kopiec maksymalny: rodzic jest nie mniejszy od dzieci. Korzeń, czyli maksimum, trafia na koniec tablicy.',
-      steps: ['Zbuduj kopiec w czasie O(n).', 'Zamień korzeń z ostatnią pozycją kopca.', 'Zmniejsz kopiec i napraw go, przesuwając nowy korzeń w dół.'],
+      description: 'Traktuje tablicę jak drzewo: każdy element ma najwyżej dwoje dzieci. Najpierw buduje kopiec maksymalny, w którym rodzic ma wartość co najmniej tak dużą jak każde z dzieci. Dzięki temu w korzeniu, czyli na początku tablicy, znajduje się maksimum. Przenosi je na koniec, a w pozostałej części odbudowuje kopiec, aby znów szybko wskazać największą wartość.',
+      steps: ['Zbuduj kopiec maksymalny: naprawiaj drzewa od ostatniego rodzica w stronę korzenia. Cała budowa zajmuje O(n).', 'Zamień korzeń z ostatnim elementem kopca. Ta ostatnia pozycja jest już częścią gotowego wyniku.', 'Zmniejsz rozmiar kopca i przesuwaj nowy korzeń w dół, zamieniając go z większym dzieckiem, jeśli narusza porządek. Powtarzaj aż do uporządkowania tablicy.'],
       pros: 'Gwarancja O(n log n) w najgorszym przypadku; brak bufora na tablicę.', cons: 'Niestabilny; skoki między rodzicami i dziećmi trudniej śledzić.', uses: 'Gdy ważny jest ograniczony koszt pamięci i przewidywalny najgorszy czas.',
       note: 'Naprawa kopca jest iteracyjna, więc pamięć wynosi O(1). ³ Przy samych równych kluczach Θ(n); przy różnych kluczach najlepszy rząd to Θ(n log n).', exercise: 'Wskaż największy element. Dlaczego po każdej ekstrakcji trafia na prawy koniec?' },
     merge: { name: 'Przez scalanie', title: 'Sortowanie przez scalanie', family: 'Dziel i zwyciężaj', stable: true, best: 'Θ(n log n)', average: 'Θ(n log n)', worst: 'Θ(n log n)', memory: 'O(n)',
-      description: 'Dzieli tablicę na połowy, sortuje je i scala, wybierając za każdym razem mniejszy z pierwszych niewykorzystanych elementów.',
-      steps: ['Dziel do pojedynczych elementów.', 'Scal dwie uporządkowane części w buforze.', 'Przepisz wynik do tablicy; przy remisie bierz element z lewej.'],
+      description: 'Dzieli tablicę na coraz mniejsze części, aż zostaną pojedyncze elementy, które są już uporządkowane. Następnie łączy te części w większe posortowane fragmenty. Scalanie przypomina łączenie dwóch uporządkowanych stosów kart: za każdym razem bierzemy mniejszą z kart leżących na wierzchu. Przykładowo z [2, 5] i [1, 4] otrzymamy kolejno 1, 2, 4, 5.',
+      steps: ['Dziel każdy fragment na połowy, aż dojdziesz do fragmentów jednoelementowych.', 'Scal dwie uporządkowane części w pomocniczej tablicy: porównuj pierwsze niewykorzystane wartości i przepisuj mniejszą. Przy remisie wybieraj lewą.', 'Gdy jedna część się skończy, dopisz resztę drugiej. Przepisz wynik do tablicy głównej i scalaj coraz większe fragmenty.'],
       pros: 'Stabilny; gwarantuje O(n log n) niezależnie od układu danych.', cons: 'Potrzebuje bufora O(n); wykonuje dodatkowe zapisy.', uses: 'Sortowanie rekordów z zachowaniem kolejności równych kluczy; scalanie uporządkowanych serii.',
       note: 'Wersja rekurencyjna bez pomijania już uporządkowanych scaleń. Bufor O(n) dominuje nad stosem O(log n).', exercise: 'Porównaj zapisy do tablicy głównej i bufora. Dlaczego ich liczby są równe?' }
   };
@@ -681,32 +681,6 @@
     if (state.running && !state.paused && !document.hidden && frameId === null) frameId = requestAnimationFrame(frame);
   }
 
-  // Shared tooltip: hoverable, dismissible, and available by touch or keyboard.
-  const tooltip = $('algorithmTooltip');
-  let tipAnchor = null, pinned = false, tipTimer = null;
-  function closeTip() {
-    clearTimeout(tipTimer);
-    if (tipAnchor) { tipAnchor.removeAttribute('aria-describedby'); tipAnchor.setAttribute('aria-expanded', 'false'); }
-    tipAnchor = null; pinned = false; tooltip.hidden = true;
-  }
-  function placeTip() {
-    if (!tipAnchor) return;
-    const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
-    const viewportWidth = document.documentElement.clientWidth, viewportHeight = window.innerHeight;
-    const right = a.right + 12;
-    const x = right + box.width <= viewportWidth - 12 ? right : Math.max(12, a.left - box.width - 12);
-    const y = Math.max(12, Math.min(a.top - 16, viewportHeight - box.height - 12));
-    tooltip.style.setProperty('--tooltip-x', `${x}px`); tooltip.style.setProperty('--tooltip-y', `${y}px`);
-  }
-  function openTip(button, pin = false) {
-    clearTimeout(tipTimer);
-    if (tipAnchor !== button) closeTip();
-    tipAnchor = button; pinned = pin || pinned;
-    const info = ALGO_INFO[button.dataset.info];
-    tooltip.innerHTML = `<h3>${info.title}</h3><p>${info.description}</p><p><strong>Zalety:</strong> ${info.pros}</p><p><strong>Ograniczenia:</strong> ${info.cons}</p><p><strong>Zastosowania:</strong> ${info.uses}</p><p class="tip-metrics"><strong>Czas</strong> (najlepszy / średni / najgorszy):<br>${info.best} / ${info.average} / ${info.worst}<br><strong>Pamięć:</strong> ${info.memory} · ${info.stable ? 'Stabilny' : 'Niestabilny'}</p><p>${info.note}</p><small>Esc lub kliknięcie poza dymkiem zamyka opis.</small>`;
-    tooltip.hidden = false; button.setAttribute('aria-describedby', 'algorithmTooltip'); button.setAttribute('aria-expanded', 'true'); placeTip();
-  }
-  function deferClose() { if (!pinned) tipTimer = setTimeout(closeTip, 180); }
   for (const [index, [key, info]] of Object.entries(ALGO_INFO).entries()) {
     const row = document.createElement('div'); row.className = 'algorithm-row';
     const pick = document.createElement('button'); pick.type = 'button'; pick.className = 'algorithm-pick'; pick.dataset.algorithm = key;
@@ -716,22 +690,8 @@
       state.selected = key; clearCounters(); renderLesson(); setStatus('Gotowy');
       $('operation').textContent = 'Algorytm zmieniony. Dane pozostały bez zmian.'; rafDraw();
     });
-    const infoButton = document.createElement('button'); infoButton.type = 'button'; infoButton.className = 'info-button'; infoButton.dataset.info = key;
-    infoButton.innerHTML = '<span aria-hidden="true">i</span>';
-    infoButton.setAttribute('aria-label', `Informacje: ${info.title.toLowerCase()}`); infoButton.setAttribute('aria-expanded', 'false');
-    infoButton.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openTip(infoButton); });
-    infoButton.addEventListener('pointerleave', deferClose);
-    infoButton.addEventListener('focus', () => openTip(infoButton));
-    infoButton.addEventListener('blur', closeTip);
-    infoButton.addEventListener('click', () => { if (tipAnchor === infoButton && pinned) closeTip(); else openTip(infoButton, true); });
-    row.append(pick, infoButton); $('algorithmList').append(row);
+    row.append(pick); $('algorithmList').append(row);
   }
-  tooltip.addEventListener('pointerenter', () => clearTimeout(tipTimer));
-  tooltip.addEventListener('pointerleave', deferClose);
-  document.addEventListener('pointerdown', event => { if (tipAnchor && !tooltip.contains(event.target) && !tipAnchor.contains(event.target)) closeTip(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeTip(); });
-  window.addEventListener('scroll', placeTip, { capture: true, passive: true });
-  window.addEventListener('resize', placeTip);
   $('startBtn').addEventListener('click', () => begin());
   $('pauseBtn').addEventListener('click', togglePause);
   $('stepBtn').addEventListener('click', () => { if (!state.running) begin(true); if (state.paused) { nextStep(); $('stepAnnouncement').textContent = $('operation').textContent; rafDraw(); } });

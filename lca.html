@@ -25,6 +25,45 @@
         </div>
         <span class="badge">LCA · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Najniższy wspólny przodek (LCA)</h2></div>
+          <span class="tag" id="methodTag">Wyrównywanie głębokości</span>
+        </div>
+        <dl class="complexity">
+          <div><dt>Wejście</dt><dd>Ukorzenione drzewo</dd></div>
+          <div><dt>Przygotowanie</dt><dd id="cxPrep">Θ(V)</dd></div>
+          <div><dt>Czas zapytania</dt><dd id="cxQuery">O(h)</dd></div>
+          <div><dt>Pamięć</dt><dd id="cxMem">O(V)</dd></div>
+          <div><dt>Wysokość drzewa</dt><dd>h</dd></div>
+        </dl>
+        <p class="complexity-note" id="methodNote">Najpierw przygotowujemy tablice rodziców i głębokości przez przejście drzewa. Ta demonstracja animuje samo zapytanie; każdy krok przechodzi do rodzica jednego lub obu wierzchołków.</p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Wyrównywanie głębokości – jak to działa?</h3>
+            <p>W ukorzenionym drzewie każdy wierzchołek poza korzeniem ma jednego rodzica. Szukamy wspólnego przodka dwóch wskazanych wierzchołków, który leży najbliżej nich, czyli najdalej od korzenia. Przykładowo dla dwóch plików w różnych podfolderach byłby to ich najbliższy wspólny folder. Głębokość oznacza liczbę krawędzi od korzenia. Najpierw wyrównujemy głębokości, a potem wspinamy się obiema drogami naraz.</p>
+            <ol>
+              <li>Jeśli jeden wierzchołek leży głębiej, zastępuj go jego rodzicem, aż oba znajdą się na tej samej głębokości. Tylko głębszy wierzchołek wykonuje te pierwsze kroki.</li>
+              <li>Sprawdź, czy wskazania są już równe. Jeśli tak, znaleziony wierzchołek jest LCA; tak dzieje się m.in., gdy jeden z początkowych wierzchołków był przodkiem drugiego.</li>
+              <li>Jeśli są różne, przesuń oba wskazania do ich rodziców i sprawdź ponownie. Pierwsze spotkanie wskazuje najniższego wspólnego przodka.</li>
+            </ol>
+          </div>
+          <div>
+            <h3>Dlaczego to działa?</h3>
+            <p>Po wyrównaniu głębokości oba wierzchołki są w tej samej odległości od korzenia. Idąc równocześnie w górę, zmniejszamy obie głębokości o tyle samo. Dlatego wskazania pozostają na tym samym poziomie i spotkają się w pierwszym wspólnym przodku — tym najniższym. Gdy jeden wierzchołek jest przodkiem drugiego, spotkanie następuje już po wyrównaniu głębokości.</p>
+          </div>
+          <div>
+            <h3>Binary lifting</h3>
+            <p>To szybszy sposób wspinania się po drzewie. Dla każdego wierzchołka przygotowujemy przodków odległych o 1, 2, 4, 8… poziomów, czyli o potęgi dwójki. Różnicę głębokości rozkładamy na takie skoki: 13 poziomów pokonamy jako 8 + 4 + 1. Jeśli po wyrównaniu wskazania są równe, mamy wynik. Jeśli nie, próbujemy skoków obu wierzchołków od największego do najmniejszego. Wykonujemy skok tylko wtedy, gdy prowadzi do różnych przodków, aby pozostać poniżej LCA. Na końcu oba wskazania mają już wspólnego rodzica — to szukany wynik. Przygotowanie tablicy kosztuje Θ(V log V), a jedno zapytanie O(log V).</p>
+            <h3>Zastosowania i ograniczenia</h3>
+            <p>LCA przydaje się m.in. przy zapytaniach o odległość w drzewie, analizie hierarchii i strukturach drzewiastych. Wyrównywanie głębokości jest proste, ale w wysokim drzewie (h bliskie V) bywa wolne; przy wielu zapytaniach opłaca się przygotować tablicę przodków 2<sup>k</sup> (binary lifting) i obsługiwać każde zapytanie w O(log V).</p>
+          </div>
+        </div>
+        <details class="glossary">
+          <summary>Co oznacza „najniższy”?</summary>
+          <p>„Najniższy” oznacza najdalszy od korzenia spośród wspólnych przodków A i B. Każdy wierzchołek jest własnym przodkiem, więc gdy A = B, wynikiem jest ten wierzchołek.</p>
+        </details>
+      </section>
       <section class="panel lca-controls" aria-label="Ustawienia zapytania LCA">
         <div class="lca-fields">
           <div class="field">
@@ -58,7 +97,7 @@
       <div class="main-column lca-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="treeTitle">
           <div class="chart-heading">
-            <div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="treeTitle">Drzewo i ścieżki do korzenia</h2></div>
+            <div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="treeTitle">Drzewo i ścieżki do korzenia</h2></div>
             <span id="statusText" role="status">Gotowy</span>
           </div>
           <details class="data-details" id="jumpDetails" hidden>
@@ -98,44 +137,6 @@
           </div>
         </details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header">
-          <div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Najniższy wspólny przodek (LCA)</h2></div>
-          <span class="tag" id="methodTag">Wyrównywanie głębokości</span>
-        </div>
-        <dl class="complexity">
-          <div><dt>Wejście</dt><dd>Ukorzenione drzewo</dd></div>
-          <div><dt>Przygotowanie</dt><dd id="cxPrep">Θ(V)</dd></div>
-          <div><dt>Czas zapytania</dt><dd id="cxQuery">O(h)</dd></div>
-          <div><dt>Pamięć</dt><dd id="cxMem">O(V)</dd></div>
-          <div><dt>Wysokość drzewa</dt><dd>h</dd></div>
-        </dl>
-        <p class="complexity-note" id="methodNote">Najpierw przygotowujemy tablice rodziców i głębokości przez przejście drzewa. Ta demonstracja animuje samo zapytanie; każdy krok przechodzi do rodzica jednego lub obu wierzchołków.</p>
-        <div class="lesson-columns">
-          <div>
-            <h3>Wyrównywanie głębokości - jak to działa?</h3>
-            <ol>
-              <li>Jeśli wierzchołki mają różne głębokości, podnieś głębszy do poziomu płytszego.</li>
-              <li>Jeśli są różne, podnieś oba o jeden poziom.</li>
-              <li>Powtarzaj, aż wierzchołki się spotkają. Ten wierzchołek jest LCA.</li>
-            </ol>
-          </div>
-          <div>
-            <h3>Dlaczego to działa?</h3>
-            <p>Po wyrównaniu głębokości oba wierzchołki są w tej samej odległości od korzenia. Idąc równocześnie w górę, zachowujemy tę odległość, aż trafimy na ich pierwszego wspólnego przodka - najniższego z nich.</p>
-          </div>
-          <div>
-            <h3>Binary lifting</h3>
-            <p>Dla każdego wierzchołka pamiętamy przodków o 1, 2, 4, 8… poziomów wyżej. Głębszy wierzchołek podnosimy o różnicę głębokości, skacząc po jej bitach. Jeśli po wyrównaniu głębokości A = B, ten wierzchołek jest LCA i kończymy zapytanie. W przeciwnym razie, od największego k, skaczemy oboma wierzchołkami, jeśli ich przodkowie up[k] są różni. Po tych skokach LCA to wspólny rodzic obu wierzchołków. Przygotowanie: Θ(V log V), zapytanie: O(log V).</p>
-            <h3>Zastosowania i ograniczenia</h3>
-            <p>LCA przydaje się m.in. przy zapytaniach o odległość w drzewie, analizie hierarchii i strukturach drzewiastych. To rozwiązanie jest proste, ale dla bardzo wielu zapytań można przygotować tablicę przodków 2<sup>k</sup> (binary lifting), by obsługiwać każde zapytanie w O(log V).</p>
-          </div>
-        </div>
-        <details class="glossary">
-          <summary>Co oznacza „najniższy”?</summary>
-          <p>„Najniższy” oznacza najdalszy od korzenia spośród wspólnych przodków A i B. Każdy wierzchołek jest własnym przodkiem, więc gdy A = B, wynikiem jest ten wierzchołek.</p>
-        </details>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

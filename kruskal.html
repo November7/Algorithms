@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Algorytm Kruskala</h1><p>Obserwuj, jak algorytm Kruskala buduje minimalne drzewo rozpinające. Sprawdzaj krawędzie od najlżejszej i łącz składowe, unikając cykli.</p></div>
         <span class="badge">Algorytm zachłanny · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Algorytm Kruskala</h2></div><span class="tag">Minimalne drzewo rozpinające</span></div>
+        <dl class="complexity"><div><dt>Strategia</dt><dd>Zachłanna</dd></div><div><dt>Czas</dt><dd>O(V + E log E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Graf</dt><dd>Nieskierowany</dd></div><div><dt>Struktura</dt><dd>Union-Find (DSU)</dd></div></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E – krawędzi. Sortowanie dominuje nad operacjami DSU z kompresją ścieżek i łączeniem według rozmiaru. Podane koszty dotyczą algorytmu, bez odświeżania wizualizacji. Sortowanie pokazujemy jako jeden krok zbiorczy.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Wyobraź sobie miasta, które chcesz połączyć siecią kabli o jak najmniejszym łącznym koszcie. W grafie spójnym szukamy minimalnego drzewa rozpinającego: połączenia wszystkich wierzchołków bez cykli, o najmniejszej sumie wag. Kruskal rozpatruje krawędzie od najtańszych i przyjmuje te, które łączą dotąd oddzielne grupy. Taką grupę już połączonych wierzchołków nazywamy składową; strukturą Union-Find śledzimy, do której grupy należy każdy wierzchołek.</p><ol>
+              <li>Na początku nie wybieraj żadnej krawędzi. Każdy wierzchołek tworzy własną, jednoelementową składową.</li>
+              <li>Posortuj wszystkie krawędzie od najmniejszej do największej wagi, czyli kosztu połączenia.</li>
+              <li>Dla kolejnej krawędzi sprawdź składowe obu końców. Jeśli są różne, dodaj krawędź do wyniku i połącz składowe.</li>
+              <li>Jeśli końce są już w tej samej składowej, istnieje między nimi droga, więc dodatkowa krawędź utworzyłaby cykl — pomiń ją. Zakończ po wybraniu V − 1 krawędzi lub po sprawdzeniu całej listy.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Rozważana krawędź jest najlżejszą spośród jeszcze niesprawdzonych, a jeśli łączy dwie różne składowe, to jest najlżejszą krawędzią przecinającą podział wierzchołków wyznaczony przez jedną z nich. Taka krawędź jest bezpiecznym wyborem: należy do pewnego minimalnego drzewa rozpinającego. Odrzucanie krawędzi zamykających cykl utrzymuje wynik w postaci lasu.</p><h3>Remisy i niespójność</h3><p>Przy równych wagach może istnieć wiele równie dobrych drzew. W grafie niespójnym otrzymujemy minimalny las rozpinający – po jednym drzewie na składową.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy projektowaniu tanich sieci połączeń i grupowaniu danych. Minimalizujemy koszt całej sieci; ścieżki między konkretnymi parami nie muszą być najkrótsze. Algorytm dopuszcza także wagi zerowe i ujemne.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz „Dwie składowe”. Dlaczego algorytm nie wybiera V − 1 krawędzi? Potem sprawdź, jak rozstrzyga remisy w trybie równych wag.</p></div></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields">
           <div class="field"><label for="scenario">Rodzaj grafu</label><select id="scenario"><option value="connected">Spójny</option><option value="disconnected">Dwie składowe</option><option value="equal">Równe wagi</option></select></div>
@@ -30,7 +46,7 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf i rosnący las</h2></div><span id="statusText" role="status">Gotowy</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Graf i rosnący las</h2></div><span id="statusText" role="status">Gotowy</span></div>
           <div class="lab-viewport" tabindex="0" role="region" aria-label="Przewijany widok grafu"><svg id="board" class="lab-board" viewBox="0 0 760 420" role="img" aria-label="Graf ważony i wybrane krawędzie" aria-describedby="operation graphText"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>▶ Badana</span><span><i class="lab-key accepted" aria-hidden="true"></i>✓ Przyjęta</span><span><i class="lab-key rejected" aria-hidden="true"></i>× Odrzucona · cykl</span><span><i class="lab-key" aria-hidden="true"></i>Jeszcze niesprawdzona</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
@@ -48,16 +64,6 @@
         </section>
         <details class="data-details"><summary>Dane grafu i składowe</summary><p id="graphText"></p><p id="groupsText"></p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Algorytm Kruskala</h2></div><span class="tag">Minimalne drzewo rozpinające</span></div>
-        <dl class="complexity"><div><dt>Strategia</dt><dd>Zachłanna</dd></div><div><dt>Czas</dt><dd>O(V + E log E)</dd></div><div><dt>Pamięć</dt><dd>O(V + E)</dd></div><div><dt>Graf</dt><dd>Nieskierowany</dd></div><div><dt>Struktura</dt><dd>Union-Find (DSU)</dd></div></dl>
-        <p class="complexity-note">V to liczba wierzchołków, E - krawędzi. Sortowanie dominuje nad operacjami DSU z kompresją ścieżek i łączeniem według rozmiaru. Podane koszty dotyczą algorytmu, bez odświeżania wizualizacji. Sortowanie pokazujemy jako jeden krok zbiorczy.</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Utwórz osobną składową dla każdego wierzchołka.</li><li>Posortuj krawędzie rosnąco według wagi.</li><li>Przyjmij krawędź, jeśli jej końce należą do różnych składowych. Połącz te składowe.</li><li>Odrzuć krawędź zamykającą cykl. Zakończ po wybraniu V − 1 krawędzi albo wyczerpaniu listy.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Najlżejsza krawędź łącząca dwie aktualne składowe jest bezpiecznym wyborem: można ją włączyć do pewnego minimalnego drzewa rozpinającego. Zakaz cykli utrzymuje wynik w postaci lasu.</p><h3>Remisy i niespójność</h3><p>Przy równych wagach może istnieć wiele równie dobrych drzew. W grafie niespójnym otrzymujemy minimalny las rozpinający - po jednym drzewie na składową.</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>Przy projektowaniu tanich sieci połączeń i grupowaniu danych. Minimalizujemy koszt całej sieci; ścieżki między konkretnymi parami nie muszą być najkrótsze. Algorytm dopuszcza także wagi zerowe i ujemne.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz „Dwie składowe”. Dlaczego algorytm nie wybiera V − 1 krawędzi? Potem sprawdź, jak rozstrzyga remisy w trybie równych wag.</p></div></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

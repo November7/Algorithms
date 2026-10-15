@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Problem plecakowy 0/1</h1><p>Każdy przedmiot możesz zabrać tylko raz. Obserwuj, jak małe podproblemy budują optymalne rozwiązanie, a potem odtwórz zawartość plecaka bez przekraczania jego pojemności.</p></div>
         <span class="badge">Plecak 0/1 · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Problem plecakowy 0/1</h2></div><span class="tag">Programowanie dynamiczne</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(n · (W + 1))</dd></div><div><dt>Pamięć</dt><dd>O(n · (W + 1))</dd></div><div><dt>Wybór przedmiotu</dt><dd>0 albo 1 raz</dd></div><div><dt>Wagi</dt><dd>Dodatnie całkowite</dd></div><div><dt>Odtwarzanie</dt><dd>O(n)</dd></div></dl>
+        <p class="complexity-note">n to liczba przedmiotów, W – pojemność. Zwykle zapisujemy O(nW); tutaj W + 1 uwzględnia też zerową pojemność. Czas jest pseudowielomianowy: zależy od wartości W, a nie liczby bitów jej zapisu. Koszty nie obejmują odświeżania widoku. Pełna tabela ułatwia odtworzenie wyboru; samą wartość można obliczyć z pamięcią O(W + 1).</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Masz plecak o ograniczonej pojemności i przedmioty o podanych wagach oraz wartościach. Chcesz uzyskać jak największą łączną wartość, nie przekraczając pojemności. „0/1” oznacza, że każdy przedmiot albo pomijasz, albo bierzesz w całości jeden raz. Komórka tabeli przechowuje najlepszą wartość dla pierwszych i przedmiotów i pojemności w. Takie zapisywanie rozwiązań mniejszych zadań to programowanie dynamiczne.</p><ol>
+              <li>Wpisz 0 w wierszu bez przedmiotów i w kolumnie pojemności 0. Bez przedmiotów albo bez miejsca nie można nic spakować, bo wagi są dodatnie.</li>
+              <li>Rozważ kolejny przedmiot dla każdej pojemności w. Pominięcie daje wynik z poprzedniego wiersza w tej samej kolumnie.</li>
+              <li>Jeśli przedmiot się mieści, policz też jego wartość plus wynik z poprzedniego wiersza dla pojemności w pomniejszonej o jego wagę. Wybierz większy wynik. Poprzedni wiersz gwarantuje, że nie zabierzesz tego przedmiotu ponownie.</li>
+              <li>Ostatnia komórka podaje najlepszą wartość. Aby ustalić zestaw, cofaj się po wierszach: zmiana wartości względem wiersza wyżej oznacza zabranie przedmiotu, więc odejmij jego wagę od rozpatrywanej pojemności.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Optymalne rozwiązanie albo zawiera ostatni rozważany przedmiot, albo go pomija. W obu przypadkach reszta musi być optymalnym rozwiązaniem mniejszego podproblemu. Tabela przechowuje te wyniki, zamiast liczyć je wielokrotnie.</p><h3>Remisy</h3><p>Gdy obie decyzje dają taką samą wartość, pomijamy bieżący przedmiot. Wynik jest optymalny, ale może nie być jedyny. Nie obiecujemy najmniejszej wagi spośród wszystkich optymalnych zestawów.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy wyborze projektów, ładunku i zasobów w ograniczonym budżecie. Dla bardzo dużego W tabela staje się kosztowna. W wariancie 0/1 nie można dzielić przedmiotów; wybieranie według wartości na jednostkę wagi nie gwarantuje optimum.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz pułapkę zachłanną: przedmiot 1 ma wagę 3 i wartość 5, a dwa pozostałe wagę 2 i wartość 3. Przy pojemności 4 dlaczego lepiej wziąć dwa mniejsze?</p></div></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields four">
           <div class="field"><label for="scenario">Zestaw przedmiotów</label><select id="scenario"><option value="example">Przykład: pięć przedmiotów</option><option value="greedy">Pułapka wyboru zachłannego</option><option value="heavy">Wszystko za ciężkie</option><option value="random">Losowy</option></select></div>
@@ -32,7 +48,7 @@
       <div class="main-column lab-results">
         <section class="panel lab-table-panel" aria-labelledby="itemsTitle"><h2 id="itemsTitle">Przedmioty do wyboru</h2><p>Wybór końcowy pojawia się podczas odtwarzania rozwiązania, po wypełnieniu tabeli.</p><ol id="items" class="lab-items" aria-labelledby="itemsTitle"></ol></section>
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Tabela najlepszych wartości</h2></div><span id="statusText" role="status">Gotowy</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Tabela najlepszych wartości</h2></div><span id="statusText" role="status">Gotowy</span></div>
           <p class="lab-table-hint" id="tableHint">DP[i, c] to największa wartość z pierwszych i przedmiotów przy pojemności c. Kreska oznacza komórkę jeszcze nieobliczoną.</p>
           <div class="lab-dp-viewport" tabindex="0" role="region" aria-label="Przewijana tabela programowania dynamicznego" aria-describedby="tableHint"><table id="dpTable" class="graph-table lab-dp"><caption>Wiersze: dostępne przedmioty · kolumny: pojemność plecaka</caption><thead id="dpHead"></thead><tbody id="dpBody"></tbody></table></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Obliczana / odtwarzana</span><span><i class="lab-key ready" aria-hidden="true"></i>Odczytywane podproblemy</span><span><i class="lab-key accepted" aria-hidden="true"></i>Ścieżka odtworzenia</span></div>
@@ -47,16 +63,6 @@
         <section class="panel lab-table-panel" aria-labelledby="resultTitle"><h2 id="resultTitle">Zawartość plecaka</h2><p id="phaseText">Najpierw wypełnimy tabelę, potem odtworzymy wybór.</p><ol id="chosen" class="graph-tokens" aria-label="Wybrane przedmioty"></ol><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
         <details class="data-details"><summary>Dane wejściowe i reguła przejścia</summary><p id="dataText"></p><p>DP[0, c] = DP[i, 0] = 0. Jeśli przedmiot i mieści się: DP[i, c] = max(DP[i − 1, c], wartość[i] + DP[i − 1, c − waga[i]]). W przeciwnym razie: DP[i, c] = DP[i − 1, c].</p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Problem plecakowy 0/1</h2></div><span class="tag">Programowanie dynamiczne</span></div>
-        <dl class="complexity"><div><dt>Czas</dt><dd>O(n · (W + 1))</dd></div><div><dt>Pamięć</dt><dd>O(n · (W + 1))</dd></div><div><dt>Wybór przedmiotu</dt><dd>0 albo 1 raz</dd></div><div><dt>Wagi</dt><dd>Dodatnie całkowite</dd></div><div><dt>Odtwarzanie</dt><dd>O(n)</dd></div></dl>
-        <p class="complexity-note">n to liczba przedmiotów, W - pojemność. Zwykle zapisujemy O(nW); tutaj W + 1 uwzględnia też zerową pojemność. Czas jest pseudowielomianowy: zależy od wartości W, a nie liczby bitów jej zapisu. Koszty nie obejmują odświeżania widoku. Pełna tabela ułatwia odtworzenie wyboru; samą wartość można obliczyć z pamięcią O(W + 1).</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Dla braku przedmiotów lub pojemności 0 wpisz wartość 0.</li><li>Dla kolejnego przedmiotu i każdej pojemności porównaj pominięcie z zabraniem, jeśli się mieści.</li><li>Oba warianty odczytuj z poprzedniego wiersza, aby nie użyć przedmiotu drugi raz.</li><li>Od ostatniej komórki cofaj się po wierszach. Zmiana wartości oznacza zabranie przedmiotu i zmniejszenie wolnej pojemności.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Optymalne rozwiązanie albo zawiera ostatni rozważany przedmiot, albo go pomija. W obu przypadkach reszta musi być optymalnym rozwiązaniem mniejszego podproblemu. Tabela przechowuje te wyniki, zamiast liczyć je wielokrotnie.</p><h3>Remisy</h3><p>Gdy obie decyzje dają taką samą wartość, pomijamy bieżący przedmiot. Wynik jest optymalny, ale może nie być jedyny. Nie obiecujemy najmniejszej wagi spośród wszystkich optymalnych zestawów.</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>Przy wyborze projektów, ładunku i zasobów w ograniczonym budżecie. Dla bardzo dużego W tabela staje się kosztowna. W wariancie 0/1 nie można dzielić przedmiotów; wybieranie według wartości na jednostkę wagi nie gwarantuje optimum.</p><div class="exercise"><h3>Sprawdź samodzielnie</h3><p>Wybierz pułapkę zachłanną: przedmiot 1 ma wagę 3 i wartość 5, a dwa pozostałe wagę 2 i wartość 3. Przy pojemności 4 dlaczego lepiej wziąć dwa mniejsze?</p></div></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>

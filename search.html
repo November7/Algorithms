@@ -30,11 +30,59 @@
         </div>
         <span class="badge">8 algorytmów · jeden zestaw danych</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header">
+          <div>
+            <p class="eyebrow">01 / Zrozum algorytm</p>
+            <h2 id="lessonTitle"></h2>
+          </div>
+          <span class="tag" id="family"></span>
+        </div>
+        <dl class="complexity" id="complexity"></dl>
+        <p class="complexity-note" id="complexityNote"></p>
+        <div class="lesson-columns">
+          <div>
+            <h3>Jak to działa?</h3>
+            <p id="description"></p>
+            <ol id="steps"></ol>
+          </div>
+          <div>
+            <h3>Zalety</h3>
+            <p id="pros"></p>
+            <h3>Ograniczenia</h3>
+            <p id="cons"></p>
+          </div>
+          <div>
+            <h3>Kiedy się przydaje?</h3>
+            <p id="uses"></p>
+            <div class="exercise">
+              <h3>Sprawdź samodzielnie</h3>
+              <p id="exercise"></p>
+            </div>
+          </div>
+        </div>
+        <details class="glossary">
+          <summary>Jak czytać złożoność i wymóg uporządkowania?</summary>
+          <div class="glossary-grid">
+            <div>
+              <h3>Czas</h3>
+              <p>n oznacza liczbę elementów. Θ opisuje ścisły rząd wzrostu liczby porównań, a O górne ograniczenie. Θ(log n) rośnie wolniej niż Θ(√n), a ono wolniej niż Θ(n). Podajemy liczbę porównań, nie sekundy.</p>
+            </div>
+            <div>
+              <h3>Pamięć pomocnicza</h3>
+              <p>Podajemy dodatkową pamięć algorytmu bez danych wejściowych. Wszystkie wersje w tym laboratorium są iteracyjne, więc potrzebują O(1) pamięci.</p>
+            </div>
+            <div>
+              <h3>Dane uporządkowane</h3>
+              <p>Jeśli tablica jest rosnąca, jedno porównanie pozwala odrzucić całą część tablicy. W danych nieuporządkowanych można tylko sprawdzać elementy po kolei, bo żaden wynik porównania nie mówi nic o pozostałych.</p>
+            </div>
+          </div>
+        </details>
+      </section>
       <div class="workspace">
         <aside class="panel algorithms" aria-labelledby="algorithmsTitle">
-          <h2 class="section-label" id="algorithmsTitle">01 / Wybierz algorytm</h2>
+          <h2 class="section-label" id="algorithmsTitle">02 / Wybierz algorytm</h2>
           <div id="algorithmList"></div>
-          <!-- <p class="sidebar-note">Najedź na ⓘ lub wybierz ikonę klawiaturą, aby zobaczyć krótkie objaśnienie. Na telefonie dotknij ikony.</p> -->
         </aside>
         <div class="main-column">
           <section class="panel controls" aria-label="Ustawienia i sterowanie">
@@ -84,7 +132,7 @@
           <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
             <div class="chart-heading">
               <div>
-                <div class="eyebrow">02 / Obserwuj działanie</div>
+                <div class="eyebrow">03 / Obserwuj działanie</div>
                 <h2 id="chartTitle">Wyszukiwanie sekwencyjne</h2>
               </div>
               <span id="statusText" role="status">Gotowy</span>
@@ -127,62 +175,12 @@
           </details>
         </div>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header">
-          <div>
-            <p class="eyebrow">03 / Zrozum algorytm</p>
-            <h2 id="lessonTitle"></h2>
-          </div>
-          <span class="tag" id="family"></span>
-        </div>
-        <dl class="complexity" id="complexity"></dl>
-        <p class="complexity-note" id="complexityNote"></p>
-        <div class="lesson-columns">
-          <div>
-            <h3>Jak to działa?</h3>
-            <p id="description"></p>
-            <ol id="steps"></ol>
-          </div>
-          <div>
-            <h3>Zalety</h3>
-            <p id="pros"></p>
-            <h3>Ograniczenia</h3>
-            <p id="cons"></p>
-          </div>
-          <div>
-            <h3>Kiedy się przydaje?</h3>
-            <p id="uses"></p>
-            <div class="exercise">
-              <h3>Sprawdź samodzielnie</h3>
-              <p id="exercise"></p>
-            </div>
-          </div>
-        </div>
-        <details class="glossary">
-          <summary>Jak czytać złożoność i wymóg uporządkowania?</summary>
-          <div class="glossary-grid">
-            <div>
-              <h3>Czas</h3>
-              <p>n oznacza liczbę elementów. Θ opisuje ścisły rząd wzrostu liczby porównań, a O górne ograniczenie. Θ(log n) rośnie wolniej niż Θ(√n), a ono wolniej niż Θ(n). Podajemy liczbę porównań, nie sekundy.</p>
-            </div>
-            <div>
-              <h3>Pamięć pomocnicza</h3>
-              <p>Podajemy dodatkową pamięć algorytmu bez danych wejściowych. Wszystkie wersje w tym laboratorium są iteracyjne, więc potrzebują O(1) pamięci.</p>
-            </div>
-            <div>
-              <h3>Dane uporządkowane</h3>
-              <p>Jeśli tablica jest rosnąca, jedno porównanie pozwala odrzucić całą część tablicy. W danych nieuporządkowanych można tylko sprawdzać elementy po kolei, bo żaden wynik porównania nie mówi nic o pozostałych.</p>
-            </div>
-          </div>
-        </details>
-      </section>
       <footer>
         <span>AlgorithmsLab · Interaktywna nauka algorytmów</span>
         <a href="index.html">Wszystkie symulacje</a>
       </footer>
     </main>
     <p id="stepAnnouncement" class="sr-only" role="status"></p>
-    <div id="algorithmTooltip" class="tooltip" role="tooltip" hidden></div>
 <script>
 (() => {
   'use strict';
@@ -191,43 +189,43 @@
   // These descriptions refer to the exact variants implemented below.
   const ALGO_INFO = {
     linear: { name: 'Sekwencyjne', title: 'Wyszukiwanie sekwencyjne', family: 'Przeglądanie po kolei', sorted: false, best: 'Θ(1)', average: 'Θ(n)', worst: 'Θ(n)', memory: 'O(1)',
-      description: 'Sprawdza elementy od początku tablicy, jeden po drugim, aż znajdzie szukaną wartość albo dojdzie do końca.',
-      steps: ['Porównaj szukaną wartość z bieżącym elementem.', 'Jeśli są równe, zwróć pozycję.', 'W przeciwnym razie przejdź do następnego elementu; po ostatnim zgłoś brak.'],
+      description: 'Szuka wartości tak, jak szukasz nazwiska na nieuporządkowanej liście: sprawdza kolejne pozycje od początku. Każde porównanie rozstrzyga tylko, czy bieżący element jest tym szukanym. Jeśli znajdzie zgodność, zwraca jej pozycję; jeśli przejrzy całą tablicę, wiadomo, że wartości w niej nie ma. Przy powtórzeniach znajdzie pierwsze wystąpienie.',
+      steps: ['Zacznij od pierwszego elementu i porównaj jego wartość z szukaną.', 'Jeśli wartości są równe, zakończ i podaj pozycję znalezionego elementu.', 'Jeśli są różne, przejdź o jedno miejsce dalej. Po sprawdzeniu ostatniej pozycji bez trafienia zgłoś brak wartości.'],
       pros: 'Działa na dowolnych danych; nie wymaga sortowania ani dodatkowej pamięci.', cons: 'Przy dużych tablicach wykonuje wiele porównań; nie wykorzystuje porządku danych.', uses: 'Małe lub nieuporządkowane zbiory oraz jednorazowe wyszukiwania.',
       note: 'Średnio, gdy szukana wartość jest w tablicy i każda pozycja jest równie prawdopodobna, wystarcza około (n + 1)/2 porównań. Przy braku wartości zawsze n.', exercise: 'Wybierz „Ostatni element” i „Brak w tablicy”. Ile porównań wykonuje algorytm w obu przypadkach?' },
     sentinel: { name: 'Z wartownikiem', title: 'Wyszukiwanie z wartownikiem', family: 'Przeglądanie po kolei', sorted: false, best: 'Θ(1)', average: 'Θ(n)', worst: 'Θ(n)', memory: 'O(1)',
-      description: 'Zastępuje ostatni element szukaną wartością, czyli wartownikiem. Dzięki temu pętla na pewno się zatrzyma i nie musi sprawdzać, czy doszła do końca tablicy.',
-      steps: ['Zapamiętaj ostatni element i wpisz na jego miejsce szukaną wartość.', 'Przeglądaj tablicę, aż trafisz na element równy szukanej.', 'Przywróć ostatni element i sprawdź, czy znaleziona pozycja jest prawdziwa.'],
+      description: 'To wyszukiwanie sekwencyjne z dodatkowym zabezpieczeniem, nazywanym wartownikiem. Na chwilę wpisuje szukaną wartość na ostatnią pozycję, więc pętla na pewno na nią trafi i nie musi w każdym kroku sprawdzać końca tablicy. Trafienie na wartownika nie dowodzi jednak, że wartość była w oryginalnych danych. Dlatego algorytm przywraca ostatni element i dopiero wtedy rozstrzyga wynik.',
+      steps: ['Zapamiętaj oryginalny ostatni element, a na jego miejsce wpisz szukaną wartość.', 'Od początku sprawdzaj kolejne elementy, aż trafisz na wartość równą szukanej. Wartownik gwarantuje zatrzymanie.', 'Przywróć ostatni element. Trafienie jest prawdziwe, jeśli nastąpiło przed ostatnią pozycją albo zapamiętany ostatni element też był równy szukanej wartości.'],
       pros: 'Usuwa jeden test indeksu z każdego obrotu pętli; nadal działa na danych nieuporządkowanych.', cons: 'Tymczasowo modyfikuje tablicę, więc nie nadaje się do danych tylko do odczytu ani do dostępu równoległego.', uses: 'Szybkie przeszukiwanie surowych tablic, gdy koszt testu indeksu ma znaczenie.',
       note: 'Liczba porównań wartości jest taka sama jak w wersji zwykłej. Zysk dotyczy testów indeksu w pętli, których nie liczymy. Dwa zapisy do tablicy są kosztem wartownika.', exercise: 'Porównaj liczbę porównań z wyszukiwaniem sekwencyjnym dla tych samych danych. Gdzie widać różnicę?' },
     binary: { name: 'Binarne', title: 'Wyszukiwanie binarne', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'Θ(log n)', worst: 'Θ(log n)', memory: 'O(1)',
-      description: 'Porównuje szukaną wartość ze środkiem przedziału i odrzuca połowę, w której na pewno jej nie ma.',
-      steps: ['Weź środkowy element przedziału.', 'Jeśli jest równy szukanej, zwróć pozycję.', 'Jeśli jest mniejszy, szukaj po prawej; jeśli większy, po lewej.'],
+      description: 'Wymaga tablicy uporządkowanej od najmniejszych do największych wartości. Sprawdza środkowy element: jeśli jest za mały, wszystkie elementy na lewo od niego też są za małe; jeśli za duży, można odrzucić prawą część. Jedno porównanie usuwa więc około połowy możliwości. To podobne do zgadywania liczby z podpowiedziami „za mało” i „za dużo”.',
+      steps: ['Ustaw przedział poszukiwań na całą tablicę i sprawdź jego środkowy element.', 'Przy równości zwróć pozycję. Gdy element jest mniejszy od szukanej wartości, zostaw tylko prawą część; gdy większy — tylko lewą.', 'Powtarzaj dla nowego przedziału, pomijając już sprawdzony środek. Jeśli przedział stanie się pusty, wartości nie ma w tablicy.'],
       pros: 'Bardzo mało porównań: dla 160 elementów wystarczy najwyżej 8.', cons: 'Wymaga danych uporządkowanych i swobodnego dostępu do elementów.', uses: 'Słowniki, indeksy, wyszukiwanie w dużych posortowanych tablicach.',
       note: 'Jedno porównanie trójstanowe (mniejsze, równe, większe) na krok. Najwyżej ⌊log₂ n⌋ + 1 porównań.', exercise: 'Podwój liczbę elementów. O ile wzrasta maksymalna liczba porównań?' },
     jump: { name: 'Skokowe (Jump)', title: 'Wyszukiwanie skokowe', family: 'Skoki i przeglądanie', sorted: true, best: 'Θ(1)', average: 'Θ(√n)', worst: 'Θ(√n)', memory: 'O(1)',
-      description: 'Przeskakuje po tablicy blokami o długości ⌊√n⌋, aż znajdzie blok, w którym może być szukana wartość. Potem przegląda ten blok po kolei.',
-      steps: ['Porównaj szukaną z ostatnim elementem kolejnego bloku.', 'Jeśli element jest mniejszy, skocz do następnego bloku.', 'Gdy jest większy, przejrzyj sekwencyjnie bieżący blok.'],
-      pros: 'Mniej porównań niż sekwencyjne; prosty, a skacze tylko w prawo, co bywa korzystne np. dla taśm.', cons: 'Więcej porównań niż binarne; wymaga uporządkowania.', uses: 'Gdy cofanie się w danych jest drogie, a swobodny dostęp ograniczony.',
+      description: 'W uporządkowanej tablicy najpierw sprawdza końce bloków, pomijając wiele pozycji naraz. Dopóki koniec bloku jest mniejszy od szukanej wartości, cały blok można odrzucić. Po przekroczeniu szukanej wartości wraca do początku wskazanego bloku i sprawdza go po kolei. Dla 100 elementów bloki mają po 10 pozycji, co równoważy liczbę skoków i końcowych porównań.',
+      steps: ['Podziel tablicę na bloki o długości ⌊√n⌋, czyli pierwiastka z liczby elementów zaokrąglonego w dół. Sprawdź koniec pierwszego bloku.', 'Jeśli trafisz na szukaną wartość, zakończ. Jeśli wartość jest za mała, przejdź do końca następnego bloku; wyjście poza tablicę oznacza brak.', 'Gdy koniec bloku jest większy od szukanej wartości, przejrzyj ten blok od początku. Zakończ przy trafieniu, przekroczeniu szukanej wartości lub wyczerpaniu bloku.'],
+      pros: 'Pomija całe bloki, więc zwykle wykonuje mniej porównań niż przeglądanie po kolei. Po znalezieniu bloku wystarcza jeden powrót do jego początku.', cons: 'Więcej porównań niż binarne; wymaga uporządkowania.', uses: 'Nauka łączenia dwóch strategii: szybkiego pomijania bloków i dokładnego przeglądania krótkiego fragmentu.',
       note: 'Długość bloku √n minimalizuje sumę liczby skoków i długości końcowego przeglądania. Dla n = 100 to blok 10.', exercise: 'Dla 100 elementów ustaw szukaną na ostatnią pozycję. Ile skoków i ile kroków sekwencyjnych wykonuje algorytm?' },
     interpolation: { name: 'Interpolacyjne', title: 'Wyszukiwanie interpolacyjne', family: 'Szacowanie pozycji', sorted: true, best: 'Θ(1)', average: 'Θ(log log n)¹', worst: 'Θ(n)', memory: 'O(1)',
-      description: 'Zamiast środka przedziału szacuje pozycję szukanej wartości na podstawie jej wielkości względem wartości na krańcach, jak szukanie nazwiska w książce telefonicznej.',
-      steps: ['Oblicz pozycję: lo + (szukana − a[lo]) · (hi − lo) / (a[hi] − a[lo]).', 'Porównaj element z tej pozycji z szukaną.', 'Zawęź przedział z lewej lub prawej strony i powtórz.'],
+      description: 'W uporządkowanej tablicy liczb próbuje przewidzieć, gdzie leży szukana wartość. Korzysta z wartości na obu końcach przedziału: liczby bliskiej dolnej granicy szuka bliżej początku, a bliskiej górnej — bliżej końca. Na przykład w równomiernym szeregu od 10 do 100 wartość 90 powinna być blisko końca. Przy nierównych odstępach takie przewidywanie może być nietrafne.',
+      steps: ['Oznacz indeksy krańców jako lo i hi, a tablicę jako a. Oszacuj indeks: lo + (szukana − a[lo]) · (hi − lo) / (a[hi] − a[lo]), zaokrąglając część ułamkową w dół.', 'Sprawdź wartość pod tym indeksem. Przy trafieniu zakończ; gdy jest za mała, przesuń lewą granicę za nią, a gdy za duża — prawą przed nią.', 'Powtarzaj, dopóki szukana wartość mieści się między wartościami krańców. Jeśli krańce mają równe wartości, sprawdź lewy element bez dzielenia przez zero.'],
       pros: 'Przy równomiernie rozłożonych wartościach potrzebuje bardzo mało porównań.', cons: 'Przy nierównomiernych danych może degradować do liniowego przeglądania; wymaga liczb i uporządkowania.', uses: 'Duże tablice liczb o w przybliżeniu jednostajnym rozkładzie, np. kolejne numery lub daty.',
       note: '¹ Średnia Θ(log log n) zakłada równomierny rozkład wartości. Odczyty a[lo] i a[hi] potrzebne do wzoru nie są liczone jako porównania.', exercise: 'Porównaj układ „równomierny” i „nierównomierny”. Dlaczego w drugim algorytm wykonuje więcej porównań?' },
     exponential: { name: 'Wykładnicze', title: 'Wyszukiwanie wykładnicze', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'O(log n)', worst: 'Θ(log n)', memory: 'O(1)',
-      description: 'Najpierw podwaja pozycję (1, 2, 4, 8, …), aż trafi na element nie mniejszy od szukanego. Potem stosuje wyszukiwanie binarne w znalezionym przedziale.',
-      steps: ['Sprawdź pozycję 1, 2, 4, 8, … aż do elementu większego od szukanego.', 'Ogranicz przedział do ostatniego podwojenia.', 'Przeszukaj ten przedział binarnie.'],
-      pros: 'Szybkie, gdy szukana wartość leży blisko początku; działa też dla bardzo długich lub nieograniczonych list.', cons: 'Dla wartości na końcu wykonuje więcej porównań niż zwykłe binarne; wymaga uporządkowania.', uses: 'Nieznany lub nieograniczony rozmiar danych oraz wyszukiwanie wartości blisko początku.',
+      description: 'Najpierw ustala, jak daleko od początku warto szukać w uporządkowanej tablicy. Sprawdza pierwszy element, a następnie indeksy 1, 2, 4, 8… liczone od zera, za każdym razem podwajając zasięg. Gdy przekroczy szukaną wartość albo koniec tablicy, ma już ograniczony obszar poszukiwań. W tym obszarze uruchamia wyszukiwanie binarne.',
+      steps: ['Sprawdź element o indeksie 0. Jeśli nie rozstrzyga wyniku, sprawdzaj indeksy 1, 2, 4, 8… aż do trafienia, przekroczenia szukanej wartości lub końca tablicy.', 'Przy trafieniu zwróć pozycję. W przeciwnym razie wybierz jeszcze niesprawdzony przedział pomiędzy ostatnią zbyt małą wartością a osiągniętą granicą.', 'Przeszukaj ten przedział binarnie, dzieląc go na połowy aż do trafienia lub wyczerpania możliwości.'],
+      pros: 'Szybkie, gdy szukana wartość leży blisko początku. Pozwala ustalić obszar poszukiwań bez znajomości pełnego rozmiaru danych, jeśli można odczytywać je po indeksie.', cons: 'Dla wartości na końcu wykonuje więcej porównań niż zwykłe binarne; wymaga uporządkowania.', uses: 'Nieznany lub nieograniczony rozmiar danych oraz wyszukiwanie wartości blisko początku.',
       note: 'Dla szukanej wartości na pozycji p liczba porównań wynosi O(log p), co przy położeniu blisko początku daje przewagę nad binarnym.', exercise: 'Wybierz „Pierwszy element”, a potem „Ostatni element”. Jak zmienia się liczba porównań?' },
     ternary: { name: 'Trójpodziałowe', title: 'Wyszukiwanie trójpodziałowe', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'Θ(log n)', worst: 'Θ(log n)', memory: 'O(1)',
-      description: 'Dzieli przedział na trzy części dwoma punktami podziału i zostawia tę część, w której może być szukana wartość.',
-      steps: ['Wyznacz dwa punkty podziału: pierwszą i drugą trzecią przedziału.', 'Porównaj szukaną z nimi i odrzuć dwie trzecie lub jedną trzecią tablicy.', 'Powtórz dla pozostałego przedziału.'],
+      description: 'W uporządkowanej tablicy wyznacza dwa punkty dzielące przedział na około trzy równe części. Porównania z tymi punktami wskazują, czy szukana wartość może leżeć w części lewej, środkowej czy prawej. Pozostawia tylko właściwą część i powtarza podział. Choć przedział maleje szybciej niż w wyszukiwaniu binarnym, jeden etap może wymagać dwóch porównań.',
+      steps: ['Wyznacz elementy przy jednej trzeciej i dwóch trzecich bieżącego przedziału.', 'Porównaj szukaną wartość z pierwszym punktem, a w razie potrzeby także z drugim. Przy równości zwróć znalezioną pozycję.', 'Zostaw lewą, środkową albo prawą część, pomijając sprawdzone punkty. Powtarzaj, aż znajdziesz wartość lub przedział stanie się pusty.'],
       pros: 'Ilustruje uogólnienie wyszukiwania binarnego na więcej części.', cons: 'Wykonuje więcej porównań niż binarne (do 2·log₃ n ≈ 1,26·log₂ n), mimo mniejszej liczby kroków.', uses: 'Głównie dydaktyka i porównanie strategii podziału.',
       note: 'Dwa porównania na krok przy trzykrotnym zmniejszaniu przedziału dają około 1,26·log₂ n porównań w najgorszym przypadku, więcej niż w binarnym.', exercise: 'Porównaj liczbę porównań z wyszukiwaniem binarnym dla 160 elementów. Które wykonuje ich mniej?' },
     fibonacci: { name: 'Fibonacciego', title: 'Wyszukiwanie Fibonacciego', family: 'Dziel i zwyciężaj', sorted: true, best: 'Θ(1)', average: 'Θ(log n)', worst: 'Θ(log n)', memory: 'O(1)',
-      description: 'Dzieli przedział według kolejnych liczb Fibonacciego zamiast na połowy. Pozycje do sprawdzenia wyznacza wyłącznie dodawaniem i odejmowaniem.',
-      steps: ['Znajdź najmniejszą liczbę Fibonacciego nie mniejszą od n.', 'Sprawdź pozycję odsuniętą o poprzednią liczbę Fibonacciego.', 'Zawęź przedział do mniejszej lub większej części i cofnij się o jedną liczbę ciągu.'],
+      description: 'Wykorzystuje liczby Fibonacciego: 0, 1, 1, 2, 3, 5, 8…; każda następna jest sumą dwóch poprzednich. Dzieli uporządkowaną tablicę na nierówne części o rozmiarach wynikających z tego ciągu. Porównanie pozwala odrzucić jedną część, a kolejne liczby ciągu pomagają wybrać nową pozycję. Dzięki tej zależności do przesuwania granic wystarczają dodawanie i odejmowanie.',
+      steps: ['Znajdź najmniejszą liczbę Fibonacciego F nie mniejszą od długości tablicy i zapamiętaj też dwie poprzednie liczby ciągu.', 'Od granicy odrzuconego początku odlicz mniejszą z tych dwóch liczb. Sprawdź wskazany element, ograniczając indeks do końca tablicy.', 'Przy trafieniu zakończ. Przy zbyt małej wartości odrzuć lewą część, a przy zbyt dużej — prawą; dobierz odpowiednio mniejsze liczby ciągu. Na końcu sprawdź ewentualną pozostałą pozycję.'],
       pros: 'Obywa się bez dzielenia; pozycje rosną i maleją zgodnie z ciągiem, co bywa korzystne w pamięciach o kosztownym dostępie.', cons: 'Trudniejszy do zrozumienia niż binarne; wykonuje średnio nieco więcej porównań.', uses: 'Systemy bez szybkiego dzielenia oraz ćwiczenia z zależnościami ciągu Fibonacciego.',
       note: 'Dla nieznacznie większej niż binarne stałej wykonuje Θ(log n) porównań. Przedział zmniejsza się w stosunku około złotego podziału 1 : 1,618.', exercise: 'Ustaw 21 lub 34 elementy. Jak pokrywają się przedziały z liczbami Fibonacciego?' }
   };
@@ -560,32 +558,6 @@
     if (state.running && !state.paused && !document.hidden && frameId === null) frameId = requestAnimationFrame(frame);
   }
 
-  // Shared tooltip: hoverable, dismissible, and available by touch or keyboard.
-  const tooltip = $('algorithmTooltip');
-  let tipAnchor = null, pinned = false, tipTimer = null;
-  function closeTip() {
-    clearTimeout(tipTimer);
-    if (tipAnchor) { tipAnchor.removeAttribute('aria-describedby'); tipAnchor.setAttribute('aria-expanded', 'false'); }
-    tipAnchor = null; pinned = false; tooltip.hidden = true;
-  }
-  function placeTip() {
-    if (!tipAnchor) return;
-    const a = tipAnchor.getBoundingClientRect(), box = tooltip.getBoundingClientRect();
-    const viewportWidth = document.documentElement.clientWidth, viewportHeight = window.innerHeight;
-    const right = a.right + 12;
-    const x = right + box.width <= viewportWidth - 12 ? right : Math.max(12, a.left - box.width - 12);
-    const y = Math.max(12, Math.min(a.top - 16, viewportHeight - box.height - 12));
-    tooltip.style.setProperty('--tooltip-x', `${x}px`); tooltip.style.setProperty('--tooltip-y', `${y}px`);
-  }
-  function openTip(button, pin = false) {
-    clearTimeout(tipTimer);
-    if (tipAnchor !== button) closeTip();
-    tipAnchor = button; pinned = pin || pinned;
-    const info = ALGO_INFO[button.dataset.info];
-    tooltip.innerHTML = `<h3>${info.title}</h3><p>${info.description}</p><p><strong>Zalety:</strong> ${info.pros}</p><p><strong>Ograniczenia:</strong> ${info.cons}</p><p><strong>Zastosowania:</strong> ${info.uses}</p><p class="tip-metrics"><strong>Czas</strong> (najlepszy / średni / najgorszy):<br>${info.best} / ${info.average} / ${info.worst}<br><strong>Pamięć:</strong> ${info.memory} · ${info.sorted ? 'Wymaga danych rosnących' : 'Działa na dowolnych danych'}</p><p>${info.note}</p><small>Esc lub kliknięcie poza dymkiem zamyka opis.</small>`;
-    tooltip.hidden = false; button.setAttribute('aria-describedby', 'algorithmTooltip'); button.setAttribute('aria-expanded', 'true'); placeTip();
-  }
-  function deferClose() { if (!pinned) tipTimer = setTimeout(closeTip, 180); }
   for (const [index, [key, info]] of Object.entries(ALGO_INFO).entries()) {
     const row = document.createElement('div'); row.className = 'algorithm-row';
     const pick = document.createElement('button'); pick.type = 'button'; pick.className = 'algorithm-pick'; pick.dataset.algorithm = key;
@@ -595,22 +567,8 @@
       state.selected = key; clearCounters(); renderLesson(); setStatus('Gotowy');
       $('operation').textContent = 'Algorytm zmieniony. Dane i szukana wartość pozostały bez zmian.'; rafDraw();
     });
-    const infoButton = document.createElement('button'); infoButton.type = 'button'; infoButton.className = 'info-button'; infoButton.dataset.info = key;
-    infoButton.innerHTML = '<span aria-hidden="true">i</span>';
-    infoButton.setAttribute('aria-label', `Informacje: ${info.title.toLowerCase()}`); infoButton.setAttribute('aria-expanded', 'false');
-    infoButton.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') openTip(infoButton); });
-    infoButton.addEventListener('pointerleave', deferClose);
-    infoButton.addEventListener('focus', () => openTip(infoButton));
-    infoButton.addEventListener('blur', closeTip);
-    infoButton.addEventListener('click', () => { if (tipAnchor === infoButton && pinned) closeTip(); else openTip(infoButton, true); });
-    row.append(pick, infoButton); $('algorithmList').append(row);
+    row.append(pick); $('algorithmList').append(row);
   }
-  tooltip.addEventListener('pointerenter', () => clearTimeout(tipTimer));
-  tooltip.addEventListener('pointerleave', deferClose);
-  document.addEventListener('pointerdown', event => { if (tipAnchor && !tooltip.contains(event.target) && !tipAnchor.contains(event.target)) closeTip(); });
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeTip(); });
-  window.addEventListener('scroll', placeTip, { capture: true, passive: true });
-  window.addEventListener('resize', placeTip);
   $('startBtn').addEventListener('click', () => begin());
   $('pauseBtn').addEventListener('click', togglePause);
   $('stepBtn').addEventListener('click', () => { if (!state.running) begin(true); if (state.paused) { nextStep(); $('stepAnnouncement').textContent = $('operation').textContent; rafDraw(); } });

@@ -18,6 +18,22 @@
         <div><span class="eyebrow">Zrozum, zanim zapamiętasz</span><h1 id="pageTitle">Algorytm Bellmana-Forda</h1><p>Dijkstra przestaje działać, gdy krawędź może mieć ujemną wagę. Bellman-Ford wielokrotnie poprawia odległości wzdłuż wszystkich krawędzi i potrafi zauważyć ujemny cykl, który psuje pojęcie „najkrótszej” drogi.</p></div>
         <span class="badge">Ujemne wagi · krok po kroku</span>
       </section>
+      <section class="panel lesson" aria-labelledby="lessonTitle">
+        <div class="lesson-header"><div><p class="eyebrow">01 / Zrozum algorytm</p><h2 id="lessonTitle">Bellman-Ford</h2></div><span class="tag">Najkrótsze ścieżki</span></div>
+        <dl class="complexity"><div><dt>Czas</dt><dd>O(V · E)</dd></div><div><dt>Pamięć</dt><dd>O(V)</dd></div><div><dt>Ujemne wagi</dt><dd>Obsługuje</dd></div><div><dt>Ujemny cykl</dt><dd>Wykrywa</dd></div><div><dt>Rund</dt><dd>V - 1 (+1 kontrolna)</dd></div></dl>
+        <p class="complexity-note">V to liczba wierzchołków, E – krawędzi. Wolniejszy od Dijkstry, ale bardziej ogólny. Wczesne zakończenie jest możliwe, gdy w całej rundzie nic się nie poprawiło.</p>
+        <div class="lesson-columns">
+          <div><h3>Jak to działa?</h3>
+            <p>Szuka dróg o najmniejszej sumie wag od jednego wierzchołka startowego do pozostałych. Waga może oznaczać koszt przejścia, także ujemny, np. rabat. Algorytm wielokrotnie sprawdza, czy znana droga do początku krawędzi pozwala taniej dotrzeć do jej końca. Taką poprawę nazywamy relaksacją: jeśli dojście do A kosztuje 5, a krawędź A → B ma wagę −2, otrzymujemy drogę do B o koszcie 3.</p><ol>
+              <li>Ustaw odległość startu na 0, a pozostałe na nieskończoność, czyli „jeszcze nie znamy drogi”. Zapis d[v] oznacza najlepszy dotąd znaleziony koszt dojścia do v.</li>
+              <li>Przejrzyj każdą krawędź u → v o wadze w. Jeśli u jest osiągalny i d[u] + w &lt; d[v], popraw d[v] oraz zapamiętaj u jako poprzednika v na tej drodze.</li>
+              <li>Wykonaj najwyżej V − 1 pełnych rund, gdzie V to liczba wierzchołków. Kolejne rundy pozwalają uwzględnić coraz dłuższe drogi. Runda bez poprawy pozwala zakończyć wcześniej.</li>
+              <li>Sprawdź jeszcze raz krawędzie. Jeśli po V − 1 rundach nadal można obniżyć odległość, istnieje ujemny cykl osiągalny ze startu.</li>
+            </ol></div>
+          <div><h3>Dlaczego to działa?</h3><p>Jeśli ze startu nie można dojść do ujemnego cyklu, najkrótszą drogę można wybrać bez powtarzania wierzchołków, a więc z najwyżej V − 1 krawędziami. Po pierwszej rundzie uwzględnione są wszystkie drogi o jednej krawędzi, po drugiej — także o dwóch, i tak dalej; niektóre dłuższe drogi mogą zostać uwzględnione wcześniej. Dlatego V − 1 rund wystarcza. Ujemny cykl osiągalny ze startu jest wyjątkiem, który wykrywa dodatkowe sprawdzenie.</p><h3>Ujemny cykl</h3><p>Gdy cykl osiągalny ze startu ma ujemną sumę wag, każde okrążenie skraca drogę. Dla wierzchołków, do których można z niego dojść, „najkrótsza” droga nie istnieje, a algorytm to zgłasza.</p></div>
+          <div><h3>Kiedy się przydaje?</h3><p>Przy kursach walut i wykrywaniu arbitrażu, w protokołach routingu wektora odległości oraz wszędzie tam, gdzie koszty mogą być ujemne, np. zyski lub ulgi.</p></div>
+        </div>
+      </section>
       <section class="panel controls" aria-label="Ustawienia i sterowanie">
         <div class="lab-fields four">
           <div class="field"><label for="scenario">Graf</label><select id="scenario"><option value="example">Przykład: ujemna krawędź</option><option value="dijkstra">Pułapka dla Dijkstry</option><option value="cycle">Ujemny cykl</option><option value="random">Losowy</option></select></div>
@@ -30,30 +46,20 @@
       </section>
       <div class="main-column lab-results">
         <section class="panel visualizer" id="visualization" tabindex="-1" aria-labelledby="chartTitle">
-          <div class="chart-heading"><div><div class="eyebrow">01 / Obserwuj działanie</div><h2 id="chartTitle">Graf skierowany z wagami</h2></div><span id="statusText" role="status">Gotowe</span></div>
+          <div class="chart-heading"><div><div class="eyebrow">02 / Obserwuj działanie</div><h2 id="chartTitle">Graf skierowany z wagami</h2></div><span id="statusText" role="status">Gotowe</span></div>
           <div class="lab-viewport"><svg id="board" class="lab-board" style="max-width:640px" viewBox="0 0 640 400" role="group" aria-label="Graf skierowany z wagami krawędzi"></svg></div>
           <div class="chart-caption lab-legend"><span><i class="lab-key current" aria-hidden="true"></i>Sprawdzana krawędź</span><span><i class="lab-key accepted" aria-hidden="true"></i>Udana relaksacja</span><span><i class="lab-key rejected" aria-hidden="true"></i>Bez poprawy / ujemny cykl</span></div>
           <p id="operation" role="status" aria-live="polite">Wybierz Start lub wykonaj pierwszy krok.</p>
         </section>
         <section class="stats" aria-label="Statystyki algorytmu">
-          <div class="stat"><span>Runda</span><output id="roundCount">0</output><small id="roundGoal">z najwyżej V − 1 + 1 kontrolna</small></div>
+          <div class="stat"><span>Runda</span><output id="roundCount">0</output><small id="roundGoal">z najwyżej V - 1 + 1 kontrolna</small></div>
           <div class="stat"><span>Sprawdzone krawędzie</span><output id="edgeCount">0</output><small>łącznie we wszystkich rundach</small></div>
           <div class="stat"><span>Udane relaksacje</span><output id="relaxCount">0</output><small>poprawy odległości</small></div>
           <div class="stat"><span>Ujemny cykl</span><output id="cycleFlag">-</output><small>wynik rundy kontrolnej</small></div>
         </section>
         <section class="panel lab-table-panel" aria-labelledby="distTitle"><h2 id="distTitle">Odległości od startu</h2><p>Dla każdego wierzchołka: aktualna odległość i poprzednik na najlepszej znanej drodze.</p><table id="distTable" class="graph-table"><caption>Wierzchołki · odległość · poprzednik</caption><thead id="distHead"></thead><tbody id="distBody"></tbody></table><p id="resultText" class="lab-result" role="status">Wynik pojawi się po zakończeniu.</p></section>
-        <details class="data-details"><summary>Dane wejściowe i reguła relaksacji</summary><p id="dataText"></p><p>Początkowo d[start] = 0, a pozostałe d[v] = ∞. Dla krawędzi (u, v) o wadze w: jeśli d[u] + w &lt; d[v], ustaw d[v] = d[u] + w i poprzednik[v] = u. Po V − 1 rundach odległości są ostateczne; poprawa w kolejnej rundzie oznacza ujemny cykl osiągalny ze startu.</p></details>
+        <details class="data-details"><summary>Dane wejściowe i reguła relaksacji</summary><p id="dataText"></p><p>Początkowo d[start] = 0, a pozostałe d[v] = ∞. Dla krawędzi (u, v) o wadze w: jeśli d[u] + w &lt; d[v], ustaw d[v] = d[u] + w i poprzednik[v] = u. Po V - 1 rundach odległości są ostateczne; poprawa w kolejnej rundzie oznacza ujemny cykl osiągalny ze startu.</p></details>
       </div>
-      <section class="panel lesson" aria-labelledby="lessonTitle">
-        <div class="lesson-header"><div><p class="eyebrow">02 / Zrozum algorytm</p><h2 id="lessonTitle">Bellman-Ford</h2></div><span class="tag">Najkrótsze ścieżki</span></div>
-        <dl class="complexity"><div><dt>Czas</dt><dd>O(V · E)</dd></div><div><dt>Pamięć</dt><dd>O(V)</dd></div><div><dt>Ujemne wagi</dt><dd>Obsługuje</dd></div><div><dt>Ujemny cykl</dt><dd>Wykrywa</dd></div><div><dt>Rund</dt><dd>V − 1 (+1 kontrolna)</dd></div></dl>
-        <p class="complexity-note">V to liczba wierzchołków, E - krawędzi. Wolniejszy od Dijkstry, ale bardziej ogólny. Wczesne zakończenie jest możliwe, gdy w całej rundzie nic się nie poprawiło.</p>
-        <div class="lesson-columns">
-          <div><h3>Jak to działa?</h3><ol><li>Ustaw odległość startu na 0, pozostałych na nieskończoność.</li><li>Przejrzyj wszystkie krawędzie i popraw odległość tam, gdzie droga przez krawędź jest krótsza.</li><li>Powtórz przeglądanie V − 1 razy.</li><li>Zrób jedną rundę kontrolną: jeśli coś się jeszcze poprawia, istnieje ujemny cykl.</li></ol></div>
-          <div><h3>Dlaczego to działa?</h3><p>Najkrótsza droga bez cyklu ma najwyżej V − 1 krawędzi. Po k rundach odległości są poprawne dla wszystkich dróg o najwyżej k krawędziach, więc V − 1 rund wystarcza.</p><h3>Ujemny cykl</h3><p>Gdy cykl ma ujemną sumę wag, każde okrążenie skraca drogę. „Najkrótsza” droga nie istnieje, a algorytm to zgłasza.</p></div>
-          <div><h3>Kiedy się przydaje?</h3><p>Przy kursach walut i wykrywaniu arbitrażu, w protokołach routingu wektora odległości oraz wszędzie tam, gdzie koszty mogą być ujemne, np. zyski lub ulgi.</p></div>
-        </div>
-      </section>
       <footer><span>AlgorithmsLab · Interaktywna nauka algorytmów</span><a href="index.html">Wszystkie symulacje</a></footer>
     </main>
     <script>
@@ -173,7 +179,7 @@ window.Lab = (() => {
   'use strict';
   const { $, text, element, svg, paint, controller } = Lab;
   let n, edges, positions, distance, previous, improved, round, checks, relaxations, active, accepted, cycleEdges, affected, phase, route, dragging;
-  const name = i => String.fromCharCode(65 + i), fmt = v => v === Infinity ? '∞' : v === -Infinity ? '−∞' : String(v);
+  const name = i => String.fromCharCode(65 + i), fmt = v => v === Infinity ? '∞' : v === -Infinity ? '-∞' : String(v);
   function generate() {
     n = Number($('size').value); const kind = $('scenario').value;
     let triples;
@@ -228,8 +234,8 @@ window.Lab = (() => {
       affected.forEach(v => { distance[v] = -Infinity; });
     }
     phase = 'done'; active = -1;
-    text('resultText', affected.size ? `Osiągalny ujemny cykl. Odległość −∞ dla: ${[...affected].sort().map(name).join(', ')}. Do tych wierzchołków nie istnieje najkrótsza ścieżka; pozostałe odległości są poprawne.` : `Wyznaczono najkrótsze ścieżki od ${name(Number($('startVertex').value))}. ${stable ? 'Zakończono wcześniej: cała runda bez poprawy.' : 'Runda kontrolna nie wykazała osiągalnego ujemnego cyklu.'} ∞ oznacza brak drogi.`);
-    return affected.size ? 'Zaznaczono krawędzie ujemnego cyklu i wierzchołki o odległości −∞.' : 'Wybierz wiersz tabeli, aby zobaczyć najkrótszą ścieżkę.';
+    text('resultText', affected.size ? `Osiągalny ujemny cykl. Odległość -∞ dla: ${[...affected].sort().map(name).join(', ')}. Do tych wierzchołków nie istnieje najkrótsza ścieżka; pozostałe odległości są poprawne.` : `Wyznaczono najkrótsze ścieżki od ${name(Number($('startVertex').value))}. ${stable ? 'Zakończono wcześniej: cała runda bez poprawy.' : 'Runda kontrolna nie wykazała osiągalnego ujemnego cyklu.'} ∞ oznacza brak drogi.`);
+    return affected.size ? 'Zaznaczono krawędzie ujemnego cyklu i wierzchołki o odległości -∞.' : 'Wybierz wiersz tabeli, aby zobaczyć najkrótszą ścieżkę.';
   }
   function showPath(vertex) {
     if (phase !== 'done') return;
@@ -239,18 +245,18 @@ window.Lab = (() => {
     text('operation', `Ścieżka: ${path.map(name).join(' → ')}. Koszt: ${distance[vertex]}.`); render();
   }
   const editor = element('form', { class: 'lab-edge-editor', hidden: '' });
-  const weightLabel = element('label', { for: 'edgeWeight' }, 'Nowa waga (−9…9)');
+  const weightLabel = element('label', { for: 'edgeWeight' }, 'Nowa waga (-9…9)');
   const weightInput = element('input', { id: 'edgeWeight', type: 'number', min: '-9', max: '9', step: '1', required: '' });
   const save = element('button', { type: 'submit', class: 'btn' }, 'Zapisz wagę'), cancel = element('button', { type: 'button', class: 'btn' }, 'Anuluj');
   editor.append(weightLabel, weightInput, save, cancel); document.querySelector('.controls').append(editor); let editing = -1;
   function editWeight(i, event) {
     if (ctl.running) return;
     if (event.shiftKey) { edges.splice(i, 1); ctl.reset(); return; }
-    editing = i; weightLabel.textContent = `Waga ${name(edges[i].a)} → ${name(edges[i].b)} (−9…9)`; weightInput.value = edges[i].weight; editor.hidden = false; weightInput.focus();
+    editing = i; weightLabel.textContent = `Waga ${name(edges[i].a)} → ${name(edges[i].b)} (-9…9)`; weightInput.value = edges[i].weight; editor.hidden = false; weightInput.focus();
   }
   editor.addEventListener('submit', event => {
     event.preventDefault(); const weight = Number(weightInput.value);
-    if (weightInput.value.trim() === '' || !Number.isInteger(weight) || weight < -9 || weight > 9) { text('operation', 'Waga musi być liczbą całkowitą od −9 do 9.'); return; }
+    if (weightInput.value.trim() === '' || !Number.isInteger(weight) || weight < -9 || weight > 9) { text('operation', 'Waga musi być liczbą całkowitą od -9 do 9.'); return; }
     edges[editing].weight = weight; ctl.reset();
   });
   cancel.addEventListener('click', () => { editor.hidden = true; }); editor.addEventListener('keydown', event => { if (event.key === 'Escape') editor.hidden = true; });
